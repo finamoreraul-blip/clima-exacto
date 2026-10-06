@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clima Exacto</title>
+<style>
+*{box-sizing:border-box;font-family:system-ui}body{background:#f2f4f7;margin:0;padding:12px}
+.card{max-width:780px;margin:auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.top{display:flex;justify-content:space-between;align-items:center}
+h1{margin:0;font-size:26px}.pill{background:#0f172a;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px}
+.sub{color:#666;font-size:13px;margin:8px 0 14px}
+.row{display:flex;gap:8px} input{flex:1;padding:14px;border:1px solid #d1d5db;border-radius:12px}
+button{padding:14px 18px;border-radius:12px;border:0;background:#0f172a;color:#fff;font-weight:700;cursor:pointer}
+.resumen{background:#0f172a;color:#fff;padding:18px;border-radius:14px;line-height:1.6;margin:16px 0;white-space:pre-line}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.kpi{background:#f8fafc;border:1px solid #eef2f7;padding:12px;border-radius:12px;text-align:center}
+.kpi b{display:block;font-size:20px}
+.tabs{display:flex;gap:8px;margin:16px 0}
+.tab{padding:8px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px}
+.tab.active{background:#0f172a;color:#fff}
+.hora{display:flex;justify-content:space-between;background:#f8fafc;border:1px solid #eef2f7;padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:6px}
+
+/* BANNER BIENVENIDA */
+#welcome{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.85);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(6px);animation:fadeOut 0.5s ease 3.5s forwards}
+.wbox{background:#fff;padding:28px;border-radius:20px;text-align:center;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.wbox h2{margin:0 0 8px;font-size:22px}.wbox p{color:#666;margin:0}
+@keyframes fadeOut{to{opacity:0;visibility:hidden}}
+
+/* PAYWALL */
+#paywall{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:9998;display:none;overflow:auto;padding:20px}
+.pwrap{max-width:420px;margin:40px auto;text-align:center}
+.price{font-size:48px;font-weight:900;letter-spacing:-2px;margin:10px 0}
+.price small{font-size:16px;color:#666;font-weight:400}
+.btnPay{display:block;width:100%;padding:16px;background:#0f172a;color:#fff;border-radius:14px;text-decoration:none;font-weight:700;margin-top:14px}
+.btnPay.green{background:#25D366}
+.badge{background:#dcfce7;color:#166534;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div id="welcome"><div class="wbox"><h2>Bienvenid@ a Clima Exacto</h2><p>Gracias por elegirnos 🌤️</p></div></div>
+
+<div id="paywall">
+<div class="pwrap">
+<div class="badge">⏰ Tu prueba gratis terminó</div>
+<h1 style="margin-top:16px">Seguí con Clima Exacto</h1>
+<p style="color:#666">Pronóstico hora por hora con modelo Windguru (GFS) + ubicación real. Sin vueltas.</p>
+<div class="price">$2.500 <small>/ mes</small></div>
+<p style="color:#666;font-size:14px">5 días de prueba gratis. Cancelás cuando querés por WhatsApp.</p>
+<a class="btnPay" href="https://wa.me/5492983640700?text=Hola!%20Quiero%20activar%20Clima%20Exacto%20por%20$2500/mes%20-%205%20dias%20gratis" target="_blank">Activar prueba de 5 días</a>
+<a class="btnPay green" href="https://wa.me/5492983640700?text=Quiero%20pagar%20Clima%20Exacto%20$2500" target="_blank">Pagar $2.500 por mes</a>
+<p style="font-size:12px;color:#999;margin-top:14px">Al activar, te damos acceso ilimitado con tu número.</p>
+</div>
+</div>
+
+<div class="card">
+<div class="top"><h1>Clima Exacto</h1><span class="pill" id="status">📍 Detectando...</span></div>
+<div class="sub">Modelo GFS (Windguru) en texto simple, con tu ubicación exacta.</div>
+<div class="row">
+<input id="loc" placeholder="Buscar: Reta, Claromecó...">
+<button onclick="buscarManual()">Buscar</button>
+<button onclick="usarGPS()" style="background:#fff;color:#111;border:1px solid #ddd">📍</button>
+</div>
+<div id="res"></div>
+</div>
+
+<script>
+// --- LOGICA SUSCRIPCION 5 DIAS ---
+const TRIAL_DAYS=5;
+function checkTrial(){
+  let start=localStorage.getItem('ce_start');
+  if(!start){localStorage.setItem('ce_start', Date.now()); return true;}
+  const diffDays=(Date.now()-parseInt(start))/(1000*60*60*24);
+  if(diffDays>TRIAL_DAYS){document.getElementById('paywall').style.display='block'; return false;}
+  const left=Math.ceil(TRIAL_DAYS-diffDays);
+  document.getElementById('status').innerText=document.getElementById('status').innerText+` • Prueba: ${left} días`;
+  return true;
+}
+setTimeout(()=>{document.getElementById('welcome').style.display='none'},4000);
+
+// --- CLIMA LOGICA ---
+let lat=-38.37, lon=-60.27, nombre="Tres Arroyos";
+function usarGPS(){
+  document.getElementById('status').innerText="📍 Obteniendo...";
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    lat=pos.coords.latitude; lon=pos.coords.longitude;
+    const rev=await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=es`).then(r=>r.json()).catch(()=>null);
+    nombre=rev?.results?.[0]?.name || "Tu ubicación";
+    document.getElementById('status').innerText="📍 "+nombre;
+    if(checkTrial()) cargar();
+  }, ()=>{document.getElementById('status').innerText="📍 Tres Arroyos"; if(checkTrial()) cargar();});
+}
+async function buscarManual(){
+  const q=document.getElementById('loc').value; if(!q) return;
+  const geo=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${q}&count=1&language=es`).then(r=>r.json());
+  if(!geo.results) return alert("No encontré");
+  lat=geo.results[0].latitude; lon=geo.results[0].longitude; nombre=geo.results[0].name;
+  document.getElementById('status').innerText="📍 "+nombre; if(checkTrial()) cargar();
+}
+async function cargar(){
+  const w=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation_probability,precipitation,weathercode,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,wind_speed_10m_max&timezone=auto&forecast_days=3&models=gfs_seamless`).then(r=>r.json());
+  const h=w.hourly,d=w.daily;
+  let kpi=`<div class="grid2"><div class="kpi"><small>Máx hoy</small><b>${Math.round(d.temperature_2m_max[0])}°</b></div><div class="kpi"><small>Mín hoy</small><b>${Math.round(d.temperature_2m_min[0])}°</b></div><div class="kpi"><small>Viento máx</small><b>${Math.round(d.wind_speed_10m_max[0])} km/h</b></div><div class="kpi"><small>Lluvia</small><b>${d.precipitation_sum[0]} mm</b></div></div>`;
+  const vmax=Math.max(...h.wind_speed_10m.slice(6,22)), pmax=Math.max(...h.precipitation_probability.slice(6,22)), total=h.precipitation.slice(6,22).reduce((a,b)=>a+b,0);
+  let txt=`${nombre} - Hoy:\n\nMañana con ${Math.round(h.temperature_2m[7])}°, viento del ${dirTxt(h.wind_direction_10m[9])} de ${Math.round(h.wind_speed_10m[9])} km/h. `;
+  if(pmax>70) txt+=`Probabilidad de lluvia ${pmax}% con ${total.toFixed(1)} mm. `; else if(pmax>35) txt+=`Lloviznas aisladas ${pmax}%. `; else txt+=`Sin lluvias. `;
+  txt+=`Máxima de ${Math.round(d.temperature_2m_max[0])}°.`;
+  window._w=w;
+  document.getElementById('res').innerHTML=kpi+`<div class="resumen">${txt}</div><div class="tabs"><div class="tab active" onclick="verDia(0,this)">Hoy</div><div class="tab" onclick="verDia(1,this)">Mañana</div><div class="tab" onclick="verDia(2,this)">Pasado</div></div><div id="horas"></div>`;
+  verDia(0, document.querySelector('.tab'));
+}
+function verDia(dia,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');const h=window._w.hourly;const s=dia*24;let out="";for(let i=s;i<s+24;i++){if(i%24<6||i%24>22)continue;const hora=String(i%24).padStart(2,'0')+":00";out+=`<div class="hora"><span><b>${hora}</b> ${icon(h.weathercode[i])} ${Math.round(h.temperature_2m[i])}°</span><span>💨 ${Math.round(h.wind_speed_10m[i])} | R ${Math.round(h.wind_gusts_10m[i])} ${flecha(h.wind_direction_10m[i])} | 🌧️ ${h.precipitation_probability[i]}%</span></div>`;}document.getElementById('horas').innerHTML=out;}
+function dirTxt(d){if(d>337||d<23)return"norte";if(d<67)return"noreste";if(d<112)return"este";if(d<157)return"sudeste";if(d<202)return"sur";if(d<247)return"sudoeste";if(d<292)return"oeste";return"noroeste";}
+function flecha(d){const a=["N","NE","E","SE","S","SO","O","NO"];return a[Math.round(d/45)%8];}
+function icon(c){if(c==0)return"☀️";if(c<4)return"⛅";if(c<60)return"☁️";if(c<80)return"🌧️";return"⛈️";}
+if(checkTrial()) usarGPS();
+</script>
+</body>
+</html>
