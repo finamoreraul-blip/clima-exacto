@@ -5,78 +5,172 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clima Exacto - $1.000/mes</title>
 <style>
-body{font-family: system-ui, Arial; background:#f0f7ff; margin:0; padding:20px}
-.card{max-width:480px; margin:0 auto; background:white; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.1)}
-h1{color:#0b5ed7; font-size:24px; margin:0 0 5px}
-.price{font-size:32px; font-weight:900; color:#0b5ed7; margin:8px 0}
-.price span{font-size:16px; font-weight:400; color:#666}
-.badge{background:#d1fadf; color:#065f46; padding:5px 12px; border-radius:20px; font-size:13px; font-weight:bold; display:inline-block; margin-bottom:12px}
-input, select, button{width:100%; padding:13px; margin:8px 0; border-radius:10px; border:1px solid #ccc; font-size:16px; box-sizing:border-box}
-button{background:#25D366; color:white; border:none; font-weight:bold; cursor:pointer; font-size:18px; margin-top:12px}
-button:hover{background:#1ebe5b}
-.pay-btn{background:#009ee3; margin-top:8px}
-.pay-btn:hover{background:#0088c7}
-.small{font-size:13px; color:#666; margin-top:12px; text-align:center}
-ul{padding-left:18px; font-size:14px; color:#333; margin:10px 0}
+*{box-sizing:border-box;font-family:system-ui}body{background:#f2f4f7;margin:0;padding:12px}
+.card{max-width:780px;margin:auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+h1{margin:0;font-size:26px}.pill{background:#0f172a;color:#fff;padding:7px 12px;border-radius:20px;font-size:12px}
+.sub{color:#666;font-size:13px;margin:8px 0 14px}
+.row{display:flex;gap:8px} input,select{flex:1;padding:14px;border:1px solid #d1d5db;border-radius:12px;font-size:15px}
+button{padding:14px 16px;border-radius:12px;border:0;background:#0f172a;color:#fff;font-weight:700;cursor:pointer}
+.resumen{background:#0f172a;color:#fff;padding:20px;border-radius:16px;line-height:1.7;margin:16px 0;white-space:pre-line;font-size:15.5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.kpi{background:#f8fafc;border:1px solid #eef2f7;padding:12px;border-radius:12px;text-align:center}
+.kpi b{display:block;font-size:18px}
+.tabs{display:flex;gap:8px;margin:16px 0;overflow:auto}
+.tab{padding:8px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;white-space:nowrap}
+.tab.active{background:#0f172a;color:#fff}
+.hora{display:flex;justify-content:space-between;background:#f8fafc;border:1px solid #eef2f7;padding:11px 12px;border-radius:10px;font-size:13px;margin-bottom:6px}
+#welcome{position:fixed;inset:0;background:rgba(15,23,42,.88);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(8px)}
+.wbox{background:#fff;padding:28px 24px;border-radius:20px;text-align:center;max-width:360px}
+#paywall{position:fixed;inset:0;background:#fff;z-index:9998;display:none;overflow:auto;padding:20px}
+.pwrap{max-width:430px;margin:30px auto;text-align:center}
+.price{font-size:52px;font-weight:900;letter-spacing:-2px;margin:10px 0}
+.price small{font-size:16px;color:#666;font-weight:400}
+.btnPay{display:block;width:100%;padding:16px;border-radius:14px;text-decoration:none;font-weight:800;margin-top:12px;text-align:center}
+.btnPay.mp{background:#009ee3;color:#fff}
+.trialInfo{background:#fffbeb;border:1px solid #fde68a;padding:10px 12px;border-radius:12px;font-size:12px;margin:12px 0;color:#92400e}
+.badge{background:#dcfce7;color:#166534;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block}
+.boxWA{margin-top:24px;padding:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px}
 </style>
 </head>
 <body>
+<div id="welcome"><div class="wbox"><h2>Bienvenid@ a Clima Exacto</h2><p>Gracias por elegirnos</p></div></div>
+<div id="paywall">
+<div class="pwrap">
+<div class="badge">Prueba gratis terminada</div>
+<h1 style="margin-top:16px">Seguí con Clima Exacto</h1>
+<p style="color:#666">Pronóstico detallado hora por hora con tu ubicación exacta.</p>
+<div class="price">$1.000 <small>/ mes</small></div>
+<div class="trialInfo">Tuviste 5 días gratis. Activá para seguir.</div>
+<a class="btnPay mp" href="https://mpago.la/286526v" target="_blank">Pagar con Mercado Pago - $1.000/mes</a>
+<a class="btnPay" href="https://wa.me/5492983389710?text=Hola!%20Pagué%20Clima%20Exacto%20$1000%20-%20activame" target="_blank" style="background:#fff;color:#111;border:1px solid #ddd">Ya pagué, activar</a>
+</div>
+</div>
 <div class="card">
-<div class="badge">🌤️ 5 DÍAS GRATIS</div>
-<h1>Clima Exacto</h1>
-<p style="margin:0;color:#555">Tres Arroyos y zona</p>
-<div class="price">$1.000 <span>/ mes</span></div>
-<ul>
-<li>✅ 2 avisos por día exactos para tu lote</li>
-<li>✅ Ventana de fumigación y lluvia</li>
-<li>✅ Alerta por WhatsApp directo</li>
-<li>✅ Cancelás cuando querés</li>
-</ul>
-<label>Tu WhatsApp</label>
-<input id="wa" placeholder="Ej: 2983 123456" type="tel">
-<label>¿Para qué lo usás?</label>
-<select id="uso">
-<option value="Fumigar">Fumigar</option>
-<option value="Sembrar">Sembrar</option>
-<option value="Cosechar">Cosechar</option>
-<option value="Aplicaciones">Aplicaciones</option>
-<option value="Ganadería">Ganadería</option>
+<div class="top"><h1>Clima Exacto</h1><span class="pill" id="status">Detectando...</span></div>
+<div class="sub">Modelo best_match (GFS + ECMWF - mismo que Windguru) • Detallado hora por hora</div>
+<div class="row">
+<input id="loc" placeholder="Ej: Tres Arroyos, Reta, Allen Rio Negro...">
+<button onclick="buscarManual()">Buscar</button>
+<button onclick="usarGPS()" style="background:#fff;color:#111;border:1px solid #ddd">GPS</button>
+</div>
+<div id="res"></div>
+<div class="boxWA">
+<h3 style="margin:0 0 6px">Activar avisos por WhatsApp</h3>
+<p style="font-size:13px;color:#666;margin:0 0 12px">Elegí cuántos avisos y para qué necesitás el clima.</p>
+<input id="wa" placeholder="Tu WhatsApp Ej: 2983 389710" style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:10px">
+<select id="frecuencia" style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:10px">
+<option value="1">1 aviso - 7:00 AM - $1.000/mes</option>
+<option value="2">2 avisos - 7:00 AM y 14:00 PM - $1.000/mes</option>
 </select>
-<label>Zona / Campo</label>
-<input id="nombre" value="Tres Arroyos">
-<button onclick="enviarWpp()">Activar 5 días gratis 🚀</button>
-<button class="pay-btn" onclick="window.open('https://mpago.la/286526v','_blank')">Pagar $1.000/mes con Mercado Pago</button>
-<p class="small">Te llega un WhatsApp a mi número 2983 389710 para activarte.<br>Después abonás por Mercado Pago.</p>
-<div id="estado" style="font-size:12px; color:#0b5ed7; margin-top:8px; text-align:center"></div>
+<select id="uso" style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:10px">
+<option value="fumigar">Fumigar / Pulverizar</option>
+<option value="construir">Construir / Obra</option>
+<option value="caminar">Caminar / Correr</option>
+<option value="playa">Playa / Pesca</option>
+<option value="campo">Campo / Cosecha</option>
+<option value="evento">Evento al aire libre</option>
+<option value="general">Uso general</option>
+</select>
+<button onclick="guardarWA()" style="width:100%;background:#25D366">Activar avisos (5 días gratis) - Después $1.000/mes</button>
+<p style="font-size:11px;color:#999;margin-top:8px">Después $1.000/mes con <a href="https://mpago.la/286526v" target="_blank">Mercado Pago</a></p>
+<div id="waOK" style="display:none;margin-top:10px;background:#dcfce7;color:#166534;padding:12px;border-radius:10px;font-size:13px;white-space:pre-line"></div>
+</div>
 </div>
 <script>
-let lat="-38.3750"; let lon="-60.2746";
-if(navigator.geolocation){
- navigator.geolocation.getCurrentPosition(p=>{
-   lat=p.coords.latitude.toFixed(4); lon=p.coords.longitude.toFixed(4);
-   document.getElementById("estado").innerHTML="📍 Ubicación: "+lat+", "+lon;
- });
+const TRIAL_DAYS=5;
+function getLeft(){let s=localStorage.getItem('ce_start'); if(!s){localStorage.setItem('ce_start',Date.now()); return TRIAL_DAYS;} return TRIAL_DAYS - (Date.now()-parseInt(s))/(1000*60*60*24);}
+function checkTrial(){if(getLeft()<=0){document.getElementById('paywall').style.display='block'; return false;} return true;}
+setTimeout(()=>document.getElementById('welcome').style.display='none',3500);
+let lat=-38.37, lon=-60.27, nombre="Tres Arroyos";
+function usarGPS(){
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    lat=pos.coords.latitude; lon=pos.coords.longitude;
+    try{const r=await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=es`).then(x=>x.json()); nombre=r?.results?.[0]?.name||"Tu ubicación";}catch{nombre="Tu ubicación";}
+    document.getElementById('status').innerText=`${nombre} - ${Math.ceil(getLeft())} dias gratis`;
+    if(checkTrial()) cargar();
+  },()=>{document.getElementById('status').innerText=`Tres Arroyos - ${Math.ceil(getLeft())} dias gratis`; if(checkTrial()) cargar();});
 }
-function enviarWpp(){
- const wa=document.getElementById("wa").value.trim();
- const uso=document.getElementById("uso").value;
- const nombre=document.getElementById("nombre").value.trim()||"Tres Arroyos";
- if(wa.length<8){ alert("Poné tu WhatsApp"); return; }
- const owner="5492983389710";
- const mensaje=`🚀 NUEVO LEAD - CLIMA EXACTO $1000/MES
-
-Hola! Quiero los 5 días gratis.
-
-👤 Mi número: ${wa}
-📍 Zona: ${nombre} (${lat}, ${lon})
-🌱 Uso: ${uso}
-💰 Link de pago: https://mpago.la/286526v
-
-¿Me activás?`;
- const url="https://wa.me/"+owner+"?text="+encodeURIComponent(mensaje);
- window.open(url,"_blank");
- setTimeout(()=>{ window.open("https://mpago.la/286526v","_blank"); }, 800);
+async function buscarManual(){
+  const q=document.getElementById('loc').value.trim(); if(!q) return;
+  let geo=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=3&language=es&countryCode=AR`).then(r=>r.json());
+  if(!geo.results) geo=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=3&language=es`).then(r=>r.json());
+  if(!geo.results) return alert("No encontré");
+  let best=geo.results.find(r=>r.country_code==='AR')||geo.results[0];
+  lat=best.latitude; lon=best.longitude; nombre=best.name+(best.admin1?`, ${best.admin1}`:'');
+  document.getElementById('status').innerText=`${nombre} - ${Math.ceil(getLeft())} dias gratis`;
+  if(checkTrial()) cargar();
 }
+function dirTxt(d){if(d>337||d<23)return"norte";if(d<67)return"noreste";if(d<112)return"este";if(d<157)return"sudeste";if(d<202)return"sur";if(d<247)return"sudoeste";if(d<292)return"oeste";return"noroeste";}
+function flecha(d){const a=["N","NE","E","SE","S","SO","O","NO"];return a[Math.round(d/45)%8];}
+function icon(c){if(c==0)return"☀️";if(c<4)return"⛅";if(c<60)return"☁️";if(c<80)return"🌧️";return"⛈️";}
+function cieloTxt(c){if(c==0)return"despejado";if(c<4)return"parcialmente nublado";return"mayormente nublado";}
+function generarTexto(nombre,h,d){
+  const hoyH=h.temperature_2m.slice(0,24), hoyV=h.wind_speed_10m.slice(0,24), hoyDir=h.wind_direction_10m.slice(0,24), hoyLl=h.precipitation_probability.slice(0,24);
+  let maxTemp=Math.max(...hoyH.slice(6,22)), idxMax=hoyH.indexOf(maxTemp,6);
+  let desc=""; for(let i=idxMax+1;i<=22;i++){ if(hoyH[i]<=maxTemp-4){ desc=`A las ${i}hs desciende a ${Math.round(hoyH[i])}°, llevar abrigo. `; break; } }
+  const pmax=Math.max(...hoyLl.slice(6,22));
+  let txt=`${nombre} - Hoy:\n\nHoy en ${nombre} máxima de ${Math.round(maxTemp)}° hasta las ${idxMax}hs, con viento del ${dirTxt(hoyDir[idxMax])} de ${Math.round(hoyV[idxMax])} km/h. `;
+  if(desc) txt+=desc;
+  if(pmax>75) txt+=`Probabilidad de lluvia del ${pmax}% a las ${hoyLl.indexOf(pmax)}hs.\n\n`;
+  else if(pmax>40) txt+=`Hay ${pmax}% de probabilidad de llovizna a la tarde.\n\n`;
+  else txt+=`Sin lluvia, cielo ${cieloTxt(h.weathercode[idxMax])}.\n\n`;
+  txt+=`Mañana arranca con ${Math.round(hoyH[7])}° a las 7hs y a la noche baja a ${Math.round(hoyH[21])}° a las 21hs. Mañana: ${Math.round(d.temperature_2m_min[1])}° / ${Math.round(d.temperature_2m_max[1])}° con ${d.precipitation_sum[1]} mm.`;
+  return txt;
+}
+function generarMensajePersonalizado(uso, nombre, h, d){
+  const maxV=Math.max(...h.wind_speed_10m.slice(6,20));
+  const horaMaxV=h.wind_speed_10m.indexOf(maxV,6);
+  const pmax=Math.max(...h.precipitation_probability.slice(6,20));
+  const maxT=Math.round(d.temperature_2m_max[0]);
+  const minT=Math.round(d.temperature_2m_min[0]);
+  const base=`*Clima Exacto - ${nombre} - Hoy*\nMáx ${maxT}° / Mín ${minT}°\n`;
+  if(uso==='fumigar'){
+    if(maxV>20) return base+`OJO PARA FUMIGAR: El viento se incrementa a ${Math.round(maxV)} km/h a las ${horaMaxV}hs. Ventana buena hasta las ${horaMaxV-1}hs.`;
+    if(pmax>60) return base+`OJO PARA FUMIGAR: ${pmax}% de lluvia a la tarde. Fumigá a la mañana, viento ${Math.round(h.wind_speed_10m[8])} km/h.`;
+    return base+`Buen día para fumigar. Viento ${Math.round(h.wind_speed_10m[8])} km/h a las 8hs, máx ${Math.round(maxV)} km/h. Sin lluvia.`;
+  }
+  if(uso==='construir'){
+    return base+`OBRA: Viento máx ${Math.round(maxV)} km/h a las ${horaMaxV}hs. ${pmax>50?`Con ${pmax}% de lluvia, cubrí material.`:`Sin lluvia, ideal para hormigón.`} Máx ${maxT}° hasta las 16hs, luego baja a ${Math.round(h.temperature_2m[18])}°.`;
+  }
+  if(uso==='caminar') return base+`Salí ${h.temperature_2m[7]<15?'abrigado':''}: ${Math.round(h.temperature_2m[7])}° a las 7hs y ${Math.round(h.temperature_2m[17])}° a las 17hs. Viento leve ${Math.round(h.wind_speed_10m[7])} km/h.`;
+  if(uso==='playa') return base+`Playa: Viento del ${dirTxt(h.wind_direction_10m[14])} de ${Math.round(h.wind_speed_10m[14])} km/h a las 14hs. ${pmax<20?'Sin lluvia, buen día.':'Probable lluvia '+pmax+'% - llevar reparo.'}`;
+  if(uso==='campo') return base+`Campo: Máx ${maxT}° hasta las 16hs, desciende a ${Math.round(h.temperature_2m[19])}° a la noche. Viento ${Math.round(maxV)} km/h. ${pmax>60?'Atención lluvia '+pmax+'%.':''}`;
+  if(uso==='evento') return base+`Evento: Máx ${maxT}° hasta las 16hs, a las 17hs ${Math.round(h.temperature_2m[17])}°. Viento ${Math.round(maxV)} km/h. ${pmax>40?'Probabilidad lluvia '+pmax+'% - plan B bajo techo.':'Sin lluvia.'}`;
+  return base+`Hoy máxima de ${maxT}° hasta las 16hs, luego baja. Viento ${Math.round(maxV)} km/h. Lluvia ${d.precipitation_sum[0]} mm.`;
+}
+async function cargar(){
+  const w=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation_probability,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto&forecast_days=3&models=best_match`).then(r=>r.json());
+  const h=w.hourly,d=w.daily;
+  const left=Math.ceil(getLeft());
+  const kpi=`<div class="trialInfo">Te quedan <b>${left} de 5 días gratis</b> - Después $1.000/mes - <a href="https://mpago.la/286526v" target="_blank">Pagar ahora</a></div><div class="grid2"><div class="kpi"><small>Máx hoy</small><b>${Math.round(d.temperature_2m_max[0])}° a las ${h.temperature_2m.slice(0,24).indexOf(Math.max(...h.temperature_2m.slice(0,24).slice(6,22)),6)}hs</b></div><div class="kpi"><small>Mín</small><b>${Math.round(d.temperature_2m_min[0])}°</b></div><div class="kpi"><small>Viento</small><b>${Math.round(d.wind_speed_10m_max[0])} km/h</b></div><div class="kpi"><small>Lluvia</small><b>${d.precipitation_sum[0]} mm</b></div></div>`;
+  window._w=w;
+  document.getElementById('res').innerHTML=kpi+`<div class="resumen">${generarTexto(nombre,h,d)}</div><div class="tabs"><div class="tab active" onclick="verDia(0,this)">Hoy detallado</div><div class="tab" onclick="verDia(1,this)">Mañana</div><div class="tab" onclick="verDia(2,this)">Pasado</div></div><div id="horas"></div>`;
+  verDia(0,document.querySelector('.tab'));
+}
+function verDia(dia,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');const h=window._w.hourly,s=dia*24;let out="";for(let i=s;i<s+24;i++){if(i%24<6||i%24>23)continue;const hora=String(i%24).padStart(2,'0')+":00";const baja=i>0&&h.temperature_2m[i]<=h.temperature_2m[i-1]-3?` - baja a ${Math.round(h.temperature_2m[i])}° - llevar abrigo`:"";out+=`<div class="hora"><span><b>${hora}</b> ${icon(h.weathercode[i])} ${Math.round(h.temperature_2m[i])}°${baja}</span><span>${Math.round(h.wind_speed_10m[i])}km/h ${flecha(h.wind_direction_10m[i])} | ${h.precipitation_probability[i]}%</span></div>`;}document.getElementById('horas').innerHTML=out;}
+function guardarWA(){
+  const wa=document.getElementById('wa').value, frec=document.getElementById('frecuencia').value, uso=document.getElementById('uso').value;
+  if(wa.length<8) return alert("Poné tu WhatsApp");
+  const datos={wa,frec,uso,nombre,lat,lon,fecha:new Date().toISOString(), precio:"$1000/mes", link_pago:"https://mpago.la/286526v"};
+  localStorage.setItem('ce_wa',JSON.stringify(datos));
+  const mensaje=generarMensajePersonalizado(uso,nombre,window._w.hourly,window._w.daily);
+  const textoFrec = frec==1? "1 aviso a las 7:00 AM" : "2 avisos a las 7:00 AM y 14:00 PM";
+
+  // Enviar a tu WhatsApp directo
+  const owner="5492983389710";
+  const textoOwner=`🚀 NUEVO LEAD - $1000/MES\n\n👤 Wa: ${wa}\n📍 Zona: ${nombre} (${lat},${lon})\n🔔 Plan: ${textoFrec}\n🌱 Uso: ${uso}\n💰 Link: https://mpago.la/286526v`;
+  window.open("https://wa.me/"+owner+"?text="+encodeURIComponent(textoOwner), "_blank");
+
+  document.getElementById('waOK').innerHTML=`Activado! ${textoFrec}\nMotivo: ${uso}\n\nAsi te va a llegar:\n${mensaje}\n\nAhora completá el pago de $1.000 para activar`;
+  document.getElementById('waOK').style.display='block';
+
+  setTimeout(()=>{ window.open("https://mpago.la/286526v","_blank"); }, 1000);
+
+  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxhrAZJP0sJcaZTCXae5amsWmWkLlc92-qoz8YTRV11YhnjThKQB6Zu26ZSV_yA6x9xE/exec";
+  fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(datos),headers:{"Content-Type":"application/json"}}).catch(e=>console.log(e));
+}
+if(checkTrial()) usarGPS();
 </script>
 </body>
 </html>
