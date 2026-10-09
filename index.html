@@ -114,6 +114,7 @@ const LINK_1000 = "https://mpago.la/286526v";
 const LINK_1500 = "https://mpago.la/1R8C5gW";
 const TRIAL_DAYS=5;
 const OWNER_WA="5492983389710";
+const GOOGLE_SHEET_URL="https://script.google.com/macros/s/AKfycbxlYqsZppDjO5FFu1K1h70YMmHG2gMB1hc-dwk6tOYRqKlbiAFHinAzMR-XCfj41ed2xg/exec";
 function getLeft(){let s=localStorage.getItem('ce_start'); if(!s){localStorage.setItem('ce_start',Date.now()); return TRIAL_DAYS;} return TRIAL_DAYS - (Date.now()-parseInt(s))/(1000*60*60*24);}
 function checkTrial(){if(getLeft()<=0){document.getElementById('paywall').style.display='block'; return false;} return true;}
 function actualizarPrecio(){ const f=document.getElementById('frecuencia').value; document.getElementById('btnActivar').innerText=f=="1"?"💳 PASO 1: PAGAR 1 aviso - $1.000/mes":"💳 PASO 1: PAGAR 2 avisos - $1.500/mes"; }
@@ -152,13 +153,11 @@ function enviarComprobante(origen){
   const plan = localStorage.getItem('ce_plan') || 'Plan no especificado';
   const uso = document.getElementById('uso')?.value || waData.uso || '';
   const texto = `Hola Santi! Acabo de pagar Clima Exacto%0A%0A✅ PLAN: ${encodeURIComponent(plan)}%0A📍 ZONA: ${encodeURIComponent(nombre)}%0A📱 MI WA: ${encodeURIComponent(waNum)}%0A🎯 USO: ${encodeURIComponent(uso)}%0A%0AAdjunto comprobante en la siguiente imagen. Porfa activame!`;
-  const datos={wa:waNum, frec:plan, uso, nombre, lat, lon, fecha:new Date().toISOString(), precio:plan, origen};
-  const GOOGLE_SHEET_URL="https://script.google.com/macros/s/AKfycbxhrAZJP0sJcaZTCXae5amsWmWkLlc92-qoz8YTRV11YhnjThKQB6Zu26ZSV_yA6x9E/exec";
+  const datos={wa:waNum, nombre: nombre, lat: lat, lon: lon, frec: plan, uso: uso, precio: plan, origen: origen};
   fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(datos)}).catch(()=>{});
   window.open("https://wa.me/"+OWNER_WA+"?text="+texto, "_blank");
   setTimeout(()=>alert("Perfecto! Ahora en WhatsApp tocá el clip 📎 y mandame la captura del comprobante que acabás de subir."), 500);
 }
-function guardarWA(){ pagarYActivar(); }
 function cargarOpiniones(){
   let ops = JSON.parse(localStorage.getItem('ce_ops')||'[]');
   if(ops.length==0){
@@ -192,4 +191,4 @@ cargarOpiniones();
 if(checkTrial()) usarGPS();
 </script>
 </body>
-  </html>
+</html>
