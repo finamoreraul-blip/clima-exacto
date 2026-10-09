@@ -36,6 +36,17 @@ button{padding:14px 16px;border-radius:12px;border:0;background:#0f172a;color:#f
 .opStars{color:#f59e0b}
 .comprobanteBox{display:none;margin-top:14px;padding:14px;background:#f0fdf4;border:1px dashed #86efac;border-radius:12px}
 .comprobanteBox.show{display:block}
+/* COLORES POR HORA */
+.t-max{color:#dc2626;font-weight:800}
+.t-min{color:#2563eb;font-weight:800}
+.t-wind{color:#059669;font-weight:700}
+.t-hum{color:#0891b2;font-weight:700}
+.t-rain{color:#3b82f6;font-weight:700}
+.t-gust{color:#ea580c;font-weight:700}
+.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;margin-right:4px;border:1px solid #e5e7eb;background:#fff}
+.chip-hum{background:#ecfeff;border-color:#a5f3fc}
+.chip-rain{background:#eff6ff;border-color:#bfdbfe}
+.chip-wind{background:#ecfdf5;border-color:#a7f3d0}
 </style>
 </head>
 <body>
@@ -65,7 +76,6 @@ button{padding:14px 16px;border-radius:12px;border:0;background:#0f172a;color:#f
 <button onclick="usarGPS()" style="background:#fff;color:#111;border:1px solid #ddd">GPS</button>
 </div>
 <div id="res"></div>
-
 <div class="boxWA">
 <h3 style="margin:0 0 6px">Activar avisos por WhatsApp</h3>
 <input id="wa" placeholder="Tu WhatsApp" style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:10px">
@@ -91,7 +101,6 @@ button{padding:14px 16px;border-radius:12px;border:0;background:#0f172a;color:#f
 <button onclick="document.getElementById('compBoxMain').classList.add('show')" style="width:100%;background:none;border:0;color:#666;text-decoration:underline;font-size:11px;margin-top:6px">Ya pagué, enviar comprobante</button>
 <div id="waOK" style="display:none;margin-top:10px;background:#dcfce7;color:#166534;padding:12px;border-radius:10px;font-size:13px;white-space:pre-line"></div>
 </div>
-
 <div class="opBox">
 <h3 style="margin:0 0 10px">⭐ Opiniones de Clima Exacto</h3>
 <div id="listaOp"></div>
@@ -107,14 +116,13 @@ button{padding:14px 16px;border-radius:12px;border:0;background:#0f172a;color:#f
 <button onclick="guardarOpinion()" style="width:100%;background:#0f172a">Publicar opinión</button>
 </div>
 </div>
-
 </div>
 <script>
 const LINK_1000 = "https://mpago.la/286526v";
 const LINK_1500 = "https://mpago.la/1R8C5gW";
 const TRIAL_DAYS=5;
 const OWNER_WA="5492983389710";
-const GOOGLE_SHEET_URL="https://script.google.com/macros/s/AKfycbxlYqsZppDjO5FFu1K1h70YMmHG2gMB1hc-dwk6tOYRqKlbiAFHinAzMR-XCfj41ed2xg/exec";
+const GOOGLE_SHEET_URL="https://script.google.com/macros/s/AKfycbx2wgadR8wi7DDh50SPANyMzo1nYxrxQ5ft6CI_pRPOF9o4TK6wsVPs7VH2xNymHuXOQw/exec";
 function getLeft(){let s=localStorage.getItem('ce_start'); if(!s){localStorage.setItem('ce_start',Date.now()); return TRIAL_DAYS;} return TRIAL_DAYS - (Date.now()-parseInt(s))/(1000*60*60*24);}
 function checkTrial(){if(getLeft()<=0){document.getElementById('paywall').style.display='block'; return false;} return true;}
 function actualizarPrecio(){ const f=document.getElementById('frecuencia').value; document.getElementById('btnActivar').innerText=f=="1"?"💳 PASO 1: PAGAR 1 aviso - $1.000/mes (5 días gratis)":"💳 PASO 1: PAGAR 2 avisos - $1.500/mes (5 días gratis)"; }
@@ -127,54 +135,59 @@ function flecha(d){const a=["N","NE","E","SE","S","SO","O","NO"];return a[Math.r
 function icon(c){if(c==0)return"☀️";if(c<4)return"⛅";if(c<60)return"☁️";if(c<80)return"🌧️";return"⛈️";}
 function cieloTxt(c){if(c==0)return"despejado";if(c<4)return"parcialmente nublado";return"mayormente nublado";}
 function generarTexto(nombre,h,d){ const hoyH=h.temperature_2m.slice(0,24), hoyV=h.wind_speed_10m.slice(0,24), hoyDir=h.wind_direction_10m.slice(0,24), hoyLl=h.precipitation_probability.slice(0,24); let maxTemp=Math.max(...hoyH.slice(6,22)), idxMax=hoyH.indexOf(maxTemp,6); let desc=""; for(let i=idxMax+1;i<=22;i++){ if(hoyH[i]<=maxTemp-4){ desc=`A las ${i}hs desciende a ${Math.round(hoyH[i])}°, llevar abrigo. `; break; } } const pmax=Math.max(...hoyLl.slice(6,22)); let txt=`${nombre} - Hoy:\n\nHoy en ${nombre} máxima de ${Math.round(maxTemp)}° hasta las ${idxMax}hs, con viento del ${dirTxt(hoyDir[idxMax])} de ${Math.round(hoyV[idxMax])} km/h. `; if(desc) txt+=desc; if(pmax>75) txt+=`Probabilidad de lluvia del ${pmax}% a las ${hoyLl.indexOf(pmax)}hs.\n\n`; else if(pmax>40) txt+=`Hay ${pmax}% de probabilidad de llovizna a la tarde.\n\n`; else txt+=`Sin lluvia, cielo ${cieloTxt(h.weathercode[idxMax])}.\n\n`; txt+=`Mañana arranca con ${Math.round(hoyH[7])}° a las 7hs y a la noche baja a ${Math.round(hoyH[21])}° a las 21hs. Mañana: ${Math.round(d.temperature_2m_min[1])}° / ${Math.round(d.temperature_2m_max[1])}° con ${d.precipitation_sum[1]} mm.`; return txt; }
-function generarMensajePersonalizado(uso, nombre, h, d){ const maxV=Math.max(...h.wind_speed_10m.slice(6,20)); const pmax=Math.max(...h.precipitation_probability.slice(6,20)); const maxT=Math.round(d.temperature_2m_max[0]); const minT=Math.round(d.temperature_2m_min[0]); return `*Clima Exacto - ${nombre}*\nMáx ${maxT}° / Mín ${minT}° - Viento ${Math.round(maxV)} km/h - Lluvia ${pmax}%`; }
 async function cargar(){ const w=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation_probability,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto&forecast_days=3&models=best_match`).then(r=>r.json()); const h=w.hourly,d=w.daily; const left=Math.ceil(getLeft()); const kpi=`<div class="trialInfo">Te quedan <b>${left} de 5 días gratis</b></div><div class="grid2"><div class="kpi"><small>Máx hoy</small><b>${Math.round(d.temperature_2m_max[0])}°</b></div><div class="kpi"><small>Mín</small><b>${Math.round(d.temperature_2m_min[0])}°</b></div><div class="kpi"><small>Viento</small><b>${Math.round(d.wind_speed_10m_max[0])} km/h</b></div><div class="kpi"><small>Lluvia</small><b>${d.precipitation_sum[0]} mm</b></div></div>`; window._w=w; document.getElementById('res').innerHTML=kpi+`<div class="resumen">${generarTexto(nombre,h,d)}</div><div class="tabs"><div class="tab active" onclick="verDia(0,this)">Hoy detallado</div><div class="tab" onclick="verDia(1,this)">Mañana</div><div class="tab" onclick="verDia(2,this)">Pasado</div></div><div id="horas"></div>`; verDia(0,document.querySelector('.tab')); }
-function verDia(dia,el){ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active'); const h=window._w.hourly,s=dia*24;let out=""; for(let i=s;i<s+24;i++){ if(i%24<6||i%24>23)continue; const hora=String(i%24).padStart(2,'0')+":00"; out+=`<div class="hora"><div style="display:flex;justify-content:space-between;font-weight:700"><span><b>${hora}</b> ${icon(h.weathercode[i])} ${Math.round(h.temperature_2m[i])}° (ST ${Math.round(h.apparent_temperature[i])}°)</span><span>${Math.round(h.wind_speed_10m[i])}km/h ${flecha(h.wind_direction_10m[i])}</span></div><div style="color:#334155;font-size:12.5px">💧 Humedad: ${h.relative_humidity_2m[i]}% | 🌧️ Lluvia: ${h.precipitation_probability[i]}% (${h.precipitation[i]} mm) | 💨 Ráfagas: ${Math.round(h.wind_gusts_10m[i])}km/h</div></div>`; } document.getElementById('horas').innerHTML=out; }
+function verDia(dia,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');
+  const h=window._w.hourly,s=dia*24;let out="";
+  for(let i=s;i<s+24;i++){
+    if(i%24<6||i%24>23)continue;
+    const hora=String(i%24).padStart(2,'0')+":00";
+    const temp=Math.round(h.temperature_2m[i]);
+    const tClass=temp>=25?'t-max':temp<=12?'t-min':'';
+    out+=`<div class="hora">
+      <div style="display:flex;justify-content:space-between;font-weight:700">
+        <span><b>${hora}</b> ${icon(h.weathercode[i])} <span class="${tClass}">${temp}°</span> <small style="color:#666">(ST ${Math.round(h.apparent_temperature[i])}°)</small></span>
+        <span class="t-wind">${Math.round(h.wind_speed_10m[i])}km/h ${flecha(h.wind_direction_10m[i])}</span>
+      </div>
+      <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">
+        <span class="chip chip-hum">💧 <span class="t-hum">${h.relative_humidity_2m[i]}%</span> Hum</span>
+        <span class="chip chip-rain">🌧️ <span class="t-rain">${h.precipitation_probability[i]}%</span> (${h.precipitation[i]}mm)</span>
+        <span class="chip chip-wind">💨 <span class="t-gust">${Math.round(h.wind_gusts_10m[i])}km/h</span> Ráfaga</span>
+      </div>
+    </div>`;
+  }
+  document.getElementById('horas').innerHTML=out;
+}
 function setPlan(pl){localStorage.setItem('ce_plan',pl); setTimeout(()=>document.getElementById('compPaywall').classList.add('show'),800)}
 function pagarYActivar(){ const wa=document.getElementById('wa').value, frec=document.getElementById('frecuencia').value, uso=document.getElementById('uso').value; if(wa.length<8) return alert("Poné tu WhatsApp"); const es2=frec=="2"; const plan=es2?"2 avisos - $1.500/mes":"1 aviso - $1.000/mes"; const link=es2?LINK_1500:LINK_1000; localStorage.setItem('ce_plan',plan); localStorage.setItem('ce_wa_temp',JSON.stringify({wa,frec,uso,nombre,lat,lon})); window.open(link,"_blank"); setTimeout(()=>{document.getElementById('compBoxMain').classList.add('show'); document.getElementById('compBoxMain').scrollIntoView({behavior:'smooth'})},1000); }
 function enviarComprobante(origen){ const fid=origen==='paywall'?'compFilePaywall':'compFileMain'; if(!document.getElementById(fid).files[0]) return alert("Subí la captura del comprobante primero 🙏"); let wd={}; try{wd=JSON.parse(localStorage.getItem('ce_wa_temp')||'{}')}catch{} const waNum=document.getElementById('wa')?.value||wd.wa||''; const plan=localStorage.getItem('ce_plan')||''; const uso=document.getElementById('uso')?.value||wd.uso||''; const texto=`Hola Santi! Acabo de pagar Clima Exacto%0A%0A✅ PLAN: ${encodeURIComponent(plan)}%0A📍 ZONA: ${encodeURIComponent(nombre)}%0A📱 MI WA: ${encodeURIComponent(waNum)}%0A🎯 USO: ${encodeURIComponent(uso)}%0A%0AAdjunto comprobante en la siguiente imagen. Porfa activame!`; const datos={wa:waNum,nombre,lat,lon,frec:plan,uso,precio:plan,origen}; fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(datos)}).catch(()=>{}); window.open("https://wa.me/"+OWNER_WA+"?text="+texto,"_blank"); setTimeout(()=>alert("Perfecto! Ahora en WhatsApp tocá el clip 📎 y mandame la captura."),500); }
 async function cargarOpiniones(){
-  let html="";
   try{
-    const r = await fetch(GOOGLE_SHEET_URL).then(x=>x.json());
-    if(r && r.length>0){
-      r.slice().reverse().forEach(o=>{
-        html+=`<div class="opItem"><div class="opStars">${"⭐".repeat(o.stars)}</div><b>${o.nombre}</b> <small style="color:#999">- ${o.fecha}</small><div style="margin-top:4px">${o.texto}</div></div>`;
+    const r=await fetch(GOOGLE_SHEET_URL);
+    const data=await r.json();
+    if(data.length>0){
+      let html="";
+      data.slice().reverse().forEach(o=>{
+        html+=`<div class="opItem"><div class="opStars">${"⭐".repeat(o.stars)}</div><b>${o.nombre}</b> <small style="color:#999">- ${new Date(o.fecha).toLocaleDateString()}</small><div style="margin-top:4px">${o.texto}</div></div>`;
       });
       document.getElementById('listaOp').innerHTML=html;
       return;
     }
   }catch(e){}
-  // fallback si no hay sheet
-  let ops = JSON.parse(localStorage.getItem('ce_ops')||'[]');
-  if(ops.length==0){
-    ops = [
-      {nombre:"Carlos - Tres Arroyos", stars:5, texto:"Muy preciso para fumigar, me avisa justo del viento. Vale cada peso.", fecha:"Hoy"},
-      {nombre:"Laura - Reta", stars:5, texto:"Lo uso para la playa y pesca, la humedad y viento hora por hora es clave.", fecha:"Ayer"},
-      {nombre:"Martin - Campo", stars:4, texto:"Buen servicio, me llega a las 7am puntual.", fecha:"Hace 2 días"}
-    ];
-  }
-  ops.slice().reverse().forEach(o=>{
-    html+=`<div class="opItem"><div class="opStars">${"⭐".repeat(o.stars)}</div><b>${o.nombre}</b> <small style="color:#999">- ${o.fecha}</small><div style="margin-top:4px">${o.texto}</div></div>`;
-  });
-  document.getElementById('listaOp').innerHTML=html;
+  document.getElementById('listaOp').innerHTML="<small style='color:#999'>Sé el primero en opinar</small>";
 }
-
-function guardarOpinion(){
+async function guardarOpinion(){
   const stars=document.getElementById('opStars').value;
-  const nombre=document.getElementById('opNombre').value.trim();
+  const nombreO=document.getElementById('opNombre').value.trim();
   const texto=document.getElementById('opTexto').value.trim();
-  if(!nombre ||!texto) return alert("Completá nombre y opinión");
-  fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({tipo:"opinion", nombre, stars, texto})});
+  if(!nombreO ||!texto) return alert("Completá nombre y opinión");
+  document.getElementById('listaOp').innerHTML+="<small>Publicando...</small>";
+  await fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({tipo:"opinion",nombre:nombreO,stars,texto})});
   document.getElementById('opNombre').value=""; document.getElementById('opTexto').value="";
-  // mostrar al toque
-  const div = document.createElement('div');
-  div.className='opItem';
-  div.innerHTML=`<div class="opStars">${"⭐".repeat(stars)}</div><b>${nombre}</b> <small style="color:#999">- Ahora</small><div style="margin-top:4px">${texto}</div>`;
-  document.getElementById('listaOp').prepend(div);
-  window.open("https://wa.me/"+OWNER_WA+"?text="+encodeURIComponent(`⭐ NUEVA OPINION Clima Exacto\n${"⭐".repeat(stars)} - ${nombre}\n${texto}`), "_blank");
-  alert("¡Gracias! Tu opinión quedó guardada para todos.");
-  }
-  </script>
+  setTimeout(()=>{cargarOpiniones(); alert("¡Gracias! Tu opinión ya quedó publicada para todos.");},1500);
+}
+cargarOpiniones();
+if(checkTrial()) usarGPS();
+</script>
 </body>
 </html>
