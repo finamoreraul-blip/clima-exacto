@@ -133,7 +133,19 @@ function verDia(dia,el){ document.querySelectorAll('.tab').forEach(t=>t.classLis
 function setPlan(pl){localStorage.setItem('ce_plan',pl); setTimeout(()=>document.getElementById('compPaywall').classList.add('show'),800)}
 function pagarYActivar(){ const wa=document.getElementById('wa').value, frec=document.getElementById('frecuencia').value, uso=document.getElementById('uso').value; if(wa.length<8) return alert("Poné tu WhatsApp"); const es2=frec=="2"; const plan=es2?"2 avisos - $1.500/mes":"1 aviso - $1.000/mes"; const link=es2?LINK_1500:LINK_1000; localStorage.setItem('ce_plan',plan); localStorage.setItem('ce_wa_temp',JSON.stringify({wa,frec,uso,nombre,lat,lon})); window.open(link,"_blank"); setTimeout(()=>{document.getElementById('compBoxMain').classList.add('show'); document.getElementById('compBoxMain').scrollIntoView({behavior:'smooth'})},1000); }
 function enviarComprobante(origen){ const fid=origen==='paywall'?'compFilePaywall':'compFileMain'; if(!document.getElementById(fid).files[0]) return alert("Subí la captura del comprobante primero 🙏"); let wd={}; try{wd=JSON.parse(localStorage.getItem('ce_wa_temp')||'{}')}catch{} const waNum=document.getElementById('wa')?.value||wd.wa||''; const plan=localStorage.getItem('ce_plan')||''; const uso=document.getElementById('uso')?.value||wd.uso||''; const texto=`Hola Santi! Acabo de pagar Clima Exacto%0A%0A✅ PLAN: ${encodeURIComponent(plan)}%0A📍 ZONA: ${encodeURIComponent(nombre)}%0A📱 MI WA: ${encodeURIComponent(waNum)}%0A🎯 USO: ${encodeURIComponent(uso)}%0A%0AAdjunto comprobante en la siguiente imagen. Porfa activame!`; const datos={wa:waNum,nombre,lat,lon,frec:plan,uso,precio:plan,origen}; fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(datos)}).catch(()=>{}); window.open("https://wa.me/"+OWNER_WA+"?text="+texto,"_blank"); setTimeout(()=>alert("Perfecto! Ahora en WhatsApp tocá el clip 📎 y mandame la captura."),500); }
-function cargarOpiniones(){
+async function cargarOpiniones(){
+  let html="";
+  try{
+    const r = await fetch(GOOGLE_SHEET_URL).then(x=>x.json());
+    if(r && r.length>0){
+      r.slice().reverse().forEach(o=>{
+        html+=`<div class="opItem"><div class="opStars">${"⭐".repeat(o.stars)}</div><b>${o.nombre}</b> <small style="color:#999">- ${o.fecha}</small><div style="margin-top:4px">${o.texto}</div></div>`;
+      });
+      document.getElementById('listaOp').innerHTML=html;
+      return;
+    }
+  }catch(e){}
+  // fallback si no hay sheet
   let ops = JSON.parse(localStorage.getItem('ce_ops')||'[]');
   if(ops.length==0){
     ops = [
@@ -141,30 +153,28 @@ function cargarOpiniones(){
       {nombre:"Laura - Reta", stars:5, texto:"Lo uso para la playa y pesca, la humedad y viento hora por hora es clave.", fecha:"Ayer"},
       {nombre:"Martin - Campo", stars:4, texto:"Buen servicio, me llega a las 7am puntual.", fecha:"Hace 2 días"}
     ];
-    localStorage.setItem('ce_ops', JSON.stringify(ops));
   }
-  let html="";
   ops.slice().reverse().forEach(o=>{
     html+=`<div class="opItem"><div class="opStars">${"⭐".repeat(o.stars)}</div><b>${o.nombre}</b> <small style="color:#999">- ${o.fecha}</small><div style="margin-top:4px">${o.texto}</div></div>`;
   });
   document.getElementById('listaOp').innerHTML=html;
 }
+
 function guardarOpinion(){
   const stars=document.getElementById('opStars').value;
   const nombre=document.getElementById('opNombre').value.trim();
   const texto=document.getElementById('opTexto').value.trim();
   if(!nombre ||!texto) return alert("Completá nombre y opinión");
-  let ops = JSON.parse(localStorage.getItem('ce_ops')||'[]');
-  ops.push({nombre, stars:parseInt(stars), texto, fecha:new Date().toLocaleDateString()});
-  localStorage.setItem('ce_ops', JSON.stringify(ops));
+  fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({tipo:"opinion", nombre, stars, texto})});
   document.getElementById('opNombre').value=""; document.getElementById('opTexto').value="";
-  cargarOpiniones();
-  const owner="5492983389710";
-  window.open("https://wa.me/"+owner+"?text="+encodeURIComponent(`⭐ NUEVA OPINION Clima Exacto\n${"⭐".repeat(stars)} - ${nombre}\n${texto}`), "_blank");
-  alert("¡Gracias por tu opinión! Publicada.");
-}
-cargarOpiniones();
-if(checkTrial()) usarGPS();
-</script>
+  // mostrar al toque
+  const div = document.createElement('div');
+  div.className='opItem';
+  div.innerHTML=`<div class="opStars">${"⭐".repeat(stars)}</div><b>${nombre}</b> <small style="color:#999">- Ahora</small><div style="margin-top:4px">${texto}</div>`;
+  document.getElementById('listaOp').prepend(div);
+  window.open("https://wa.me/"+OWNER_WA+"?text="+encodeURIComponent(`⭐ NUEVA OPINION Clima Exacto\n${"⭐".repeat(stars)} - ${nombre}\n${texto}`), "_blank");
+  alert("¡Gracias! Tu opinión quedó guardada para todos.");
+  }
+  </script>
 </body>
-  </html>
+</html>
