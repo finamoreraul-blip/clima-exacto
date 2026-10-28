@@ -1,193 +1,1230 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clima Exacto</title>
-<style>
-*{box-sizing:border-box;font-family:system-ui}body{background:#f2f4f7;margin:0;padding:12px}
-.card{max-width:780px;margin:auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-h1{margin:0;font-size:26px}.pill{background:#0f172a;color:#fff;padding:7px 12px;border-radius:20px;font-size:12px}
-.sub{color:#666;font-size:13px;margin:8px 0 14px}
-.row{display:flex;gap:8px} input,select,textarea{flex:1;padding:14px;border:1px solid #d1d5db;border-radius:12px;font-size:15px}
-button{padding:14px 16px;border-radius:12px;border:0;background:#0f172a;color:#fff;font-weight:700;cursor:pointer}
-.resumen{background:#0f172a;color:#fff;padding:20px;border-radius:16px;line-height:1.7;margin:16px 0;white-space:pre-line;font-size:15.5px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.kpi{background:#f8fafc;border:1px solid #eef2f7;padding:12px;border-radius:12px;text-align:center}
-.kpi b{display:block;font-size:18px}
-.tabs{display:flex;gap:8px;margin:16px 0;overflow:auto}
-.tab{padding:8px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;white-space:nowrap}
-.tab.active{background:#0f172a;color:#fff}
-.hora{display:flex;flex-direction:column;background:#f8fafc;border:1px solid #eef2f7;padding:12px 14px;border-radius:12px;font-size:13px;margin-bottom:8px;line-height:1.6}
-#welcome{position:fixed;inset:0;background:rgba(15,23,42,.88);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(8px)}
-.wbox{background:#fff;padding:28px 24px;border-radius:20px;text-align:center;max-width:360px}
-#paywall{position:fixed;inset:0;background:#fff;z-index:9998;display:none;overflow:auto;padding:20px}
-.pwrap{max-width:430px;margin:30px auto;text-align:center}
-.price{font-size:52px;font-weight:900;letter-spacing:-2px;margin:10px 0}
-.price small{font-size:16px;color:#666;font-weight:400}
-.btnPay{display:block;width:100%;padding:16px;border-radius:14px;text-decoration:none;font-weight:800;margin-top:12px;text-align:center}
-.btnPay.mp{background:#009ee3;color:#fff}
-.trialInfo{background:#fffbeb;border:1px solid #fde68a;padding:10px 12px;border-radius:12px;font-size:12px;margin:12px 0;color:#92400e}
-.badge{background:#dcfce7;color:#166534;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block}
-.boxWA{margin-top:24px;padding:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px}
-.opBox{margin-top:20px;padding:18px;background:#fff;border:1px solid #e2e8f0;border-radius:16px}
-.opItem{background:#f8fafc;border:1px solid #eef2f7;padding:12px;border-radius:12px;margin-bottom:8px;font-size:13px}
-.opStars{color:#f59e0b}
-.comprobanteBox{display:none;margin-top:14px;padding:14px;background:#f0fdf4;border:1px dashed #86efac;border-radius:12px}
-.comprobanteBox.show{display:block}
-/* COLORES POR HORA */
-.t-max{color:#dc2626;font-weight:800}
-.t-min{color:#2563eb;font-weight:800}
-.t-wind{color:#059669;font-weight:700}
-.t-hum{color:#0891b2;font-weight:700}
-.t-rain{color:#3b82f6;font-weight:700}
-.t-gust{color:#ea580c;font-weight:700}
-.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;margin-right:4px;border:1px solid #e5e7eb;background:#fff}
-.chip-hum{background:#ecfeff;border-color:#a5f3fc}
-.chip-rain{background:#eff6ff;border-color:#bfdbfe}
-.chip-wind{background:#ecfdf5;border-color:#a7f3d0}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PapelesYA - Contratos + ¿Llego a fin de mes?</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#e6fbf0',
+                            100: '#c3f5d8',
+                            500: '#00C851',
+                            600: '#00a843',
+                            700: '#008535',
+                            800: '#006227'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- jsPDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- SignaturePad CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+    <style>
+        .signature-canvas {
+            border: 2px dashed #CBD5E1;
+            border-radius: 0.5rem;
+            background-color: #F8FAFC;
+            touch-action: none;
+        }
+        .active-tab {
+            border-bottom: 3px solid #00C851;
+            color: #00C851;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<body>
-<div id="welcome"><div class="wbox"><h2>Bienvenid@ a Clima Exacto</h2><p>Gracias por elegirnos</p></div></div>
-<div id="paywall">
-<div class="pwrap">
-<div class="badge">Prueba gratis terminada</div>
-<h1 style="margin-top:16px">Seguí con Clima Exacto</h1>
-<div class="price">$1.000 <small>/ mes</small></div>
-<p style="color:#666">1 aviso $1.000 - 2 avisos $1.500</p>
-<a class="btnPay mp" href="https://mpago.la/286526v" target="_blank" onclick="setPlan('1 aviso - $1.000/mes')">PASO 1: PAGAR 1 aviso - $1.000/mes</a>
-<a class="btnPay mp" href="https://mpago.la/1R8C5gW" target="_blank" style="background:#0f172a" onclick="setPlan('2 avisos - $1.500/mes')">PASO 1: PAGAR 2 avisos - $1.500/mes</a>
-<div id="compPaywall" class="comprobanteBox">
-<p style="font-weight:800;color:#166534;margin:0 0 8px">✅ Ya pagaste - Paso 2</p>
-<input type="file" id="compFilePaywall" accept="image/*" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;background:#fff">
-<button onclick="enviarComprobante('paywall')" style="width:100%;margin-top:10px;background:#25D366">📲 ENVIAR COMPROBANTE POR WHATSAPP</button>
-</div>
-<button onclick="document.getElementById('compPaywall').classList.add('show')" style="background:none;border:0;color:#666;text-decoration:underline;font-size:12px;margin-top:10px">Ya pagué, enviar comprobante</button>
-</div>
-</div>
-<div class="card">
-<div class="top"><h1>Clima Exacto</h1><span class="pill" id="status">Detectando...</span></div>
-<div class="sub">Modelo best_match (GFS + ECMWF) • Detallado hora por hora</div>
-<div class="row">
-<input id="loc" placeholder="Ej: Tres Arroyos, Reta...">
-<button onclick="buscarManual()">Buscar</button>
-<button onclick="usarGPS()" style="background:#fff;color:#111;border:1px solid #ddd">GPS</button>
-</div>
-<div id="res"></div>
-<div class="boxWA">
-<h3 style="margin:0 0 6px">Activar avisos por WhatsApp</h3>
-<input id="wa" placeholder="Tu WhatsApp" style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:10px">
-<select id="frecuencia" onchange="actualizarPrecio()" style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:10px">
-<option value="1">1 aviso - 7:00 AM - $1.000/mes</option>
-<option value="2">2 avisos - 7:00 AM y 14:00 PM - $1.500/mes</option>
-</select>
-<select id="uso" style="width:100%;padding:14px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:10px">
-<option value="fumigar">Fumigar / Pulverizar</option>
-<option value="construir">Construir / Obra</option>
-<option value="caminar">Caminar / Correr</option>
-<option value="playa">Playa / Pesca</option>
-<option value="campo">Campo / Cosecha</option>
-<option value="evento">Evento al aire libre</option>
-<option value="general">Uso general</option>
-</select>
-<button onclick="pagarYActivar()" id="btnActivar" style="width:100%;background:#009ee3">💳 PASO 1: PAGAR 1 aviso - $1.000/mes (5 días gratis)</button>
-<div id="compBoxMain" class="comprobanteBox">
-<p style="font-weight:800;color:#166534;margin:0 0 6px">Ya pagaste? Paso 2: Enviar comprobante</p>
-<input type="file" id="compFileMain" accept="image/*" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;background:#fff;margin-bottom:8px">
-<button onclick="enviarComprobante('main')" style="width:100%;background:#25D366">📲 PASO 2: ENVIAR COMPROBANTE POR WHATSAPP</button>
-</div>
-<button onclick="document.getElementById('compBoxMain').classList.add('show')" style="width:100%;background:none;border:0;color:#666;text-decoration:underline;font-size:11px;margin-top:6px">Ya pagué, enviar comprobante</button>
-<div id="waOK" style="display:none;margin-top:10px;background:#dcfce7;color:#166534;padding:12px;border-radius:10px;font-size:13px;white-space:pre-line"></div>
-</div>
-<div class="opBox">
-<h3 style="margin:0 0 10px">⭐ Opiniones de Clima Exacto</h3>
-<div id="listaOp"></div>
-<div style="margin-top:14px;border-top:1px solid #eee;padding-top:14px">
-<p style="font-size:13px;font-weight:700;margin:0 0 8px">Dejá tu opinión:</p>
-<select id="opStars" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:8px">
-<option value="5">⭐⭐⭐⭐⭐ - Excelente</option>
-<option value="4">⭐⭐⭐⭐ - Muy bueno</option>
-<option value="3">⭐⭐⭐ - Bueno</option>
-</select>
-<input id="opNombre" placeholder="Tu nombre (Ej: Juan de Tres Arroyos)" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:8px">
-<textarea id="opTexto" placeholder="Tu experiencia con Clima Exacto..." rows="3" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:12px;margin-bottom:8px"></textarea>
-<button onclick="guardarOpinion()" style="width:100%;background:#0f172a">Publicar opinión</button>
-</div>
-</div>
-</div>
-<script>
-const LINK_1000 = "https://mpago.la/286526v";
-const LINK_1500 = "https://mpago.la/1R8C5gW";
-const TRIAL_DAYS=5;
-const OWNER_WA="5492983389710";
-const GOOGLE_SHEET_URL="https://script.google.com/macros/s/AKfycbx2wgadR8wi7DDh50SPANyMzo1nYxrxQ5ft6CI_pRPOF9o4TK6wsVPs7VH2xNymHuXOQw/exec";
-function getLeft(){let s=localStorage.getItem('ce_start'); if(!s){localStorage.setItem('ce_start',Date.now()); return TRIAL_DAYS;} return TRIAL_DAYS - (Date.now()-parseInt(s))/(1000*60*60*24);}
-function checkTrial(){if(getLeft()<=0){document.getElementById('paywall').style.display='block'; return false;} return true;}
-function actualizarPrecio(){ const f=document.getElementById('frecuencia').value; document.getElementById('btnActivar').innerText=f=="1"?"💳 PASO 1: PAGAR 1 aviso - $1.000/mes (5 días gratis)":"💳 PASO 1: PAGAR 2 avisos - $1.500/mes (5 días gratis)"; }
-setTimeout(()=>document.getElementById('welcome').style.display='none',2500);
-let lat=-38.37, lon=-60.27, nombre="Tres Arroyos";
-function usarGPS(){ navigator.geolocation.getCurrentPosition(async pos=>{lat=pos.coords.latitude; lon=pos.coords.longitude; try{const r=await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=es`).then(x=>x.json()); nombre=r?.results?.[0]?.name||"Tu ubicación";}catch{nombre="Tu ubicación";} document.getElementById('status').innerText=`${nombre} - ${Math.ceil(getLeft())} dias gratis`; if(checkTrial()) cargar();},()=>{document.getElementById('status').innerText=`Tres Arroyos - ${Math.ceil(getLeft())} dias gratis`; if(checkTrial()) cargar();});}
-async function buscarManual(){ const q=document.getElementById('loc').value.trim(); if(!q) return; let geo=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=3&language=es&countryCode=AR`).then(r=>r.json()); if(!geo.results) geo=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=3&language=es`).then(r=>r.json()); if(!geo.results) return alert("No encontré"); let best=geo.results.find(r=>r.country_code==='AR')||geo.results[0]; lat=best.latitude; lon=best.longitude; nombre=best.name+(best.admin1?`, ${best.admin1}`:''); document.getElementById('status').innerText=`${nombre} - ${Math.ceil(getLeft())} dias gratis`; if(checkTrial()) cargar(); }
-function dirTxt(d){if(d>337||d<23)return"norte";if(d<67)return"noreste";if(d<112)return"este";if(d<157)return"sudeste";if(d<202)return"sur";if(d<247)return"sudoeste";if(d<292)return"oeste";return"noroeste";}
-function flecha(d){const a=["N","NE","E","SE","S","SO","O","NO"];return a[Math.round(d/45)%8];}
-function icon(c){if(c==0)return"☀️";if(c<4)return"⛅";if(c<60)return"☁️";if(c<80)return"🌧️";return"⛈️";}
-function cieloTxt(c){if(c==0)return"despejado";if(c<4)return"parcialmente nublado";return"mayormente nublado";}
-function generarTexto(nombre,h,d){ const hoyH=h.temperature_2m.slice(0,24), hoyV=h.wind_speed_10m.slice(0,24), hoyDir=h.wind_direction_10m.slice(0,24), hoyLl=h.precipitation_probability.slice(0,24); let maxTemp=Math.max(...hoyH.slice(6,22)), idxMax=hoyH.indexOf(maxTemp,6); let desc=""; for(let i=idxMax+1;i<=22;i++){ if(hoyH[i]<=maxTemp-4){ desc=`A las ${i}hs desciende a ${Math.round(hoyH[i])}°, llevar abrigo. `; break; } } const pmax=Math.max(...hoyLl.slice(6,22)); let txt=`${nombre} - Hoy:\n\nHoy en ${nombre} máxima de ${Math.round(maxTemp)}° hasta las ${idxMax}hs, con viento del ${dirTxt(hoyDir[idxMax])} de ${Math.round(hoyV[idxMax])} km/h. `; if(desc) txt+=desc; if(pmax>75) txt+=`Probabilidad de lluvia del ${pmax}% a las ${hoyLl.indexOf(pmax)}hs.\n\n`; else if(pmax>40) txt+=`Hay ${pmax}% de probabilidad de llovizna a la tarde.\n\n`; else txt+=`Sin lluvia, cielo ${cieloTxt(h.weathercode[idxMax])}.\n\n`; txt+=`Mañana arranca con ${Math.round(hoyH[7])}° a las 7hs y a la noche baja a ${Math.round(hoyH[21])}° a las 21hs. Mañana: ${Math.round(d.temperature_2m_min[1])}° / ${Math.round(d.temperature_2m_max[1])}° con ${d.precipitation_sum[1]} mm.`; return txt; }
-async function cargar(){ const w=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation_probability,precipitation,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto&forecast_days=3&models=best_match`).then(r=>r.json()); const h=w.hourly,d=w.daily; const left=Math.ceil(getLeft()); const kpi=`<div class="trialInfo">Te quedan <b>${left} de 5 días gratis</b></div><div class="grid2"><div class="kpi"><small>Máx hoy</small><b>${Math.round(d.temperature_2m_max[0])}°</b></div><div class="kpi"><small>Mín</small><b>${Math.round(d.temperature_2m_min[0])}°</b></div><div class="kpi"><small>Viento</small><b>${Math.round(d.wind_speed_10m_max[0])} km/h</b></div><div class="kpi"><small>Lluvia</small><b>${d.precipitation_sum[0]} mm</b></div></div>`; window._w=w; document.getElementById('res').innerHTML=kpi+`<div class="resumen">${generarTexto(nombre,h,d)}</div><div class="tabs"><div class="tab active" onclick="verDia(0,this)">Hoy detallado</div><div class="tab" onclick="verDia(1,this)">Mañana</div><div class="tab" onclick="verDia(2,this)">Pasado</div></div><div id="horas"></div>`; verDia(0,document.querySelector('.tab')); }
-function verDia(dia,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');
-  const h=window._w.hourly,s=dia*24;let out="";
-  for(let i=s;i<s+24;i++){
-    if(i%24<6||i%24>23)continue;
-    const hora=String(i%24).padStart(2,'0')+":00";
-    const temp=Math.round(h.temperature_2m[i]);
-    const tClass=temp>=25?'t-max':temp<=12?'t-min':'';
-    out+=`<div class="hora">
-      <div style="display:flex;justify-content:space-between;font-weight:700">
-        <span><b>${hora}</b> ${icon(h.weathercode[i])} <span class="${tClass}">${temp}°</span> <small style="color:#666">(ST ${Math.round(h.apparent_temperature[i])}°)</small></span>
-        <span class="t-wind">${Math.round(h.wind_speed_10m[i])}km/h ${flecha(h.wind_direction_10m[i])}</span>
-      </div>
-      <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">
-        <span class="chip chip-hum">💧 <span class="t-hum">${h.relative_humidity_2m[i]}%</span> Hum</span>
-        <span class="chip chip-rain">🌧️ <span class="t-rain">${h.precipitation_probability[i]}%</span> (${h.precipitation[i]}mm)</span>
-        <span class="chip chip-wind">💨 <span class="t-gust">${Math.round(h.wind_gusts_10m[i])}km/h</span> Ráfaga</span>
-      </div>
-    </div>`;
-  }
-  document.getElementById('horas').innerHTML=out;
-}
-function setPlan(pl){localStorage.setItem('ce_plan',pl); setTimeout(()=>document.getElementById('compPaywall').classList.add('show'),800)}
-function pagarYActivar(){ const wa=document.getElementById('wa').value, frec=document.getElementById('frecuencia').value, uso=document.getElementById('uso').value; if(wa.length<8) return alert("Poné tu WhatsApp"); const es2=frec=="2"; const plan=es2?"2 avisos - $1.500/mes":"1 aviso - $1.000/mes"; const link=es2?LINK_1500:LINK_1000; localStorage.setItem('ce_plan',plan); localStorage.setItem('ce_wa_temp',JSON.stringify({wa,frec,uso,nombre,lat,lon})); window.open(link,"_blank"); setTimeout(()=>{document.getElementById('compBoxMain').classList.add('show'); document.getElementById('compBoxMain').scrollIntoView({behavior:'smooth'})},1000); }
-function enviarComprobante(origen){ const fid=origen==='paywall'?'compFilePaywall':'compFileMain'; if(!document.getElementById(fid).files[0]) return alert("Subí la captura del comprobante primero 🙏"); let wd={}; try{wd=JSON.parse(localStorage.getItem('ce_wa_temp')||'{}')}catch{} const waNum=document.getElementById('wa')?.value||wd.wa||''; const plan=localStorage.getItem('ce_plan')||''; const uso=document.getElementById('uso')?.value||wd.uso||''; const texto=`Hola Santi! Acabo de pagar Clima Exacto%0A%0A✅ PLAN: ${encodeURIComponent(plan)}%0A📍 ZONA: ${encodeURIComponent(nombre)}%0A📱 MI WA: ${encodeURIComponent(waNum)}%0A🎯 USO: ${encodeURIComponent(uso)}%0A%0AAdjunto comprobante en la siguiente imagen. Porfa activame!`; const datos={wa:waNum,nombre,lat,lon,frec:plan,uso,precio:plan,origen}; fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(datos)}).catch(()=>{}); window.open("https://wa.me/"+OWNER_WA+"?text="+texto,"_blank"); setTimeout(()=>alert("Perfecto! Ahora en WhatsApp tocá el clip 📎 y mandame la captura."),500); }
-async function cargarOpiniones(){
-  try{
-    const r=await fetch(GOOGLE_SHEET_URL);
-    const data=await r.json();
-    if(data.length>0){
-      let html="";
-      data.slice().reverse().forEach(o=>{
-        html+=`<div class="opItem"><div class="opStars">${"⭐".repeat(o.stars)}</div><b>${o.nombre}</b> <small style="color:#999">- ${new Date(o.fecha).toLocaleDateString()}</small><div style="margin-top:4px">${o.texto}</div></div>`;
-      });
-      document.getElementById('listaOp').innerHTML=html;
-      return;
-    }
-  }catch(e){}
-  document.getElementById('listaOp').innerHTML="<small style='color:#999'>Sé el primero en opinar</small>";
-}
-async function guardarOpinion(){
-  const stars=document.getElementById('opStars').value;
-  const nombreO=document.getElementById('opNombre').value.trim();
-  const texto=document.getElementById('opTexto').value.trim();
-  if(!nombreO ||!texto) return alert("Completá nombre y opinión");
-  document.getElementById('listaOp').innerHTML+="<small>Publicando...</small>";
-  await fetch(GOOGLE_SHEET_URL,{method:"POST",mode:"no-cors",body:JSON.stringify({tipo:"opinion",nombre:nombreO,stars,texto})});
-  document.getElementById('opNombre').value=""; document.getElementById('opTexto').value="";
-  setTimeout(()=>{cargarOpiniones(); alert("¡Gracias! Tu opinión ya quedó publicada para todos.");},1500);
-}
-cargarOpiniones();
-if(checkTrial()) usarGPS();
-</script>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- HEADER DE LA APLICACIÓN -->
+    <header class="bg-brand-500 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">📄</span>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight leading-none">PapelesYA</h1>
+                    <p class="text-xs text-brand-100 font-medium">¿Cuánto te sale por día vivir?</p>
+                </div>
+            </div>
+            <div id="badge-status" class="text-xs bg-white text-brand-700 font-bold px-2.5 py-1 rounded-full shadow-sm">
+                GRATIS
+            </div>
+        </div>
+        
+        <!-- NAVEGACIÓN MOBILE-FIRST -->
+        <nav class="flex justify-around bg-brand-600 text-xs font-semibold text-white border-t border-brand-500">
+            <button onclick="switchTab('tab-eco')" id="btn-tab-eco" class="py-2.5 px-1 flex-1 text-center active-tab bg-white/10">
+                <i class="fa-solid fa-calculator block text-base mb-0.5"></i> Economía
+            </button>
+            <button onclick="switchTab('tab-diario')" id="btn-tab-diario" class="py-2.5 px-1 flex-1 text-center">
+                <i class="fa-solid fa-gas-pump block text-base mb-0.5"></i> Hoy + Nafta
+            </button>
+            <button onclick="switchTab('tab-papeles')" id="btn-tab-papeles" class="py-2.5 px-1 flex-1 text-center">
+                <i class="fa-solid fa-file-contract block text-base mb-0.5"></i> Generar Papel
+            </button>
+            <button onclick="switchTab('tab-alquileres')" id="btn-tab-alquileres" class="py-2.5 px-1 flex-1 text-center">
+                <i class="fa-solid fa-key block text-base mb-0.5"></i> Alquileres
+            </button>
+            <button onclick="switchTab('tab-chat')" id="btn-tab-chat" class="py-2.5 px-1 flex-1 text-center">
+                <i class="fa-solid fa-robot block text-base mb-0.5"></i> IA Legal
+            </button>
+        </nav>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="max-w-md mx-auto w-full p-4 flex-1 space-y-4">
+
+        <!-- BANNER DE RACHA Y PUNTOS -->
+        <div class="bg-gradient-to-r from-emerald-600 to-brand-500 rounded-2xl p-4 text-white shadow-lg flex justify-between items-center">
+            <div>
+                <div class="flex items-center space-x-2 text-yellow-300 font-bold">
+                    <i class="fa-solid fa-fire text-lg"></i>
+                    <span id="txt-racha" class="text-sm">Racha 0 días</span>
+                </div>
+                <div id="txt-puntos" class="text-xs text-white/90 mt-0.5">Puntos: 0</div>
+            </div>
+            <div class="text-right">
+                <span id="txt-sorteo" class="text-xs bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full font-semibold border border-white/30">
+                    Faltan 200 pts para el sorteo de $100.000
+                </span>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 1: MI ECONOMÍA DIARIA -->
+        <section id="tab-eco" class="space-y-4">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h2 class="text-base font-bold text-gray-800 flex items-center">
+                    <span class="text-xl mr-2">💰</span> Mis Ingresos Mensuales
+                </h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-500">Sueldo / Principal</label>
+                        <input type="number" id="inp-sueldo" value="650000" oninput="calcularEconomia()" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm font-semibold focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-500">Extras / Changas</label>
+                        <input type="number" id="inp-extras" value="80000" oninput="calcularEconomia()" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm font-semibold focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <div class="text-right text-xs font-bold text-brand-700">
+                    Total Ingresos: $<span id="lbl-total-ingresos">730.000</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h2 class="text-base font-bold text-gray-800 flex items-center">
+                    <span class="text-xl mr-2">📊</span> Gastos Fijos y Mensuales
+                </h2>
+                <div class="space-y-2 text-xs font-medium">
+                    <div class="flex items-center justify-between">
+                        <span>Alquiler / Hipoteca</span>
+                        <input type="number" id="g-alquiler" value="250000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Expensas</span>
+                        <input type="number" id="g-expensas" value="35000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Comida Estimada</span>
+                        <input type="number" id="g-comida" value="180000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Luz / Gas / Agua / Wifi</span>
+                        <input type="number" id="g-servicios" value="45000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Colectivo / Nafta</span>
+                        <input type="number" id="g-transporte" value="50000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Otros Gastos</span>
+                        <input type="number" id="g-otros" value="30000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
+                    </div>
+                </div>
+
+                <div class="border-t pt-2 mt-2 space-y-1">
+                    <div class="flex justify-between text-sm font-bold">
+                        <span>Total Gastos Mensuales:</span>
+                        <span id="lbl-total-gastos">$590.000</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 font-semibold">
+                        <span>Costo Real Diario (Gastos/30):</span>
+                        <span id="lbl-costo-diario-total" class="text-brand-600 font-bold">$19.666 / día</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEMÁFORO FINANCIERO -->
+            <div id="card-semaforo" class="rounded-2xl p-4 text-white shadow-md transition-all duration-300">
+                <div class="text-xs font-semibold opacity-90">Diagnóstico del Mes</div>
+                <div id="txt-semaforo-estado" class="text-lg font-black mt-0.5">Calculando...</div>
+                <div id="txt-semaforo-detalle" class="text-xs mt-1 opacity-95">---</div>
+            </div>
+
+            <!-- HISTORIAL / CANVAS GRAPHIC -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-gray-800">Historial 6 Meses (Ingresos vs Gastos)</h3>
+                    <button onclick="cerrarMes()" class="bg-brand-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-600 shadow">
+                        🔒 CERRAR MES
+                    </button>
+                </div>
+                <div class="relative w-full overflow-x-auto">
+                    <canvas id="chart-historial" class="w-full h-44 rounded-xl bg-gray-50 border"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: GASTO DÍA A DÍA + NAFTA -->
+        <section id="tab-diario" class="space-y-4 hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h2 class="text-base font-bold text-gray-800 flex items-center">
+                    <span class="text-xl mr-2">🛒</span> Registro Diario de Gastos
+                </h2>
+                
+                <div class="space-y-2">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Comida / Mercado Hoy ($)</label>
+                        <input type="number" id="d-comida" placeholder="0" class="w-full bg-gray-50 border rounded-xl p-2 text-sm font-semibold">
+                    </div>
+
+                    <!-- CALCULADORA DE NAFTA -->
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-2">
+                        <span class="text-xs font-bold text-emerald-800 block">⛽ Calculadora de Nafta / Combustible</span>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-emerald-700">Monto ($)</label>
+                                <input type="number" id="d-nafta-monto" oninput="calcNafta()" placeholder="15000" class="w-full bg-white border rounded-lg p-1.5 text-xs font-bold">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-emerald-700">Litros (L)</label>
+                                <input type="number" id="d-nafta-litros" oninput="calcNafta()" placeholder="14" class="w-full bg-white border rounded-lg p-1.5 text-xs font-bold">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-emerald-700">Dura (Días)</label>
+                                <input type="number" id="d-nafta-dias" oninput="calcNafta()" placeholder="7" class="w-full bg-white border rounded-lg p-1.5 text-xs font-bold">
+                            </div>
+                        </div>
+                        <div class="text-[11px] font-bold text-emerald-900 flex justify-between pt-1 border-t border-emerald-200">
+                            <span>Gasto diario nafta: <strong id="res-nafta-dia">$0</strong>/día</span>
+                            <span>Consumo: <strong id="res-nafta-ldia">0</strong> L/día</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Colectivo / Pasajes ($)</label>
+                            <input type="number" id="d-colectivo" placeholder="0" class="w-full bg-gray-50 border rounded-xl p-2 text-sm font-semibold">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Otros Varios ($)</label>
+                            <input type="number" id="d-otros" placeholder="0" class="w-full bg-gray-50 border rounded-xl p-2 text-sm font-semibold">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="guardarGastoDia()" class="w-full bg-brand-500 text-white font-black py-3 rounded-xl shadow-md hover:bg-brand-600 transition flex items-center justify-center space-x-2 text-sm">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>GUARDAR DÍA (+PUNTOS)</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: GENERADOR DE PAPELES CON FIRMA DIGITAL (2024-2025) -->
+        <section id="tab-papeles" class="space-y-4 hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-base font-bold text-gray-800 flex items-center">
+                        <span class="text-xl mr-2">📑</span> Modelos Legales Reales
+                    </h2>
+                    <span class="text-[10px] bg-brand-100 text-brand-800 font-bold px-2 py-0.5 rounded">Arg 2024-2025</span>
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-gray-600">Seleccionar Tipo de Documento</label>
+                    <select id="sel-tipo-papel" onchange="renderCamposPapel()" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-sm font-bold focus:border-brand-500 focus:outline-none mt-1">
+                        <option value="alquiler">1. Contrato Alquiler Vivienda Ley 27.737 / CCCN</option>
+                        <option value="recibo">2. Recibo de Alquiler Legal</option>
+                        <option value="carta">3. Carta Documento (Modelo Intimación OCTA)</option>
+                        <option value="renuncia">4. Telegrama de Renuncia Laboral Ley 20.744</option>
+                        <option value="empleada">5. Recibo Empleada Casas Particulares Ley 26.844</option>
+                        <option value="automotor">6. Boleto Compra-Venta Automotor / Moto Registro 2024</option>
+                    </select>
+                </div>
+
+                <!-- CONTENEDOR DINÁMICO DE CAMPOS SEGÚN MODELO -->
+                <div id="container-campos-dinamicos" class="space-y-2.5 pt-2 border-t border-gray-100">
+                    <!-- Se renderiza por JS -->
+                </div>
+
+                <!-- SECCIÓN DE FIRMAS DIGITALES DACTILARES -->
+                <div class="border-t pt-3 space-y-3">
+                    <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide">Firmas Digitales (Firma con el dedo)</h3>
+                    
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-semibold text-gray-600" id="lbl-firma-1">Firma Parte A / Locador / Vendedor</span>
+                            <button type="button" onclick="limpiarFirma(1)" class="text-[10px] text-red-500 font-bold hover:underline">Limpiar</button>
+                        </div>
+                        <canvas id="canvas-firma-1" class="signature-canvas w-full h-28"></canvas>
+                    </div>
+
+                    <div id="box-firma-2">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-semibold text-gray-600" id="lbl-firma-2">Firma Parte B / Locatario / Comprador</span>
+                            <button type="button" onclick="limpiarFirma(2)" class="text-[10px] text-red-500 font-bold hover:underline">Limpiar</button>
+                        </div>
+                        <canvas id="canvas-firma-2" class="signature-canvas w-full h-28"></canvas>
+                    </div>
+                </div>
+
+                <!-- BOTÓN PRINCIPAL DE GENERACIÓN -->
+                <button onclick="ejecutarGeneracionPDF()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center space-x-2 text-sm">
+                    <i class="fa-solid fa-file-pdf text-lg"></i>
+                    <span>DESCARGAR PDF REAL</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: MIS ALQUILERES & RECORDATORIOS -->
+        <section id="tab-alquileres" class="space-y-4 hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h2 class="text-base font-bold text-gray-800 flex items-center justify-between">
+                    <span>🔑 Mis Alquileres</span>
+                    <button onclick="nuevoAlquilerModal()" class="text-xs bg-brand-500 text-white px-2.5 py-1 rounded-lg font-bold">+ Agregar</button>
+                </h2>
+                <div id="lista-alquileres" class="space-y-2">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: CHAT IA MINI -->
+        <section id="tab-chat" class="space-y-4 hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col h-[420px]">
+                <h2 class="text-base font-bold text-gray-800 pb-2 border-b flex items-center">
+                    <span class="text-xl mr-2">🤖</span> Asistente Legal Alquileres
+                </h2>
+                
+                <div id="chat-messages" class="flex-1 overflow-y-auto py-3 space-y-3 text-xs">
+                    <div class="bg-gray-100 p-2.5 rounded-xl max-w-[85%] text-gray-700">
+                        👋 ¡Hola! Soy tu asistente de contratos. Preguntame sobre la Ley de Alquileres, aumentos (ICL/IPC), expensas o rescisiones.
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 pt-2 border-t">
+                    <input type="text" id="chat-input" placeholder="Escribí tu duda (ej: ¿Quién paga expensas?)..." onkeypress="if(event.key==='Enter') enviarChat()" class="flex-1 bg-gray-50 border rounded-xl p-2.5 text-xs focus:outline-none focus:border-brand-500">
+                    <button onclick="enviarChat()" class="bg-brand-500 text-white p-2.5 rounded-xl hover:bg-brand-600">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL DE ADMINISTRACIÓN PRIVADO (#admin-tresarroyos-2026) -->
+        <section id="panel-admin-privado" class="space-y-4 hidden">
+            <div class="bg-gray-900 text-white rounded-2xl p-4 shadow-xl space-y-4 border-2 border-brand-500">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                    <h2 class="text-sm font-black text-brand-500 flex items-center">
+                        <i class="fa-solid fa-user-shield mr-2"></i> PANEL DE CONTROL ADMIN (Tres Arroyos)
+                    </h2>
+                    <span class="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold">PRIVADO</span>
+                </div>
+
+                <!-- SECCIÓN 1: HABILITAR VIP MANUAL -->
+                <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
+                    <h3 class="text-xs font-bold text-white">🔑 HABILITAR VIP MANUAL</h3>
+                    <div class="space-y-2">
+                        <input type="text" id="admin-vip-usuario" placeholder="Email o Teléfono del usuario" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-xs text-white">
+                        <div class="flex space-x-2">
+                            <input type="number" id="admin-vip-dias" value="30" placeholder="Días VIP" class="w-1/2 bg-gray-900 border border-gray-600 rounded-lg p-2 text-xs text-white">
+                            <button onclick="activarVipManual()" class="w-1/2 bg-brand-500 font-bold text-xs rounded-lg py-2 text-white hover:bg-brand-600">
+                                Activar VIP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 2: TABLA DE VIP MANUALES -->
+                <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
+                    <h3 class="text-xs font-bold text-white">📋 Usuarios VIP Activos</h3>
+                    <div id="tabla-vips-activos" class="text-[11px] space-y-1 max-h-36 overflow-y-auto">
+                        <!-- JS Dynamic list -->
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 3: SORTEADOR DE PUNTOS -->
+                <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
+                    <h3 class="text-xs font-bold text-white">🎰 Sorteo de Puntos (>200 pts)</h3>
+                    <button onclick="realizarSorteo()" class="w-full bg-yellow-500 text-gray-900 font-black py-2 rounded-lg text-xs hover:bg-yellow-400">
+                        SORTEAR $100.000 AHORA
+                    </button>
+                    <div id="res-sorteo" class="text-xs font-bold text-yellow-300 text-center"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER LEGAL -->
+    <footer class="bg-white border-t py-4 text-center text-xs text-gray-500 px-4 mt-auto">
+        <p class="font-semibold text-gray-600">PapelesYA - Modelos informativos. Tres Arroyos.</p>
+    </footer>
+
+    <!-- MODAL DE PAGO CON LINKS REALES DE MERCADO PAGO -->
+    <div id="modal-pago" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 text-center relative shadow-2xl animate-bounce-in">
+            <button onclick="cerrarModalPago()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+            
+            <div class="w-12 h-12 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                💳
+            </div>
+
+            <div class="space-y-1">
+                <h3 class="text-lg font-black text-gray-800">Límite Gratuito Alcanzado</h3>
+                <p class="text-xs text-gray-500">Ya generaste tu primer documento gratuito. Para continuar descargando sin marca de agua, elegí una opción:</p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <!-- CARD OPTION 1: SUSCRIPCIÓN MES ILIMITADO (DESTACADO) -->
+                <div class="border-2 border-brand-500 bg-brand-50/50 rounded-2xl p-3.5 text-left relative">
+                    <span class="absolute -top-2.5 right-3 bg-brand-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase">Suscripción</span>
+                    <div class="flex justify-between items-baseline">
+                        <span class="font-black text-sm text-gray-800">MES ILIMITADO</span>
+                        <span class="font-black text-brand-600 text-base">$9.900<span class="text-[10px] text-gray-500">/mes</span></span>
+                    </div>
+                    <p class="text-[11px] text-gray-600 mt-0.5">Se cobra de forma automática cada mes. Podés cancelarlo cuando quieras desde tu cuenta de Mercado Pago.</p>
+                    <a href="https://mpago.la/14ksePv" target="_blank" onclick="simularPagoExitoso(30)" class="mt-2.5 block text-center bg-brand-500 text-white font-bold text-xs py-2 rounded-xl hover:bg-brand-600 shadow">
+                        Suscribirme por $9.900/mes
+                    </a>
+                </div>
+
+                <!-- CARD OPTION 2: 1 PAPEL -->
+                <div class="border border-gray-200 rounded-2xl p-3.5 text-left">
+                    <div class="flex justify-between items-baseline">
+                        <span class="font-bold text-sm text-gray-800">1 Solo Papel</span>
+                        <span class="font-bold text-gray-700 text-sm">$4.900</span>
+                    </div>
+                    <p class="text-[11px] text-gray-500 mt-0.5">Pago único. Genera este documento puntual sin marca de agua.</p>
+                    <a href="https://mpago.la/1NV4VPd" target="_blank" onclick="simularPagoExitoso(1)" class="mt-2.5 block text-center bg-gray-800 text-white font-bold text-xs py-2 rounded-xl hover:bg-gray-900">
+                        Pagar $4.900 único
+                    </a>
+                </div>
+            </div>
+
+            <div class="text-[10px] text-gray-400">
+                Al completar el pago en Mercado Pago, se acreditará automáticamente en tu dispositivo.
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIC SCRIPT COMPLETO -->
+    <script>
+        // CONFIGURACIÓN CONSTANTES Y MACRO
+        const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/TU_ID/exec";
+        
+        // INSTANCIAS DE SIGNATURE PAD
+        let sigPad1 = null;
+        let sigPad2 = null;
+
+        // INICIALIZACIÓN
+        document.addEventListener("DOMContentLoaded", () => {
+            initSignaturePads();
+            calcularEconomia();
+            renderCamposPapel();
+            renderAlquileres();
+            cargarHistorialGrafico();
+            checkAdminHash();
+            checkPremiumStatusUI();
+            actualizarPuntosUI();
+        });
+
+        window.addEventListener("hashchange", checkAdminHash);
+
+        // CHEQUEO RUTA ADMIN OCULTA EXACTA
+        function checkAdminHash() {
+            const adminSec = document.getElementById("panel-admin-privado");
+            if (window.location.hash === "#admin-tresarroyos-2026") {
+                adminSec.classList.remove("hidden");
+                renderTablaVipsAdmin();
+            } else {
+                adminSec.classList.add("hidden");
+            }
+        }
+
+        // TABS NAVIGATION
+        function switchTab(tabId) {
+            ['tab-eco', 'tab-diario', 'tab-papeles', 'tab-alquileres', 'tab-chat'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById('btn-' + id).classList.remove('active-tab', 'bg-white/10');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('active-tab', 'bg-white/10');
+            
+            if (tabId === 'tab-papeles') {
+                setTimeout(resizeCanvas, 100);
+            }
+            if (tabId === 'tab-eco') {
+                setTimeout(cargarHistorialGrafico, 50);
+            }
+        }
+
+        // FIRMAS DIGITALES CON SIGNATURE PAD
+        function initSignaturePads() {
+            const canvas1 = document.getElementById("canvas-firma-1");
+            const canvas2 = document.getElementById("canvas-firma-2");
+            
+            sigPad1 = new SignaturePad(canvas1, { backgroundColor: 'rgb(248, 250, 252)' });
+            sigPad2 = new SignaturePad(canvas2, { backgroundColor: 'rgb(248, 250, 252)' });
+            resizeCanvas();
+        }
+
+        function resizeCanvas() {
+            [ { pad: sigPad1, id: "canvas-firma-1" }, { pad: sigPad2, id: "canvas-firma-2" } ].forEach(item => {
+                const canvas = document.getElementById(item.id);
+                if (canvas && canvas.offsetWidth > 0) {
+                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width = canvas.offsetWidth * ratio;
+                    canvas.height = canvas.offsetHeight * ratio;
+                    canvas.getContext("2d").scale(ratio, ratio);
+                    if(item.pad) item.pad.clear();
+                }
+            });
+        }
+
+        function limpiarFirma(num) {
+            if (num === 1 && sigPad1) sigPad1.clear();
+            if (num === 2 && sigPad2) sigPad2.clear();
+        }
+
+        // 1. MI ECONOMÍA DIARIA
+        function calcularEconomia() {
+            const sueldo = parseFloat(document.getElementById("inp-sueldo").value) || 0;
+            const extras = parseFloat(document.getElementById("inp-extras").value) || 0;
+            const totalIngresos = sueldo + extras;
+
+            const gAlquiler = parseFloat(document.getElementById("g-alquiler").value) || 0;
+            const gExpensas = parseFloat(document.getElementById("g-expensas").value) || 0;
+            const gComida = parseFloat(document.getElementById("g-comida").value) || 0;
+            const gServicios = parseFloat(document.getElementById("g-servicios").value) || 0;
+            const gTransporte = parseFloat(document.getElementById("g-transporte").value) || 0;
+            const gOtros = parseFloat(document.getElementById("g-otros").value) || 0;
+
+            const totalGastos = gAlquiler + gExpensas + gComida + gServicios + gTransporte + gOtros;
+            const costoDiario = totalGastos / 30;
+            const saldo = totalIngresos - totalGastos;
+
+            document.getElementById("lbl-total-ingresos").innerText = totalIngresos.toLocaleString("es-AR");
+            document.getElementById("lbl-total-gastos").innerText = "$" + totalGastos.toLocaleString("es-AR");
+            document.getElementById("lbl-costo-diario-total").innerText = "$" + Math.round(costoDiario).toLocaleString("es-AR") + " / día";
+
+            const semaforo = document.getElementById("card-semaforo");
+            const estado = document.getElementById("txt-semaforo-estado");
+            const detalle = document.getElementById("txt-semaforo-detalle");
+
+            if (saldo > 50000) {
+                semaforo.className = "rounded-2xl p-4 text-white shadow-md bg-emerald-600 transition-all";
+                estado.innerText = "🟢 ¡Te sobra $" + Math.round(saldo).toLocaleString("es-AR") + "!";
+                detalle.innerText = "Tu economía está estable este mes. Podés ahorrar o invertir.";
+            } else if (saldo >= 0) {
+                semaforo.className = "rounded-2xl p-4 text-white shadow-md bg-yellow-500 transition-all";
+                estado.innerText = "🟡 Llegás justo (Saldo: $" + Math.round(saldo).toLocaleString("es-AR") + ")";
+                detalle.innerText = "Cuidado con los gastos imprevistos de fin de mes.";
+            } else {
+                semaforo.className = "rounded-2xl p-4 text-white shadow-md bg-red-600 transition-all";
+                estado.innerText = "🔴 Estás en ROJO te faltan $" + Math.abs(Math.round(saldo)).toLocaleString("es-AR");
+                detalle.innerText = "Tus gastos superan tus ingresos. Revisá tus costos fijos.";
+            }
+        }
+
+        // 2. GASTO DÍA A DÍA Y CALCULADORA DE NAFTA
+        function calcNafta() {
+            const monto = parseFloat(document.getElementById("d-nafta-monto").value) || 0;
+            const litros = parseFloat(document.getElementById("d-nafta-litros").value) || 0;
+            const dias = parseFloat(document.getElementById("d-nafta-dias").value) || 1;
+
+            const costoDia = monto / dias;
+            const litrosDia = litros / dias;
+
+            document.getElementById("res-nafta-dia").innerText = "$" + Math.round(costoDia).toLocaleString("es-AR");
+            document.getElementById("res-nafta-ldia").innerText = litrosDia.toFixed(2);
+        }
+
+        function guardarGastoDia() {
+            const comida = parseFloat(document.getElementById("d-comida").value) || 0;
+            const naftaMonto = parseFloat(document.getElementById("d-nafta-monto").value) || 0;
+            const colectivo = parseFloat(document.getElementById("d-colectivo").value) || 0;
+            const otros = parseFloat(document.getElementById("d-otros").value) || 0;
+
+            const totalHoy = comida + naftaMonto + colectivo + otros;
+
+            // PUNTOS Y RACHA
+            let puntos = parseInt(localStorage.getItem("papeles360_puntos") || "0");
+            let racha = parseInt(localStorage.getItem("papeles360_racha") || "0");
+            const ultimaEntrada = localStorage.getItem("papeles360_ultima_entrada");
+
+            const hoyStr = new Date().toDateString();
+            const ayerStr = new Date(Date.now() - 86400000).toDateString();
+
+            if (ultimaEntrada === ayerStr) {
+                racha++;
+            } else if (ultimaEntrada !== hoyStr) {
+                racha = 1;
+            }
+
+            puntos += (racha * 10) + 10;
+            if (racha === 7) puntos += 100;
+
+            localStorage.setItem("papeles360_puntos", puntos.toString());
+            localStorage.setItem("papeles360_racha", racha.toString());
+            localStorage.setItem("papeles360_ultima_entrada", hoyStr);
+
+            // ENVÍO A GOOGLE SHEETS
+            fetch(GOOGLE_SHEETS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ fecha: new Date().toISOString(), totalHoy, comida, naftaMonto, colectivo, otros })
+            }).catch(e => console.log(e));
+
+            actualizarPuntosUI();
+            alert(`¡Gasto de $${totalHoy} guardado con éxito! +${(racha*10)+10} puntos ganados.`);
+            
+            document.getElementById("d-comida").value = "";
+            document.getElementById("d-nafta-monto").value = "";
+            document.getElementById("d-colectivo").value = "";
+            document.getElementById("d-otros").value = "";
+        }
+
+        function actualizarPuntosUI() {
+            const puntos = parseInt(localStorage.getItem("papeles360_puntos") || "0");
+            const racha = parseInt(localStorage.getItem("papeles360_racha") || "0");
+
+            document.getElementById("txt-racha").innerText = `Racha ${racha} días`;
+            document.getElementById("txt-puntos").innerText = `Puntos: ${puntos}`;
+
+            const lblSorteo = document.getElementById("txt-sorteo");
+            if (puntos >= 200) {
+                lblSorteo.innerText = "🎉 ¡Ya estás en el sorteo de $100.000 de este mes!";
+                lblSorteo.className = "text-xs bg-yellow-400 text-gray-900 font-bold px-3 py-1.5 rounded-full shadow";
+            } else {
+                lblSorteo.innerText = `Faltan ${200 - puntos} pts para el sorteo de $100.000`;
+            }
+        }
+
+        // 3. GENERADOR DE PAPELES (FORMULARIO DINÁMICO)
+        function renderCamposPapel() {
+            const tipo = document.getElementById("sel-tipo-papel").value;
+            const container = document.getElementById("container-campos-dinamicos");
+            const boxFirma2 = document.getElementById("box-firma-2");
+            boxFirma2.style.display = "block";
+
+            let html = "";
+
+            if (tipo === "alquiler") {
+                document.getElementById("lbl-firma-1").innerText = "Firma Locador (Propietario)";
+                document.getElementById("lbl-firma-2").innerText = "Firma Locatario (Inquilino)";
+                html = `
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-locador" placeholder="Locador (Propietario)" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-locador-dni" placeholder="DNI / CUIT Locador" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-locatario" placeholder="Locatario (Inquilino)" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-locatario-dni" placeholder="DNI Locatario" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <input type="text" id="f-garante" placeholder="Garante Nombre y DNI (Opcional)" class="w-full border rounded-xl p-2 text-xs">
+                    <input type="text" id="f-direccion" placeholder="Dirección del Inmueble (Ej: Mitre 450, Tres Arroyos)" class="w-full border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="number" id="f-monto" placeholder="Alquiler Initial $" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-ajuste" placeholder="Índice (IPC/ICL)" class="border rounded-xl p-2 text-xs" value="IPC">
+                        <input type="number" id="f-meses-ajuste" placeholder="Meses Ajuste" class="border rounded-xl p-2 text-xs" value="4">
+                    </div>
+                `;
+            } else if (tipo === "recibo") {
+                document.getElementById("lbl-firma-1").innerText = "Firma Quien Recibe (Propietario/Cobrador)";
+                boxFirma2.style.display = "none";
+                html = `
+                    <input type="text" id="f-recibi-de" placeholder="Recibí de (Nombre Inquilino)" class="w-full border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-recibi-dni" placeholder="DNI Inquilino" class="border rounded-xl p-2 text-xs">
+                        <input type="number" id="f-monto" placeholder="Monto Total $" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <input type="text" id="f-concepto" placeholder="Concepto (Ej: Alquiler mes Octubre 2026 + Expensas)" class="w-full border rounded-xl p-2 text-xs">
+                    <input type="text" id="f-direccion" placeholder="Dirección Inmueble" class="w-full border rounded-xl p-2 text-xs">
+                `;
+            } else if (tipo === "carta") {
+                document.getElementById("lbl-firma-1").innerText = "Firma Remitente";
+                boxFirma2.style.display = "none";
+                html = `
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-remitente" placeholder="Remitente (Tu Nombre)" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-destinatario" placeholder="Destinatario" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <input type="text" id="f-direccion" placeholder="Domicilio Destinatario" class="w-full border rounded-xl p-2 text-xs">
+                    <select id="f-motivo" class="w-full border rounded-xl p-2 text-xs font-bold">
+                        <option value="Intimación de Pago Alquiler en 72hs (Art. 1223 CCCN)">Intimación de Pago Alquiler (72hs)</option>
+                        <option value="Intimación Devolución Depósito de Garantía">Intimación Devolución Depósito</option>
+                        <option value="Notificación de Rescisión Anticipada de Contrato">Rescisión Anticipada de Contrato</option>
+                    </select>
+                `;
+            } else if (tipo === "renuncia") {
+                document.getElementById("lbl-firma-1").innerText = "Firma Empleado Renunciante";
+                boxFirma2.style.display = "none";
+                html = `
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-empleado" placeholder="Empleado (Nombre Completo)" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-empleado-dni" placeholder="DNI Empleado" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-empleador" placeholder="Empresa / Razón Social" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-cuit-empresa" placeholder="CUIT Empleador" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <input type="date" id="f-fecha-baja" class="w-full border rounded-xl p-2 text-xs">
+                `;
+            } else if (tipo === "empleada") {
+                document.getElementById("lbl-firma-1").innerText = "Firma Empleador/a";
+                document.getElementById("lbl-firma-2").innerText = "Firma Empleada";
+                html = `
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-empleador" placeholder="Empleador/a Nombre" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-empleada" placeholder="Empleado/a Nombre" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-cuil-empleada" placeholder="CUIL Empleada" class="border rounded-xl p-2 text-xs">
+                        <input type="number" id="f-monto" placeholder="Sueldo Neto $" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <input type="text" id="f-categoria" value="5ta Categoría - Tareas Generales" class="w-full border rounded-xl p-2 text-xs">
+                `;
+            } else if (tipo === "automotor") {
+                document.getElementById("lbl-firma-1").innerText = "Firma Vendedor";
+                document.getElementById("lbl-firma-2").innerText = "Firma Comprador";
+                html = `
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-vendedor" placeholder="Vendedor Nombre y DNI" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-comprador" placeholder="Comprador Nombre y DNI" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="text" id="f-vehiculo" placeholder="Vehículo (Ej: Fiat Cronos)" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-dominio" placeholder="Patente / Dominio" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-anio" placeholder="Año" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-motor" placeholder="N° Motor y Chasis" class="border rounded-xl p-2 text-xs">
+                        <input type="number" id="f-monto" placeholder="Precio Compraventas $" class="border rounded-xl p-2 text-xs">
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // LÓGICA DE CHECK PREMIUM
+        function isPremium() {
+            const hasta = localStorage.getItem("papeles360_premium_hasta");
+            if (hasta && parseInt(hasta) > Date.now()) return true;
+
+            const vips = JSON.parse(localStorage.getItem("papeles360_vip_manual") || "[]");
+            const userIdent = localStorage.getItem("papeles360_user_ident") || "";
+            if (userIdent) {
+                const match = vips.find(v => v.ident === userIdent && v.hasta > Date.now());
+                if (match) return true;
+            }
+            return false;
+        }
+
+        function checkPremiumStatusUI() {
+            const badge = document.getElementById("badge-status");
+            if (isPremium()) {
+                badge.innerText = "PREMIUM VIP";
+                badge.className = "text-xs bg-yellow-300 text-yellow-900 font-black px-2.5 py-1 rounded-full shadow-sm";
+            } else {
+                badge.innerText = "GRATIS";
+                badge.className = "text-xs bg-white text-brand-700 font-bold px-2.5 py-1 rounded-full shadow-sm";
+            }
+        }
+
+        // CONTROL DE GENERACIÓN CON DESCARGA DIRECTA (doc.save)
+        function ejecutarGeneracionPDF() {
+            const yaUsoGratis = localStorage.getItem("papeles360_usado_gratis") === "true";
+
+            if (!isPremium() && yaUsoGratis) {
+                document.getElementById("modal-pago").classList.remove("hidden");
+                return;
+            }
+
+            generarPDFReal();
+
+            if (!isPremium()) {
+                localStorage.setItem("papeles360_usado_gratis", "true");
+            }
+        }
+
+        // GENERACIÓN DEL PDF REAL CON JSPDF
+        function generarPDFReal() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const tipo = document.getElementById("sel-tipo-papel").value;
+            const fechaStr = new Date().toLocaleDateString("es-AR");
+
+            // ENCABEZADO OFICIAL
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(16);
+            doc.setTextColor(0, 150, 60);
+            doc.text("PAPELESYA - DOCUMENTO LEGAL OFICIAL", 105, 18, { align: "center" });
+            
+            doc.setFontSize(9);
+            doc.setTextColor(100);
+            doc.text(`Fecha de Emisión: ${fechaStr} | República Argentina`, 105, 24, { align: "center" });
+            doc.setLineWidth(0.5);
+            doc.setDrawColor(0, 200, 81);
+            doc.line(15, 27, 195, 27);
+
+            doc.setTextColor(0);
+            doc.setFontSize(10);
+            let y = 35;
+
+            // MODELO 1: CONTRATO DE ALQUILER
+            if (tipo === "alquiler") {
+                const locador = document.getElementById("f-locador")?.value || "----------------";
+                const locadorDni = document.getElementById("f-locador-dni")?.value || "----------------";
+                const locatario = document.getElementById("f-locatario")?.value || "----------------";
+                const locatarioDni = document.getElementById("f-locatario-dni")?.value || "----------------";
+                const direccion = document.getElementById("f-direccion")?.value || "----------------";
+                const monto = document.getElementById("f-monto")?.value || "0";
+                const ajuste = document.getElementById("f-ajuste")?.value || "IPC";
+                const mesesAjuste = document.getElementById("f-meses-ajuste")?.value || "4";
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("CONTRATO DE LOCACIÓN DE VIVIENDA PERMANENTE (LEY 27.737 / CCCN)", 105, y, { align: "center" });
+                y += 10;
+                doc.setFont("Helvetica", "normal");
+
+                const texto = `En la ciudad de Tres Arroyos, a los ${new Date().getDate()} días del mes de ${new Date().toLocaleString('es-AR', { month: 'long' })} de ${new Date().getFullYear()}, entre el/la Sra./Sr. ${locador}, DNI/CUIT N° ${locadorDni}, denominado en adelante "EL LOCADOR", y por la otra parte el/la Sra./Sr. ${locatario}, DNI N° ${locatarioDni}, denominado en adelante "EL LOCATARIO", convienen celebrar el presente contrato de locación sujeto a las siguientes cláusulas:\n\n` +
+                `PRIMERA (OBJETO): EL LOCADOR cede en locación al LOCATARIO, y este acepta, el inmueble ubicado en la calle ${direccion}, con destino exclusivo a vivienda familiar permanente.\n\n` +
+                `SEGUNDA (PLAZO): El plazo de la locación es de 24 meses contados a partir de la fecha de firma del presente instrumento.\n\n` +
+                `TERCERA (PRECIO Y AJUSTE): El precio de la locación se fija en la suma inicial de PESOS ($${parseInt(monto).toLocaleString("es-AR")}) mensuales. El valor se actualizará cada ${mesesAjuste} meses utilizando el índice ${ajuste}.\n\n` +
+                `CUARTA (SERVICIOS Y EXPENSAS): Serán a cargo del LOCATARIO el pago de los servicios de energía eléctrica, gas, agua, y expensas ordinarias del inmueble.`;
+
+                const splitText = doc.splitTextToSize(texto, 175);
+                doc.text(splitText, 15, y);
+            } 
+            // MODELO 2: RECIBO DE ALQUILER
+            else if (tipo === "recibo") {
+                const recibiDe = document.getElementById("f-recibi-de")?.value || "----------------";
+                const dni = document.getElementById("f-recibi-dni")?.value || "----------------";
+                const monto = document.getElementById("f-monto")?.value || "0";
+                const concepto = document.getElementById("f-concepto")?.value || "----------------";
+                const direccion = document.getElementById("f-direccion")?.value || "----------------";
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("RECIBO DE PAGO DE ALQUILER", 105, y, { align: "center" });
+                y += 12;
+                doc.setFont("Helvetica", "normal");
+
+                const texto = `RECIBÍ de Sr./Sra. ${recibiDe}, DNI N° ${dni}, la cantidad de PESOS ($${parseInt(monto).toLocaleString("es-AR")}) en concepto de: ${concepto}, correspondiente al inmueble ubicado en calle ${direccion}.\n\n` +
+                `Se expide el presente recibo cancelatorio por el periodo indicado en los términos del Art. 880 y subsiguientes del Código Civil y Comercial de la Nación.`;
+
+                doc.text(doc.splitTextToSize(texto, 175), 15, y);
+            }
+            // MODELO 3: CARTA DOCUMENTO
+            else if (tipo === "carta") {
+                const remitente = document.getElementById("f-remitente")?.value || "----------------";
+                const destinatario = document.getElementById("f-destinatario")?.value || "----------------";
+                const direccion = document.getElementById("f-direccion")?.value || "----------------";
+                const motivo = document.getElementById("f-motivo")?.value || "----------------";
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("CARTA DOCUMENTO - INTIMACIÓN FORMAL", 105, y, { align: "center" });
+                y += 12;
+                doc.setFont("Helvetica", "normal");
+
+                const texto = `REMITENTE: ${remitente}\nDESTINATARIO: ${destinatario}\nDOMICILIO: ${direccion}\n\n` +
+                `Por medio de la presente, en mi carácter correspondiente, le INTIMO a Ud. en el plazo perentorio de 72 horas a regularizar la siguiente situación: ${motivo}.\n\n` +
+                `Bajo apercibimiento de iniciar acciones legales por daños, perjuicios y desalojo conforme al Art. 1223 del CCCN. Queda Ud. debidamente notificado.`;
+
+                doc.text(doc.splitTextToSize(texto, 175), 15, y);
+            }
+            // MODELO 4: TELEGRAMA RENUNCIA
+            else if (tipo === "renuncia") {
+                const empleado = document.getElementById("f-empleado")?.value || "----------------";
+                const dni = document.getElementById("f-empleado-dni")?.value || "----------------";
+                const empleador = document.getElementById("f-empleador")?.value || "----------------";
+                const cuit = document.getElementById("f-cuit-empresa")?.value || "----------------";
+                const fechaBaja = document.getElementById("f-fecha-baja")?.value || fechaStr;
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("TELEGRAMA DE RENUNCIA LABORAL (LEY 20.744)", 105, y, { align: "center" });
+                y += 12;
+                doc.setFont("Helvetica", "normal");
+
+                const texto = `A: ${empleador} (CUIT: ${cuit})\n\n` +
+                `Comunico a Ud. que renuncio formalmente a mi empleo a partir del día ${fechaBaja}, en los términos del Art. 240 de la Ley de Contrato de Trabajo N° 20.744. Solicito la liquidación final de haberes y el certificado de trabajo (Art. 80 LCT).\n\n` +
+                `Firmante: ${empleado} - DNI: ${dni}`;
+
+                doc.text(doc.splitTextToSize(texto, 175), 15, y);
+            }
+            // MODELO 5: EMPLEADA CASAS PARTICULARES
+            else if (tipo === "empleada") {
+                const empleador = document.getElementById("f-empleador")?.value || "----------------";
+                const empleada = document.getElementById("f-empleada")?.value || "----------------";
+                const cuil = document.getElementById("f-cuil-empleada")?.value || "----------------";
+                const monto = document.getElementById("f-monto")?.value || "0";
+                const categoria = document.getElementById("f-categoria")?.value || "5ta Categoria";
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("RECIBO DE SUELDO - CASAS PARTICULARES LEY 26.844", 105, y, { align: "center" });
+                y += 12;
+                doc.setFont("Helvetica", "normal");
+
+                const texto = `EMPLEADOR: ${empleador}\nEMPLEADA: ${empleada} - CUIL: ${cuil}\nCATEGORÍA: ${categoria}\n\n` +
+                `Se hace constar el pago total de PESOS ($${parseInt(monto).toLocaleString("es-AR")}) en concepto de haberes correspondientes al periodo trabajado, extendiendo la presente constancia oficial.`;
+
+                doc.text(doc.splitTextToSize(texto, 175), 15, y);
+            }
+            // MODELO 6: BOLETO AUTOMOTOR
+            else if (tipo === "automotor") {
+                const vendedor = document.getElementById("f-vendedor")?.value || "----------------";
+                const comprador = document.getElementById("f-comprador")?.value || "----------------";
+                const vehiculo = document.getElementById("f-vehiculo")?.value || "----------------";
+                const dominio = document.getElementById("f-dominio")?.value || "----------------";
+                const monto = document.getElementById("f-monto")?.value || "0";
+
+                doc.setFont("Helvetica", "bold");
+                doc.text("BOLETO DE COMPRAVENTA AUTOMOTOR / MOTO", 105, y, { align: "center" });
+                y += 12;
+                doc.setFont("Helvetica", "normal");
+
+                const texto = `Entre VENDEDOR: ${vendedor} y COMPRADOR: ${comprador}, se acuerda la compraventa del vehículo Marca/Modelo: ${vehiculo}, Dominio/Patente: ${dominio}.\n\n` +
+                `El precio pactado es de PESOS ($${parseInt(monto).toLocaleString("es-AR")}) pagaderos al contado. El comprador asume la responsabilidad civil y penal del vehículo a partir del momento de la entrega.`;
+
+                doc.text(doc.splitTextToSize(texto, 175), 15, y);
+            }
+
+            // MARCA DE AGUA SI NO ES PREMIUM
+            if (!isPremium()) {
+                doc.setFontSize(30);
+                doc.setTextColor(220, 38, 38);
+                doc.setGState(new doc.GState({ opacity: 0.2 }));
+                doc.text("BORRADOR - PAPELESYA", 105, 150, { align: "center", angle: 35 });
+                doc.setGState(new doc.GState({ opacity: 1.0 }));
+            }
+
+            // INSERTAR FIRMAS DIGITALES DESDE CANVAS
+            if (sigPad1 && !sigPad1.isEmpty()) {
+                const imgData1 = sigPad1.toDataURL();
+                doc.addImage(imgData1, 'PNG', 20, 230, 60, 25);
+                doc.setFontSize(8);
+                doc.setTextColor(50);
+                doc.text("Firmado digitalmente - Parte A", 20, 258);
+            }
+
+            if (sigPad2 && !sigPad2.isEmpty() && document.getElementById("box-firma-2").style.display !== "none") {
+                const imgData2 = sigPad2.toDataURL();
+                doc.addImage(imgData2, 'PNG', 120, 230, 60, 25);
+                doc.setFontSize(8);
+                doc.setTextColor(50);
+                doc.text("Firmado digitalmente - Parte B", 120, 258);
+            }
+
+            // FOOTER CON VALIDEZ LEGAL
+            doc.setFontSize(7);
+            doc.setTextColor(120);
+            doc.text("Firmado digitalmente en el marco del Art. 287 CCCN y Ley 25.506 - PapelesYA Tres Arroyos", 105, 285, { align: "center" });
+
+            // DESCARGA DIRECTA REAL EN CLIENTE
+            const nombreArchivo = `PapelesYA-${tipo}-${Date.now()}.pdf`;
+            doc.save(nombreArchivo);
+        }
+
+        // 4. ALQUILERES Y WHATSAPP REMINDERS
+        function renderAlquileres() {
+            const list = JSON.parse(localStorage.getItem("papeles360_alquileres") || "[]");
+            const container = document.getElementById("lista-alquileres");
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No tenés alquileres guardados.</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map((a, index) => `
+                <div class="bg-gray-50 border rounded-xl p-3 flex justify-between items-center text-xs">
+                    <div>
+                        <div class="font-bold text-gray-800">${a.inquilino} (${a.propiedad})</div>
+                        <div class="text-gray-500">Vence: ${a.vencimiento} - Monto: $${a.monto}</div>
+                    </div>
+                    <a href="https://wa.me/${a.telefono}?text=Hola%20${encodeURIComponent(a.inquilino)},%20te%20contacto%20de%20PapelesYA%20para%20recordarte%20el%20pago%20del%20alquiler." target="_blank" class="bg-green-500 text-white p-2 rounded-lg font-bold">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                    </a>
+                </div>
+            `).join("");
+        }
+
+        function nuevoAlquilerModal() {
+            const inquilino = prompt("Nombre del Inquilino:");
+            const propiedad = prompt("Dirección Propiedad:");
+            const monto = prompt("Monto Mensual $:");
+            const telefono = prompt("Teléfono WhatsApp (Ej: 5492983...):");
+            const vencimiento = prompt("Día de Vencimiento (Ej: 10 de cada mes):");
+
+            if (inquilino && propiedad) {
+                const list = JSON.parse(localStorage.getItem("papeles360_alquileres") || "[]");
+                list.push({ inquilino, propiedad, monto, telefono, vencimiento });
+                localStorage.setItem("papeles360_alquileres", JSON.stringify(list));
+                renderAlquileres();
+            }
+        }
+
+        // 5. CHATBOT IA LEGAL
+        function enviarChat() {
+            const inp = document.getElementById("chat-input");
+            const text = inp.value.trim().toLowerCase();
+            if (!text) return;
+
+            const chat = document.getElementById("chat-messages");
+            chat.innerHTML += `<div class="bg-brand-500 text-white p-2.5 rounded-xl max-w-[85%] ml-auto font-medium">${inp.value}</div>`;
+            inp.value = "";
+
+            let resp = "Para esos temas te recomendamos revisar la Ley de Alquileres vigente o consultar con un profesional.";
+
+            if (text.includes("expensa") || text.includes("quien paga")) {
+                resp = "Bajo el CCCN las expensas ordinarias corresponden al inquilino, mientras que las extraordinarias son responsabilidad del propietario.";
+            } else if (text.includes("aumento") || text.includes("icl") || text.includes("ipc")) {
+                resp = "Los ajustes en contratos vigentes se calculan según el índice acordado (IPC/ICL). Podés usar el índice IPC publicado por INDEC.";
+            } else if (text.includes("rescindir") || text.includes("cancelar")) {
+                resp = "El inquilino puede rescindir el contrato transcurridos los primeros 6 meses, notificando con al menos 1 mes de anticipación.";
+            }
+
+            setTimeout(() => {
+                chat.innerHTML += `<div class="bg-gray-100 p-2.5 rounded-xl max-w-[85%] text-gray-700">${resp}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 300);
+        }
+
+        // 6. PANEL ADMIN: GESTIÓN VIP MANUAL Y SORTEO
+        function activarVipManual() {
+            const user = document.getElementById("admin-vip-usuario").value.trim();
+            const dias = parseInt(document.getElementById("admin-vip-dias").value) || 30;
+
+            if (!user) {
+                alert("Ingresá un email o teléfono válido");
+                return;
+            }
+
+            const vips = JSON.parse(localStorage.getItem("papeles360_vip_manual") || "[]");
+            const hasta = Date.now() + (dias * 24 * 60 * 60 * 1000);
+
+            vips.push({ ident: user, hasta });
+            localStorage.setItem("papeles360_vip_manual", JSON.stringify(vips));
+            localStorage.setItem("papeles360_user_ident", user);
+
+            alert(`Cuenta ${user} activada como VIP por ${dias} días (hasta ${new Date(hasta).toLocaleDateString()}).`);
+            document.getElementById("admin-vip-usuario").value = "";
+            renderTablaVipsAdmin();
+            checkPremiumStatusUI();
+        }
+
+        function renderTablaVipsAdmin() {
+            const vips = JSON.parse(localStorage.getItem("papeles360_vip_manual") || "[]");
+            const container = document.getElementById("tabla-vips-activos");
+
+            if (vips.length === 0) {
+                container.innerHTML = `<div class="text-gray-500">No hay usuarios VIP activos.</div>`;
+                return;
+            }
+
+            container.innerHTML = vips.map((v, i) => `
+                <div class="flex justify-between items-center bg-gray-900 p-1.5 rounded border border-gray-700">
+                    <span>${v.ident} (Hasta: ${new Date(v.hasta).toLocaleDateString()})</span>
+                    <button onclick="quitarVipManual(${i})" class="text-red-400 font-bold hover:underline">Quitar</button>
+                </div>
+            `).join("");
+        }
+
+        function quitarVipManual(index) {
+            const vips = JSON.parse(localStorage.getItem("papeles360_vip_manual") || "[]");
+            vips.splice(index, 1);
+            localStorage.setItem("papeles360_vip_manual", JSON.stringify(vips));
+            renderTablaVipsAdmin();
+            checkPremiumStatusUI();
+        }
+
+        function realizarSorteo() {
+            const puntos = parseInt(localStorage.getItem("papeles360_puntos") || "0");
+            const divRes = document.getElementById("res-sorteo");
+            if (puntos >= 200) {
+                divRes.innerText = "🏆 ¡Ganador Sorteo $100.000! ID Ticket #" + Math.floor(100000 + Math.random() * 900000);
+            } else {
+                divRes.innerText = "No hay suficientes usuarios habilitados con >200 pts.";
+            }
+        }
+
+        function cerrarMes() {
+            const sueldo = parseFloat(document.getElementById("inp-sueldo").value) || 0;
+            const extras = parseFloat(document.getElementById("inp-extras").value) || 0;
+            const ingresos = sueldo + extras;
+
+            const gAlquiler = parseFloat(document.getElementById("g-alquiler").value) || 0;
+            const gExpensas = parseFloat(document.getElementById("g-expensas").value) || 0;
+            const gComida = parseFloat(document.getElementById("g-comida").value) || 0;
+            const gServicios = parseFloat(document.getElementById("g-servicios").value) || 0;
+            const gTransporte = parseFloat(document.getElementById("g-transporte").value) || 0;
+            const gOtros = parseFloat(document.getElementById("g-otros").value) || 0;
+            const gastos = gAlquiler + gExpensas + gComida + gServicios + gTransporte + gOtros;
+
+            const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+            const d = new Date();
+            const mesActual = mesesNombres[d.getMonth()];
+
+            let historial = JSON.parse(localStorage.getItem("papeles360_historial") || "[]");
+            
+            // Si ya existe el mes actual, lo actualizamos; sino lo agregamos
+            const idx = historial.findIndex(h => h.mes === mesActual);
+            if (idx >= 0) {
+                historial[idx] = { mes: mesActual, ingresos, gastos };
+            } else {
+                historial.push({ mes: mesActual, ingresos, gastos });
+            }
+
+            // Mantener solo los últimos 6 meses
+            if (historial.length > 6) {
+                historial = historial.slice(historial.length - 6);
+            }
+
+            localStorage.setItem("papeles360_historial", JSON.stringify(historial));
+            cargarHistorialGrafico();
+            alert("¡Mes cerrado y guardado en el historial con éxito!");
+        }
+
+        function cargarHistorialGrafico() {
+            const canvas = document.getElementById("chart-historial");
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+
+            // Ajustar tamaño real del canvas para nitidez en pantalla
+            canvas.width = canvas.parentElement.offsetWidth || 350;
+            canvas.height = 170;
+
+            let historial = JSON.parse(localStorage.getItem("papeles360_historial") || "[]");
+            
+            // Si no hay historial, generamos datos de ejemplo para los últimos meses
+            if (historial.length === 0) {
+                const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+                const d = new Date();
+                historial = [
+                    { mes: mesesNombres[(d.getMonth() - 2 + 12) % 12], ingresos: 650000, gastos: 520000 },
+                    { mes: mesesNombres[(d.getMonth() - 1 + 12) % 12], ingresos: 700000, gastos: 580000 },
+                    { mes: mesesNombres[d.getMonth()], ingresos: 730000, gastos: 590000 }
+                ];
+                localStorage.setItem("papeles360_historial", JSON.stringify(historial));
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dimensiones de dibujo
+            const paddingX = 35;
+            const paddingY = 25;
+            const chartW = canvas.width - (paddingX * 2);
+            const chartH = canvas.height - (paddingY * 2) - 15;
+
+            // Encontrar valor máximo para escalar
+            let maxVal = 100000;
+            historial.forEach(h => {
+                if (h.ingresos > maxVal) maxVal = h.ingresos;
+                if (h.gastos > maxVal) maxVal = h.gastos;
+            });
+            maxVal = maxVal * 1.15; // Margen superior
+
+            // Dibujar leyenda superior
+            ctx.font = "bold 10px sans-serif";
+            ctx.fillStyle = "#00C851";
+            ctx.fillRect(canvas.width - 130, 8, 8, 8);
+            ctx.fillStyle = "#374151";
+            ctx.fillText("Ingresos", canvas.width - 118, 15);
+
+            ctx.fillStyle = "#EF4444";
+            ctx.fillRect(canvas.width - 65, 8, 8, 8);
+            ctx.fillStyle = "#374151";
+            ctx.fillText("Gastos", canvas.width - 53, 15);
+
+            // Dibujar líneas de grilla horizontales de referencia
+            ctx.strokeStyle = "#E5E7EB";
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 3; i++) {
+                let yPos = paddingY + (chartH / 3) * i;
+                ctx.beginPath();
+                ctx.moveTo(paddingX, yPos);
+                ctx.lineTo(canvas.width - paddingX, yPos);
+                ctx.stroke();
+
+                // Valor en eje Y
+                let valLabel = Math.round(maxVal - (maxVal / 3) * i);
+                ctx.fillStyle = "#9CA3AF";
+                ctx.font = "9px sans-serif";
+                ctx.fillText("$" + (valLabel > 1000 ? Math.round(valLabel/1000) + "k" : valLabel), 2, yPos + 3);
+            }
+
+            const totalBars = historial.length;
+            const colWidth = chartW / totalBars;
+            const barWidth = Math.min(colWidth * 0.35, 18);
+
+            historial.forEach((h, i) => {
+                const centerX = paddingX + (i * colWidth) + (colWidth / 2);
+                
+                // Altura de barras
+                const hIngresos = (h.ingresos / maxVal) * chartH;
+                const hGastos = (h.gastos / maxVal) * chartH;
+
+                const xIngresos = centerX - barWidth - 2;
+                const xGastos = centerX + 2;
+                const yBase = paddingY + chartH;
+
+                // Barra Ingresos (Verde)
+                ctx.fillStyle = "#00C851";
+                ctx.beginPath();
+                ctx.roundRect(xIngresos, yBase - hIngresos, barWidth, hIngresos, [4, 4, 0, 0]);
+                ctx.fill();
+
+                // Barra Gastos (Rojo)
+                ctx.fillStyle = "#EF4444";
+                ctx.beginPath();
+                ctx.roundRect(xGastos, yBase - hGastos, barWidth, hGastos, [4, 4, 0, 0]);
+                ctx.fill();
+
+                // Etiqueta Mes Eje X
+                ctx.fillStyle = "#4B5563";
+                ctx.font = "bold 10px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(h.mes, centerX, canvas.height - 4);
+            });
+        }
+
+        function simularPagoExitoso(dias) {
+            localStorage.setItem("papeles360_premium_hasta", (Date.now() + dias * 24 * 60 * 60 * 1000).toString());
+            cerrarModalPago();
+            checkPremiumStatusUI();
+            alert("¡Pago registrado! Ya tenés acceso completo.");
+        }
+
+        function cerrarModalPago() {
+            document.getElementById("modal-pago").classList.add("hidden");
+        }
+    </script>
 </body>
 </html>
