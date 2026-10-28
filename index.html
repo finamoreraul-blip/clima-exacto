@@ -245,12 +245,12 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 3: GENERADOR DE PAPELES CON FIRMA DIGITAL (2024-2025) -->
+        <!-- SECCIÓN 3: GENERADOR DE PAPELES CON FIRMA DIGITAL (LIBRERÍA JURÍDICA) -->
         <section id="tab-papeles" class="space-y-4 hidden">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
                 <div class="flex justify-between items-center">
                     <h2 class="text-base font-bold text-gray-800 flex items-center">
-                        <span class="text-xl mr-2">📑</span> Modelos Legales Reales
+                        <span class="text-xl mr-2">📑</span> Modelos Librería Jurídica
                     </h2>
                     <span class="text-[10px] bg-brand-100 text-brand-800 font-bold px-2 py-0.5 rounded">Arg 2024-2025</span>
                 </div>
@@ -258,12 +258,12 @@
                 <div>
                     <label class="text-xs font-bold text-gray-600">Seleccionar Tipo de Documento</label>
                     <select id="sel-tipo-papel" onchange="renderCamposPapel()" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-sm font-bold focus:border-brand-500 focus:outline-none mt-1">
-                        <option value="alquiler">1. Contrato Alquiler Vivienda Ley 27.737 / CCCN</option>
-                        <option value="recibo">2. Recibo de Alquiler Legal</option>
-                        <option value="carta">3. Carta Documento (Modelo Intimación OCTA)</option>
-                        <option value="renuncia">4. Telegrama de Renuncia Laboral Ley 20.744</option>
-                        <option value="empleada">5. Recibo Empleada Casas Particulares Ley 26.844</option>
-                        <option value="automotor">6. Boleto Compra-Venta Automotor / Moto Registro 2024</option>
+                        <option value="alquiler">1. Contrato Alquiler Vivienda (12 Cláusulas)</option>
+                        <option value="automotor">2. Boleto Compra-Venta Automotor / Moto (10 Cláusulas)</option>
+                        <option value="recibo">3. Recibo de Alquiler Legal Detallado</option>
+                        <option value="carta">4. Carta Documento Intimación 72hs</option>
+                        <option value="renuncia">5. Telegrama de Renuncia Laboral Ley 20.744</option>
+                        <option value="empleada">6. Recibo Empleada Casas Particulares Ley 26.844</option>
                     </select>
                 </div>
 
@@ -296,7 +296,7 @@
                 <!-- BOTÓN PRINCIPAL DE GENERACIÓN -->
                 <button onclick="ejecutarGeneracionPDF()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center space-x-2 text-sm">
                     <i class="fa-solid fa-file-pdf text-lg"></i>
-                    <span>DESCARGAR PDF REAL</span>
+                    <span>DESCARGAR PDF LIBRERÍA (2-3 PÁGS)</span>
                 </button>
             </div>
         </section>
@@ -627,7 +627,7 @@
             }
         }
 
-        // 3. GENERADOR DE PAPELES (FORMULARIO DINÁMICO)
+        // 3. GENERADOR DE PAPELES (FORMULARIO DINÁMICO LIBRERÍA JURÍDICA)
         function renderCamposPapel() {
             const tipo = document.getElementById("sel-tipo-papel").value;
             const container = document.getElementById("container-campos-dinamicos");
@@ -641,19 +641,44 @@
                 document.getElementById("lbl-firma-2").innerText = "Firma Locatario (Inquilino)";
                 html = `
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-locador" placeholder="Locador (Propietario)" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-locador" placeholder="Locador (Nombre y Apellido)" class="border rounded-xl p-2 text-xs">
                         <input type="text" id="f-locador-dni" placeholder="DNI / CUIT Locador" class="border rounded-xl p-2 text-xs">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-locatario" placeholder="Locatario (Inquilino)" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-locatario" placeholder="Locatario (Nombre y Apellido)" class="border rounded-xl p-2 text-xs">
                         <input type="text" id="f-locatario-dni" placeholder="DNI Locatario" class="border rounded-xl p-2 text-xs">
                     </div>
-                    <input type="text" id="f-garante" placeholder="Garante Nombre y DNI (Opcional)" class="w-full border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-fiador" placeholder="Fiador / Garante Solidario" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-fiador-dni" placeholder="DNI / CUIT Fiador" class="border rounded-xl p-2 text-xs">
+                    </div>
                     <input type="text" id="f-direccion" placeholder="Dirección del Inmueble (Ej: Mitre 450, Tres Arroyos)" class="w-full border rounded-xl p-2 text-xs">
                     <div class="grid grid-cols-3 gap-2">
-                        <input type="number" id="f-monto" placeholder="Alquiler Initial $" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-ajuste" placeholder="Índice (IPC/ICL)" class="border rounded-xl p-2 text-xs" value="IPC">
+                        <input type="number" id="f-monto" placeholder="Alquiler Inicial $" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-ajuste" placeholder="Índice (IPC/ICL/Casa Propia)" class="border rounded-xl p-2 text-xs" value="IPC">
                         <input type="number" id="f-meses-ajuste" placeholder="Meses Ajuste" class="border rounded-xl p-2 text-xs" value="4">
+                    </div>
+                `;
+            } else if (tipo === "automotor") {
+                document.getElementById("lbl-firma-1").innerText = "Firma Vendedor";
+                document.getElementById("lbl-firma-2").innerText = "Firma Comprador";
+                html = `
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-vendedor" placeholder="Vendedor Nombre y DNI" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-vendedor-cuit" placeholder="CUIT / Estado Civil Vendedor" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-comprador" placeholder="Comprador Nombre y DNI" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-comprador-domicilio" placeholder="Domicilio Comprador" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="text" id="f-vehiculo" placeholder="Marca y Modelo" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-dominio" placeholder="Patente / Dominio" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-anio" placeholder="Año / Color" class="border rounded-xl p-2 text-xs">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="f-motor" placeholder="N° Motor y Chasis" class="border rounded-xl p-2 text-xs">
+                        <input type="number" id="f-monto" placeholder="Precio Total Compraventa $" class="border rounded-xl p-2 text-xs">
                     </div>
                 `;
             } else if (tipo === "recibo") {
@@ -665,22 +690,22 @@
                         <input type="text" id="f-recibi-dni" placeholder="DNI Inquilino" class="border rounded-xl p-2 text-xs">
                         <input type="number" id="f-monto" placeholder="Monto Total $" class="border rounded-xl p-2 text-xs">
                     </div>
-                    <input type="text" id="f-concepto" placeholder="Concepto (Ej: Alquiler mes Octubre 2026 + Expensas)" class="w-full border rounded-xl p-2 text-xs">
-                    <input type="text" id="f-direccion" placeholder="Dirección Inmueble" class="w-full border rounded-xl p-2 text-xs">
+                    <input type="text" id="f-concepto" placeholder="Concepto Detallado (Ej: Alquiler mes Octubre + Expensas + Edesur)" class="w-full border rounded-xl p-2 text-xs">
+                    <input type="text" id="f-direccion" placeholder="Dirección del Inmueble" class="w-full border rounded-xl p-2 text-xs">
                 `;
             } else if (tipo === "carta") {
                 document.getElementById("lbl-firma-1").innerText = "Firma Remitente";
                 boxFirma2.style.display = "none";
                 html = `
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-remitente" placeholder="Remitente (Tu Nombre)" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-remitente" placeholder="Remitente (Tu Nombre y Apellido)" class="border rounded-xl p-2 text-xs">
                         <input type="text" id="f-destinatario" placeholder="Destinatario" class="border rounded-xl p-2 text-xs">
                     </div>
-                    <input type="text" id="f-direccion" placeholder="Domicilio Destinatario" class="w-full border rounded-xl p-2 text-xs">
+                    <input type="text" id="f-direccion" placeholder="Domicilio del Destinatario" class="w-full border rounded-xl p-2 text-xs">
                     <select id="f-motivo" class="w-full border rounded-xl p-2 text-xs font-bold">
-                        <option value="Intimación de Pago Alquiler en 72hs (Art. 1223 CCCN)">Intimación de Pago Alquiler (72hs)</option>
-                        <option value="Intimación Devolución Depósito de Garantía">Intimación Devolución Depósito</option>
-                        <option value="Notificación de Rescisión Anticipada de Contrato">Rescisión Anticipada de Contrato</option>
+                        <option value="Intimación de Pago de Alquileres atrasados en 72hs (Art. 1223 CCCN)">Intimación Pago Alquiler 72hs</option>
+                        <option value="Intimación Devolución Inmediata Depósito de Garantía">Intimación Devolución Depósito</option>
+                        <option value="Notificación Formal de Rescisión Anticipada de Contrato">Rescisión Anticipada Contrato</option>
                     </select>
                 `;
             } else if (tipo === "renuncia") {
@@ -702,32 +727,14 @@
                 document.getElementById("lbl-firma-2").innerText = "Firma Empleada";
                 html = `
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-empleador" placeholder="Empleador/a Nombre" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-empleada" placeholder="Empleado/a Nombre" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-empleador" placeholder="Empleador/a Nombre y DNI" class="border rounded-xl p-2 text-xs">
+                        <input type="text" id="f-empleada" placeholder="Empleado/a Nombre y DNI" class="border rounded-xl p-2 text-xs">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="f-cuil-empleada" placeholder="CUIL Empleada" class="border rounded-xl p-2 text-xs">
                         <input type="number" id="f-monto" placeholder="Sueldo Neto $" class="border rounded-xl p-2 text-xs">
                     </div>
-                    <input type="text" id="f-categoria" value="5ta Categoría - Tareas Generales" class="w-full border rounded-xl p-2 text-xs">
-                `;
-            } else if (tipo === "automotor") {
-                document.getElementById("lbl-firma-1").innerText = "Firma Vendedor";
-                document.getElementById("lbl-firma-2").innerText = "Firma Comprador";
-                html = `
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-vendedor" placeholder="Vendedor Nombre y DNI" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-comprador" placeholder="Comprador Nombre y DNI" class="border rounded-xl p-2 text-xs">
-                    </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <input type="text" id="f-vehiculo" placeholder="Vehículo (Ej: Fiat Cronos)" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-dominio" placeholder="Patente / Dominio" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-anio" placeholder="Año" class="border rounded-xl p-2 text-xs">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-motor" placeholder="N° Motor y Chasis" class="border rounded-xl p-2 text-xs">
-                        <input type="number" id="f-monto" placeholder="Precio Compraventas $" class="border rounded-xl p-2 text-xs">
-                    </div>
+                    <input type="text" id="f-categoria" value="5ta Categoría - Personal para Tareas Generales" class="w-full border rounded-xl p-2 text-xs">
                 `;
             }
 
@@ -775,181 +782,262 @@
             }
         }
 
-        // GENERACIÓN DEL PDF REAL CON JSPDF
+        // ==========================================
+        // FUNCIÓN GENERAR PDF REAL (LIBRERÍA JURÍDICA 2-3 PÁGS)
+        // ==========================================
         function generarPDFReal() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
             const tipo = document.getElementById("sel-tipo-papel").value;
-            const fechaStr = new Date().toLocaleDateString("es-AR");
+            const fechaLarga = new Date().toLocaleDateString("es-AR", { day: 'numeric', month: 'long', year: 'numeric' });
 
-            // ENCABEZADO OFICIAL
-            doc.setFont("Helvetica", "bold");
-            doc.setFontSize(16);
-            doc.setTextColor(0, 150, 60);
-            doc.text("PAPELESYA - DOCUMENTO LEGAL OFICIAL", 105, 18, { align: "center" });
-            
+            // Helper de valores con formato o línea punteada
+            const f = (id) => document.getElementById(id)?.value || "..................................................";
+
+            // Configuración tipográfica obligatoria (Helvetica 9pt, interlineado 4.2)
+            doc.setFont("Helvetica", "normal");
             doc.setFontSize(9);
+            const lineHeight = 4.2;
+
+            let y = 18;
+
+            // Función interna de escritura con salto de página automático y ancho 185
+            const escribir = (texto, esNegrita = false, fontSize = 9) => {
+                doc.setFont("Helvetica", esNegrita ? "bold" : "normal");
+                doc.setFontSize(fontSize);
+                const lineas = doc.splitTextToSize(texto, 185);
+                
+                lineas.forEach(linea => {
+                    if (y > 272) {
+                        // Footer en página anterior
+                        doc.setFont("Helvetica", "italic");
+                        doc.setFontSize(7);
+                        doc.setTextColor(100);
+                        doc.text("PAPELESYA - Validez Legal - Art 287 CCCN / Ley 25.506", 105, 288, { align: "center" });
+                        
+                        doc.addPage();
+                        y = 18; // Margen superior nueva página
+                        
+                        // Encabezado de continuación
+                        doc.setFont("Helvetica", "bold");
+                        doc.setFontSize(9);
+                        doc.setTextColor(0, 150, 60);
+                        doc.text("PAPELESYA - INSTRUMENTO PRIVADO (Continuación)", 15, y);
+                        y += 8;
+                        doc.setFont("Helvetica", "normal");
+                        doc.setFontSize(9);
+                        doc.setTextColor(0);
+                    }
+                    doc.text(linea, 15, y);
+                    y += lineHeight;
+                });
+            };
+
+            // Encabezado inicial Página 1
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(0, 150, 60);
+            doc.text("PAPELESYA - INSTRUMENTO PRIVADO", 15, y);
+            y += 5;
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(8);
             doc.setTextColor(100);
-            doc.text(`Fecha de Emisión: ${fechaStr} | República Argentina`, 105, 24, { align: "center" });
-            doc.setLineWidth(0.5);
+            doc.text(`Fecha de emisión: ${fechaLarga} | Jurisdicción: Tres Arroyos, Bs. As.`, 15, y);
+            y += 8;
+            doc.setLineWidth(0.4);
             doc.setDrawColor(0, 200, 81);
-            doc.line(15, 27, 195, 27);
-
+            doc.line(15, y, 200, y);
+            y += 8;
             doc.setTextColor(0);
-            doc.setFontSize(10);
-            let y = 35;
 
-            // MODELO 1: CONTRATO DE ALQUILER
+            // ==========================================
+            // MODELO A) CONTRATO ALQUILER (12 CLÁUSULAS LARGAS)
+            // ==========================================
             if (tipo === "alquiler") {
-                const locador = document.getElementById("f-locador")?.value || "----------------";
-                const locadorDni = document.getElementById("f-locador-dni")?.value || "----------------";
-                const locatario = document.getElementById("f-locatario")?.value || "----------------";
-                const locatarioDni = document.getElementById("f-locatario-dni")?.value || "----------------";
-                const direccion = document.getElementById("f-direccion")?.value || "----------------";
-                const monto = document.getElementById("f-monto")?.value || "0";
-                const ajuste = document.getElementById("f-ajuste")?.value || "IPC";
-                const mesesAjuste = document.getElementById("f-meses-ajuste")?.value || "4";
+                const locador = f("f-locador");
+                const locadorDni = f("f-locador-dni");
+                const locatario = f("f-locatario");
+                const locatarioDni = f("f-locatario-dni");
+                const fiador = f("f-fiador");
+                const fiadorDni = f("f-fiador-dni");
+                const direccion = f("f-direccion");
+                const monto = f("f-monto");
+                const ajuste = f("f-ajuste");
+                const mesesAjuste = f("f-meses-ajuste");
 
-                doc.setFont("Helvetica", "bold");
-                doc.text("CONTRATO DE LOCACIÓN DE VIVIENDA PERMANENTE (LEY 27.737 / CCCN)", 105, y, { align: "center" });
-                y += 10;
-                doc.setFont("Helvetica", "normal");
+                escribir("CONTRATO DE LOCACIÓN DE VIVIENDA PERMANENTE", true, 11);
+                y += 2;
+                escribir(`Entre el/la señor/a ${locador}, DNI/CUIT N° ${locadorDni}, con domicilio en ${f("f-locador")}, en adelante denominado/a "EL LOCADOR", por una parte; y por la otra el/la señor/a ${locatario}, DNI N° ${locatarioDni}, en adelante denominado/a "EL LOCATARIO"; y el/la señor/a ${fiador}, DNI/CUIT N° ${fiadorDni}, en adelante denominado/a "EL FIADOR" o "CODEUDOR SOLIDARIO", convienen celebrar el presente Contrato de Locación sujeto a las siguientes cláusulas y condiciones legales vigentes:`);
+                y += 3;
 
-                const texto = `En la ciudad de Tres Arroyos, a los ${new Date().getDate()} días del mes de ${new Date().toLocaleString('es-AR', { month: 'long' })} de ${new Date().getFullYear()}, entre el/la Sra./Sr. ${locador}, DNI/CUIT N° ${locadorDni}, denominado en adelante "EL LOCADOR", y por la otra parte el/la Sra./Sr. ${locatario}, DNI N° ${locatarioDni}, denominado en adelante "EL LOCATARIO", convienen celebrar el presente contrato de locación sujeto a las siguientes cláusulas:\n\n` +
-                `PRIMERA (OBJETO): EL LOCADOR cede en locación al LOCATARIO, y este acepta, el inmueble ubicado en la calle ${direccion}, con destino exclusivo a vivienda familiar permanente.\n\n` +
-                `SEGUNDA (PLAZO): El plazo de la locación es de 24 meses contados a partir de la fecha de firma del presente instrumento.\n\n` +
-                `TERCERA (PRECIO Y AJUSTE): El precio de la locación se fija en la suma inicial de PESOS ($${parseInt(monto).toLocaleString("es-AR")}) mensuales. El valor se actualizará cada ${mesesAjuste} meses utilizando el índice ${ajuste}.\n\n` +
-                `CUARTA (SERVICIOS Y EXPENSAS): Serán a cargo del LOCATARIO el pago de los servicios de energía eléctrica, gas, agua, y expensas ordinarias del inmueble.`;
-
-                const splitText = doc.splitTextToSize(texto, 175);
-                doc.text(splitText, 15, y);
-            } 
-            // MODELO 2: RECIBO DE ALQUILER
-            else if (tipo === "recibo") {
-                const recibiDe = document.getElementById("f-recibi-de")?.value || "----------------";
-                const dni = document.getElementById("f-recibi-dni")?.value || "----------------";
-                const monto = document.getElementById("f-monto")?.value || "0";
-                const concepto = document.getElementById("f-concepto")?.value || "----------------";
-                const direccion = document.getElementById("f-direccion")?.value || "----------------";
-
-                doc.setFont("Helvetica", "bold");
-                doc.text("RECIBO DE PAGO DE ALQUILER", 105, y, { align: "center" });
-                y += 12;
-                doc.setFont("Helvetica", "normal");
-
-                const texto = `RECIBÍ de Sr./Sra. ${recibiDe}, DNI N° ${dni}, la cantidad de PESOS ($${parseInt(monto).toLocaleString("es-AR")}) en concepto de: ${concepto}, correspondiente al inmueble ubicado en calle ${direccion}.\n\n` +
-                `Se expide el presente recibo cancelatorio por el periodo indicado en los términos del Art. 880 y subsiguientes del Código Civil y Comercial de la Nación.`;
-
-                doc.text(doc.splitTextToSize(texto, 175), 15, y);
+                escribir("PRIMERA (OBJETO): EL LOCADOR da en locación al LOCATARIO, que acepta para sí, el inmueble ubicado en calle " + direccion + ", de la ciudad de Tres Arroyos, Provincia de Buenos Aires. El inmueble se entrega desocupado y en perfecto estado de conservación, limpieza y funcionamiento de sus instalaciones, obligándose el LOCATARIO a restituirlo en las mismas condiciones al finalizar el vínculo locativo.", false);
+                escribir("SEGUNDA (PLAZO): El plazo de vigencia del presente contrato se estipula en veinticuatro (24) meses corridos, obligatorios para ambas partes, comenzando a regir a partir del día de la fecha, conforme lo normado por el Código Civil y Comercial de la Nación y la legislación complementaria aplicable.", false);
+                escribir("TERCERA (PRECIO Y FORMA DE PAGO): El precio mensual de la locación se pacta libremente en la suma inicial de PESOS ($" + monto + "), pagaderos por mes adelantado del 1 al 10 de cada mes calendario mediante transferencia bancaria. El valor de los alquileres se ajustará en forma cuatrimestral utilizando el índice oficial " + ajuste + " publicado por el BCRA/INDEC, aplicado cada " + mesesAjuste + " meses.", false);
+                escribir("CUARTA (DEPÓSITO DE GARANTÍA): En garantía del fiel cumplimiento de todas las obligaciones asumidas en este contrato, el LOCATARIO entrega en este acto la suma equivalente a un mes de alquiler en concepto de depósito de garantía, el cual será devuelto al finalizar la locación previa comprobación del estado del inmueble y libre deuda de servicios.", false);
+                escribir("QUINTA (DESTINO): El inmueble alquilado será destinado única y exclusivamente a vivienda familiar permanente del LOCATARIO y su grupo conviviente declarado, estando terminantemente prohibido cambiar su destino, subalquilar total o parcialmente, ni ceder los derechos de esta locación bajo ninguna forma jurídica, conforme el art. 1208 del CCCN.", false);
+                escribir("SEXTA (CONSERVACIÓN): El LOCATARIO recibe el inmueble con todos sus cristales, herrajes, llaves, sanitarios y cañerías en óptimo estado. Serán a su exclusivo cargo todas las reparaciones menores, roturas o desperfectos que se produzcan en el inmueble durante la vigencia de la locación, debiendo mantenerlo en idénticas condiciones.", false);
+                escribir("SEPTIMA (SERVICIOS Y EXPENSAS): Son a exclusivo cargo del LOCATARIO los pagos correspondientes a los servicios de energía eléctrica (Edesur/Cooperativa), gas natural (Camuzzi), impuesto inmobiliario (ARBA), tasa municipal (ABL / Servicios Urbanos Municipalidad de Tres Arroyos) y expensas comunes ordinarias. Las expensas extraordinarias serán íntegramente soportadas por el LOCADOR.", false);
+                escribir("OCTAVA (PROHIBICIONES): Queda prohibido al LOCATARIO realizar modificaciones estructurales, pintar paredes con colores oscuros sin previa autorización escrita del LOCADOR, tener animales peligrosos que afecten la convivencia o realizar actividades que perturben la tranquilidad de los vecinos.", false);
+                escribir("NOVENA (MORA E INTERESES): La falta de pago en término de los alquileres o servicios devengará un interés punitorio diario del 10% acumulativo mensual desde el día de su vencimiento, sin necesidad de interpelación previa. La mora se producirá de pleno derecho por el solo vencimiento de los plazos. Asimismo, faculta al LOCADOR a iniciar acción judicial de desalojo por falta de pago conforme art. 1223 del CCCN.", false);
+                escribir("DECIMA (RESCISIÓN ANTICIPADA): El LOCATARIO podrá rescindir el presente contrato en cualquier momento, debiendo notificar fehacientemente al LOCADOR. Si la rescisión se comunica transcurridos los primeros seis meses de contrato, deberá abonar en concepto de indemnización el equivalente a un mes y medio (1.5) de alquiler si la opción se ejercita dentro del primer año, o de un (1) mes si se efectúa transcurrido el primer año.", false);
+                escribir("UNDECIMA (FIADOR SOLIDARIO): El/la señor/a " + fiador + " se constituye en fiador liso, llano y principal pagador, codeudor solidario de todas y cada una de las obligaciones del LOCATARIO, renunciando expresamente a los beneficios de división y excusión, subsistiendo su fianza hasta la efectiva desocupación y entrega de llaves al LOCADOR.", false);
+                escribir("DUODECIMA (JURISDICCIÓN): Para todos los efectos legales derivados del presente contrato, las partes y el fiador se someten voluntariamente a la competencia y jurisdicción de los Tribunales Ordinarios del Departamento Judicial de Tres Arroyos, Provincia de Buenos Aires, renunciando a cualquier otro fuero o excepción.", false);
             }
-            // MODELO 3: CARTA DOCUMENTO
-            else if (tipo === "carta") {
-                const remitente = document.getElementById("f-remitente")?.value || "----------------";
-                const destinatario = document.getElementById("f-destinatario")?.value || "----------------";
-                const direccion = document.getElementById("f-direccion")?.value || "----------------";
-                const motivo = document.getElementById("f-motivo")?.value || "----------------";
-
-                doc.setFont("Helvetica", "bold");
-                doc.text("CARTA DOCUMENTO - INTIMACIÓN FORMAL", 105, y, { align: "center" });
-                y += 12;
-                doc.setFont("Helvetica", "normal");
-
-                const texto = `REMITENTE: ${remitente}\nDESTINATARIO: ${destinatario}\nDOMICILIO: ${direccion}\n\n` +
-                `Por medio de la presente, en mi carácter correspondiente, le INTIMO a Ud. en el plazo perentorio de 72 horas a regularizar la siguiente situación: ${motivo}.\n\n` +
-                `Bajo apercibimiento de iniciar acciones legales por daños, perjuicios y desalojo conforme al Art. 1223 del CCCN. Queda Ud. debidamente notificado.`;
-
-                doc.text(doc.splitTextToSize(texto, 175), 15, y);
-            }
-            // MODELO 4: TELEGRAMA RENUNCIA
-            else if (tipo === "renuncia") {
-                const empleado = document.getElementById("f-empleado")?.value || "----------------";
-                const dni = document.getElementById("f-empleado-dni")?.value || "----------------";
-                const empleador = document.getElementById("f-empleador")?.value || "----------------";
-                const cuit = document.getElementById("f-cuit-empresa")?.value || "----------------";
-                const fechaBaja = document.getElementById("f-fecha-baja")?.value || fechaStr;
-
-                doc.setFont("Helvetica", "bold");
-                doc.text("TELEGRAMA DE RENUNCIA LABORAL (LEY 20.744)", 105, y, { align: "center" });
-                y += 12;
-                doc.setFont("Helvetica", "normal");
-
-                const texto = `A: ${empleador} (CUIT: ${cuit})\n\n` +
-                `Comunico a Ud. que renuncio formalmente a mi empleo a partir del día ${fechaBaja}, en los términos del Art. 240 de la Ley de Contrato de Trabajo N° 20.744. Solicito la liquidación final de haberes y el certificado de trabajo (Art. 80 LCT).\n\n` +
-                `Firmante: ${empleado} - DNI: ${dni}`;
-
-                doc.text(doc.splitTextToSize(texto, 175), 15, y);
-            }
-            // MODELO 5: EMPLEADA CASAS PARTICULARES
-            else if (tipo === "empleada") {
-                const empleador = document.getElementById("f-empleador")?.value || "----------------";
-                const empleada = document.getElementById("f-empleada")?.value || "----------------";
-                const cuil = document.getElementById("f-cuil-empleada")?.value || "----------------";
-                const monto = document.getElementById("f-monto")?.value || "0";
-                const categoria = document.getElementById("f-categoria")?.value || "5ta Categoria";
-
-                doc.setFont("Helvetica", "bold");
-                doc.text("RECIBO DE SUELDO - CASAS PARTICULARES LEY 26.844", 105, y, { align: "center" });
-                y += 12;
-                doc.setFont("Helvetica", "normal");
-
-                const texto = `EMPLEADOR: ${empleador}\nEMPLEADA: ${empleada} - CUIL: ${cuil}\nCATEGORÍA: ${categoria}\n\n` +
-                `Se hace constar el pago total de PESOS ($${parseInt(monto).toLocaleString("es-AR")}) en concepto de haberes correspondientes al periodo trabajado, extendiendo la presente constancia oficial.`;
-
-                doc.text(doc.splitTextToSize(texto, 175), 15, y);
-            }
-            // MODELO 6: BOLETO AUTOMOTOR
+            // ==========================================
+            // MODELO B) BOLETO AUTOMOTOR (10 CLÁUSULAS LARGAS)
+            // ==========================================
             else if (tipo === "automotor") {
-                const vendedor = document.getElementById("f-vendedor")?.value || "----------------";
-                const comprador = document.getElementById("f-comprador")?.value || "----------------";
-                const vehiculo = document.getElementById("f-vehiculo")?.value || "----------------";
-                const dominio = document.getElementById("f-dominio")?.value || "----------------";
-                const monto = document.getElementById("f-monto")?.value || "0";
+                const vendedor = f("f-vendedor");
+                const vendedorCuit = f("f-vendedor-cuit");
+                const comprador = f("f-comprador");
+                const compradorDom = f("f-comprador-domicilio");
+                const vehiculo = f("f-vehiculo");
+                const dominio = f("f-dominio");
+                const anio = f("f-anio");
+                const motor = f("f-motor");
+                const monto = f("f-monto");
 
-                doc.setFont("Helvetica", "bold");
-                doc.text("BOLETO DE COMPRAVENTA AUTOMOTOR / MOTO", 105, y, { align: "center" });
-                y += 12;
-                doc.setFont("Helvetica", "normal");
+                escribir("BOLETO DE COMPRAVENTA DE AUTOMOTOR / MOTO", true, 11);
+                y += 2;
+                escribir(`Conste por el presente instrumento que el/la señor/a ${vendedor}, CUIT/DNI ${vendedorCuit}, en adelante "EL VENDEDOR", vende al/la señor/a ${comprador}, DNI N° ${compradorDom}, en adelante "EL COMPRADOR", el vehículo usado cuyas especificaciones se detallan a continuación, sujeto a las cláusulas siguientes:`);
+                y += 3;
 
-                const texto = `Entre VENDEDOR: ${vendedor} y COMPRADOR: ${comprador}, se acuerda la compraventa del vehículo Marca/Modelo: ${vehiculo}, Dominio/Patente: ${dominio}.\n\n` +
-                `El precio pactado es de PESOS ($${parseInt(monto).toLocaleString("es-AR")}) pagaderos al contado. El comprador asume la responsabilidad civil y penal del vehículo a partir del momento de la entrega.`;
+                escribir("ESPECIFICACIONES DEL RODADO: Vehículo marca y modelo " + vehiculo + ", Dominio / Patente N° " + dominio + ", Año " + anio + ", Motor y Chasis N° " + motor + ", en el estado en que se encuentra y que el COMPRADOR declara conocer y aceptar.", false);
+                escribir("PRIMERA (VENTA): EL VENDEDOR transfiere la propiedad del rodado mencionado libre de todo gravamen, prenda, inhibición o embargo judicial.", false);
+                escribir("SEGUNDA (PRECIO Y FORMA DE PAGO): El precio total y convenido de la compraventa se fija en la suma de PESOS ($" + monto + "), pagados en efectivo en este acto, sirviendo el presente de suficiente y eficaz recibo de pago total.", false);
+                escribir("TERCERA (DOCUMENTACIÓN OBLIGATORIA): EL VENDEDOR hace entrega en este acto del Título del Automotor, Cédula de Identificación (verde/azul), Formulario 08 certificado ante Escribano Público, Formulario 12 de Verificación Policial, grabado de autopartes, libre deuda de multas e informe de dominio histórico.", false);
+                escribir("CUARTA (DEUDAS ANTERIORES): Todas las deudas por patentes, infracciones de tránsito, multas o tasas municipales devengadas con anterioridad a la fecha de entrega real y efectiva del vehículo serán exclusiva y única responsabilidad del VENDEDOR.", false);
+                escribir("QUINTA (ENTREGA MATERIAL): La entrega material y posesoria del rodado se efectúa en el día de la fecha en la ciudad de Tres Arroyos, incluyendo herramientas reglamentarias, rueda de auxilio y llaves originales.", false);
+                escribir("SEXTA (RESPONSABILIDAD CIVIL): A partir de la hora cero del día siguiente a la firma del presente boleto y entrega de llaves, el COMPRADOR asume toda la responsabilidad civil, penal y administrativa por los daños o accidentes que el vehículo pueda ocasionar, art. 1740 del CCCN.", false);
+                escribir("SEPTIMA (ARREPENTIMIENTO): Las partes pactan el carácter de seña penitencial, rigiendo el art. 1059 del CCCN respecto a penalidades por desistimiento unilateral.", false);
+                escribir("OCTAVA (EVICCIÓN): El VENDEDOR responde por saneamiento, evicción y vicios redhibitorios conforme a derecho.", false);
+                escribir("NOVENA (TRANSFERENCIA OBLIGATORIA): El COMPRADOR se obliga formalmente a iniciar y concluir el trámite de transferencia de titularidad ante el Registro Seccional de la Propiedad Automotor correspondiente dentro del plazo improrrogable de diez (10) días hábiles.", false);
+                escribir("DECIMA (JURISDICCIÓN): Para cualquier litigio judicial, las partes se someten a los Tribunales Ordinarios de Tres Arroyos, Provincia de Buenos Aires.", false);
+            }
+            // ==========================================
+            // MODELO C) RECIBO DE ALQUILER LEGAL
+            // ==========================================
+            else if (tipo === "recibo") {
+                const recibiDe = f("f-recibi-de");
+                const dni = f("f-recibi-dni");
+                const monto = f("f-monto");
+                const concepto = f("f-concepto");
+                const direccion = f("f-direccion");
 
-                doc.text(doc.splitTextToSize(texto, 175), 15, y);
+                escribir("RECIBO DE PAGO DE ALQUILER Y SERVICIOS", true, 11);
+                y += 2;
+                escribir("RECIBÍ de la/el señor/a " + recibiDe + ", DNI N° " + dni + ", la suma total de PESOS ($" + monto + "), en concepto de cancelación de alquiler y obligaciones conexas correspondientes al inmueble ubicado en calle " + direccion + ".");
+                y += 3;
+                escribir("DETALLE DEL COBRO: " + concepto + ".", false);
+                escribir("El presente recibo se extiende en los términos del Art. 880 del Código Civil y Comercial de la Nación, sirviendo de suficiente y eficaz comprobante cancelatorio por los conceptos indicados, no otorgándose validez a pagos parciales que no posean constancia escrita y firmada por el locador.", false);
+                escribir("En la ciudad de Tres Arroyos, a los " + new Date().getDate() + " días del mes en curso.", false);
+            }
+            // ==========================================
+            // MODELO D) CARTA DOCUMENTO (72HS)
+            // ==========================================
+            else if (tipo === "carta") {
+                const remitente = f("f-remitente");
+                const destinatario = f("f-destinatario");
+                const direccion = f("f-direccion");
+                const motivo = f("f-motivo");
+
+                escribir("CARTA DOCUMENTO - INTIMACIÓN FORMAL FEHACIENTE", true, 11);
+                y += 2;
+                escribir("REMITENTE: " + remitente);
+                escribir("DESTINATARIO: " + destinatario);
+                escribir("DOMICILIO: " + direccion);
+                y += 2;
+                escribir("POR MEDIO DE LA PRESENTE, en mi carácter de locador/propietario, LE INTIMO formalmente a Ud. en el plazo perentorio e improrrogable de SETENTA Y DOS (72) HORAS corridas de recibida la presente, a regularizar la siguiente situación: " + motivo + ".");
+                y += 3;
+                escribir("El incumplimiento a lo aquí intimado dentro del plazo legal acordado configurará causal de mora automática, facultándome a iniciar de inmediato las acciones judiciales de desalojo, cobro ejecutivo de alquileres atrasados y daños y perjuicios, con expresa reserva de derechos en los términos del Art. 1223 del CCCN y normativa concordante. QUEDA UD. DEBIDAMENTE NOTIFICADO E APERCIBIDO.", false);
+            }
+            // ==========================================
+            // MODELO E) TELEGRAMA RENUNCIA LEY 20.744
+            // ==========================================
+            else if (tipo === "renuncia") {
+                const empleado = f("f-empleado");
+                const dni = f("f-empleado-dni");
+                const empleador = f("f-empleador");
+                const cuit = f("f-cuit-empresa");
+                const fechaBaja = f("f-fecha-baja");
+
+                escribir("TELEGRAMA COLABORADOR - RENUNCIA LABORAL", true, 11);
+                y += 2;
+                escribir("DESTINATARIO: " + empleador + " (CUIT: " + cuit + ")");
+                y += 2;
+                escribir("Por medio de la presente, comunico formal y fehacientemente a Ud./s que renuncio de manera voluntaria e irrevocable al puesto de trabajo que venía desempeñando en su empresa, operando la efectiva extinción del vínculo laboral a partir del día " + fechaBaja + ", todo ello en los estrictos términos del Artículo 240 de la Ley de Contrato de Trabajo N° 20.744.");
+                y += 3;
+                escribir("Asimismo, intimo a la patronal a proceder a la inmediata confección y entrega de los certificados de trabajo y aportes de seguridad social previstos en el Artículo 80 de la LCT, así como a realizar la correspondiente liquidación final de haberes indemnizatorios proporcionales dentro de los plazos legales.", false);
+                escribir("Remitente: " + empleado + " - DNI N° " + dni, false);
+            }
+            // ==========================================
+            // MODELO F) RECIBO EMPLEADA CASAS PARTICULARES
+            // ==========================================
+            else if (tipo === "empleada") {
+                const empleador = f("f-empleador");
+                const empleada = f("f-empleada");
+                const cuil = f("f-cuil-empleada");
+                const monto = f("f-monto");
+                const categoria = f("f-categoria");
+
+                escribir("RECIBO DE HABIERES - CASAS PARTICULARES (LEY 26.844)", true, 11);
+                y += 2;
+                escribir("EMPLEADOR/A: " + empleador);
+                escribir("TRABAJADOR/A: " + empleada + " - CUIL: " + cuil);
+                escribir("CATEGORÍA LABORAL: " + categoria);
+                y += 2;
+                escribir("Recibí de la parte empleadora la cantidad neta de PESOS ($" + monto + ") en concepto de pago integro de remuneraciones mensuales correspondientes al periodo devengado, con más los aportes y contribuciones de ley previstos por el régimen especial de casas particulares.");
+                y += 3;
+                escribir("Se extiende el presente duplicado de recibo oficial en los términos y con las formalidades legales exigidas por AFIP y el Ministerio de Trabajo.", false);
             }
 
             // MARCA DE AGUA SI NO ES PREMIUM
             if (!isPremium()) {
                 doc.setFontSize(30);
                 doc.setTextColor(220, 38, 38);
-                doc.setGState(new doc.GState({ opacity: 0.2 }));
-                doc.text("BORRADOR - PAPELESYA", 105, 150, { align: "center", angle: 35 });
+                doc.setGState(new doc.GState({ opacity: 0.15 }));
+                doc.text("BORRADOR - PAPELESYA", 105, 140, { align: "center", angle: 35 });
                 doc.setGState(new doc.GState({ opacity: 1.0 }));
             }
 
-            // INSERTAR FIRMAS DIGITALES DESDE CANVAS
+            // ==========================================
+            // BLOQUE DE FIRMAS DIGITALES DACTILARES
+            // ==========================================
+            y += 10;
+            if (y > 240) {
+                doc.addPage();
+                y = 30;
+            }
+
             if (sigPad1 && !sigPad1.isEmpty()) {
                 const imgData1 = sigPad1.toDataURL();
-                doc.addImage(imgData1, 'PNG', 20, 230, 60, 25);
+                doc.addImage(imgData1, 'PNG', 25, y, 65, 25);
                 doc.setFontSize(8);
                 doc.setTextColor(50);
-                doc.text("Firmado digitalmente - Parte A", 20, 258);
+                doc.text("Firma Parte A / Locador / Vendedor", 25, y + 29);
             }
 
             if (sigPad2 && !sigPad2.isEmpty() && document.getElementById("box-firma-2").style.display !== "none") {
                 const imgData2 = sigPad2.toDataURL();
-                doc.addImage(imgData2, 'PNG', 120, 230, 60, 25);
+                doc.addImage(imgData2, 'PNG', 120, y, 65, 25);
                 doc.setFontSize(8);
                 doc.setTextColor(50);
-                doc.text("Firmado digitalmente - Parte B", 120, 258);
+                doc.text("Firma Parte B / Locatario / Comprador", 120, y + 29);
             }
 
-            // FOOTER CON VALIDEZ LEGAL
-            doc.setFontSize(7);
-            doc.setTextColor(120);
-            doc.text("Firmado digitalmente en el marco del Art. 287 CCCN y Ley 25.506 - PapelesYA Tres Arroyos", 105, 285, { align: "center" });
+            // FOOTER LEGAL FINAL EN ÚLTIMA PÁGINA
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFont("Helvetica", "italic");
+                doc.setFontSize(7);
+                doc.setTextColor(120);
+                doc.text(`Página ${i} de ${pageCount} | Documento generado por PapelesYA Tres Arroyos - Validez legal Art 287 CCCN / Ley 25.506`, 105, 288, { align: "center" });
+            }
 
             // DESCARGA DIRECTA REAL EN CLIENTE
-            const nombreArchivo = `PapelesYA-${tipo}-${Date.now()}.pdf`;
+            const nombreArchivo = `PapelesYA-${tipo}-LIBRERIA-${Date.now()}.pdf`;
             doc.save(nombreArchivo);
         }
 
@@ -1094,7 +1182,6 @@
 
             let historial = JSON.parse(localStorage.getItem("papeles360_historial") || "[]");
             
-            // Si ya existe el mes actual, lo actualizamos; sino lo agregamos
             const idx = historial.findIndex(h => h.mes === mesActual);
             if (idx >= 0) {
                 historial[idx] = { mes: mesActual, ingresos, gastos };
@@ -1102,7 +1189,6 @@
                 historial.push({ mes: mesActual, ingresos, gastos });
             }
 
-            // Mantener solo los últimos 6 meses
             if (historial.length > 6) {
                 historial = historial.slice(historial.length - 6);
             }
@@ -1117,13 +1203,11 @@
             if (!canvas) return;
             const ctx = canvas.getContext("2d");
 
-            // Ajustar tamaño real del canvas para nitidez en pantalla
             canvas.width = canvas.parentElement.offsetWidth || 350;
             canvas.height = 170;
 
             let historial = JSON.parse(localStorage.getItem("papeles360_historial") || "[]");
             
-            // Si no hay historial, generamos datos de ejemplo para los últimos meses
             if (historial.length === 0) {
                 const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
                 const d = new Date();
@@ -1137,21 +1221,18 @@
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Dimensiones de dibujo
             const paddingX = 35;
             const paddingY = 25;
             const chartW = canvas.width - (paddingX * 2);
             const chartH = canvas.height - (paddingY * 2) - 15;
 
-            // Encontrar valor máximo para escalar
             let maxVal = 100000;
             historial.forEach(h => {
                 if (h.ingresos > maxVal) maxVal = h.ingresos;
                 if (h.gastos > maxVal) maxVal = h.gastos;
             });
-            maxVal = maxVal * 1.15; // Margen superior
+            maxVal = maxVal * 1.15;
 
-            // Dibujar leyenda superior
             ctx.font = "bold 10px sans-serif";
             ctx.fillStyle = "#00C851";
             ctx.fillRect(canvas.width - 130, 8, 8, 8);
@@ -1163,7 +1244,6 @@
             ctx.fillStyle = "#374151";
             ctx.fillText("Gastos", canvas.width - 53, 15);
 
-            // Dibujar líneas de grilla horizontales de referencia
             ctx.strokeStyle = "#E5E7EB";
             ctx.lineWidth = 1;
             for (let i = 0; i <= 3; i++) {
@@ -1173,7 +1253,6 @@
                 ctx.lineTo(canvas.width - paddingX, yPos);
                 ctx.stroke();
 
-                // Valor en eje Y
                 let valLabel = Math.round(maxVal - (maxVal / 3) * i);
                 ctx.fillStyle = "#9CA3AF";
                 ctx.font = "9px sans-serif";
@@ -1186,8 +1265,6 @@
 
             historial.forEach((h, i) => {
                 const centerX = paddingX + (i * colWidth) + (colWidth / 2);
-                
-                // Altura de barras
                 const hIngresos = (h.ingresos / maxVal) * chartH;
                 const hGastos = (h.gastos / maxVal) * chartH;
 
@@ -1195,19 +1272,16 @@
                 const xGastos = centerX + 2;
                 const yBase = paddingY + chartH;
 
-                // Barra Ingresos (Verde)
                 ctx.fillStyle = "#00C851";
                 ctx.beginPath();
                 ctx.roundRect(xIngresos, yBase - hIngresos, barWidth, hIngresos, [4, 4, 0, 0]);
                 ctx.fill();
 
-                // Barra Gastos (Rojo)
                 ctx.fillStyle = "#EF4444";
                 ctx.beginPath();
                 ctx.roundRect(xGastos, yBase - hGastos, barWidth, hGastos, [4, 4, 0, 0]);
                 ctx.fill();
 
-                // Etiqueta Mes Eje X
                 ctx.fillStyle = "#4B5563";
                 ctx.font = "bold 10px sans-serif";
                 ctx.textAlign = "center";
