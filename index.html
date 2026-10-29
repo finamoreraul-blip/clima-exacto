@@ -89,19 +89,19 @@
     <!-- CONTENEDOR PRINCIPAL -->
     <main class="max-w-md mx-auto w-full p-4 flex-1 space-y-4">
 
-        <!-- BANNER DE RACHA Y PUNTOS -->
-        <div class="bg-gradient-to-r from-emerald-600 to-brand-500 rounded-2xl p-4 text-white shadow-lg flex justify-between items-center">
-            <div>
-                <div class="flex items-center space-x-2 text-yellow-300 font-bold">
-                    <i class="fa-solid fa-fire text-lg"></i>
-                    <span id="txt-racha" class="text-sm">Racha 0 días</span>
+        <!-- BANNER DE RACHA Y PUNTOS (VERTICAL NO CORTADO) -->
+        <div class="bg-gradient-to-r from-emerald-600 to-brand-500 rounded-2xl p-4 text-white shadow-lg flex flex-col space-y-2">
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="flex items-center space-x-2 text-yellow-300 font-bold">
+                        <i class="fa-solid fa-fire"></i>
+                        <span id="txt-racha">Racha 0 días</span>
+                    </div>
+                    <div id="txt-puntos" class="text-xs">Puntos: 0</div>
                 </div>
-                <div id="txt-puntos" class="text-xs text-white/90 mt-0.5">Puntos: 0</div>
             </div>
-            <div class="text-right">
-                <span id="txt-sorteo" class="text-xs bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full font-semibold border border-white/30">
-                    Faltan 200 pts para el sorteo de $100.000
-                </span>
+            <div id="txt-sorteo" class="w-full text-center text-xs bg-white/20 px-3 py-2 rounded-full font-semibold border border-white/30 whitespace-normal break-words leading-tight">
+                Faltan 200 pts para el sorteo de $100.000
             </div>
         </div>
 
@@ -165,6 +165,19 @@
                     <div class="flex justify-between text-xs text-gray-500 font-semibold">
                         <span>Costo Real Diario (Gastos/30):</span>
                         <span id="lbl-costo-diario-total" class="text-brand-600 font-bold">$19.666 / día</span>
+                    </div>
+                    <!-- NUEVAS LÍNEAS DE CÁLCULO POR DÍA -->
+                    <div class="flex justify-between text-xs font-bold mt-1">
+                      <span>💸 Gastás por día:</span>
+                      <span id="lbl-gasto-dia" class="text-red-600">$0 / día</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-bold">
+                      <span>💰 Ganás por día:</span>
+                      <span id="lbl-ganancia-dia" class="text-emerald-600">$0 / día</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-black mt-1 pt-1 border-t border-gray-200">
+                      <span>✅ Te queda por día:</span>
+                      <span id="lbl-neto-dia" class="text-brand-600">$0 / día</span>
                     </div>
                 </div>
             </div>
@@ -512,7 +525,7 @@
             if (num === 2 && sigPad2) sigPad2.clear();
         }
 
-        // 1. MI ECONOMÍA DIARIA
+        // 1. MI ECONOMÍA DIARIA (CON CÁLCULO DIARIO DETALLADO)
         function calcularEconomia() {
             const sueldo = parseFloat(document.getElementById("inp-sueldo").value) || 0;
             const extras = parseFloat(document.getElementById("inp-extras").value) || 0;
@@ -532,6 +545,21 @@
             document.getElementById("lbl-total-ingresos").innerText = totalIngresos.toLocaleString("es-AR");
             document.getElementById("lbl-total-gastos").innerText = "$" + totalGastos.toLocaleString("es-AR");
             document.getElementById("lbl-costo-diario-total").innerText = "$" + Math.round(costoDiario).toLocaleString("es-AR") + " / día";
+
+            // Cálculos diarios solicitados
+            const ingresoDiario = totalIngresos / 30;
+            const gastoDiario = totalGastos / 30;
+            const netoDiario = ingresoDiario - gastoDiario;
+            document.getElementById("lbl-gasto-dia").innerText = "$" + Math.round(gastoDiario).toLocaleString("es-AR") + " / día";
+            document.getElementById("lbl-ganancia-dia").innerText = "$" + Math.round(ingresoDiario).toLocaleString("es-AR") + " / día";
+            
+            const elNeto = document.getElementById("lbl-neto-dia");
+            elNeto.innerText = "$" + Math.round(netoDiario).toLocaleString("es-AR") + " / día";
+            if (netoDiario < 0) {
+                elNeto.className = "text-red-600";
+            } else {
+                elNeto.className = "text-brand-600";
+            }
 
             const semaforo = document.getElementById("card-semaforo");
             const estado = document.getElementById("txt-semaforo-estado");
@@ -565,20 +593,33 @@
             document.getElementById("res-nafta-ldia").innerText = litrosDia.toFixed(2);
         }
 
+        // CONTROL LÍMITE 20 PUNTOS POR DÍA
         function guardarGastoDia() {
             const comida = parseFloat(document.getElementById("d-comida").value) || 0;
             const naftaMonto = parseFloat(document.getElementById("d-nafta-monto").value) || 0;
             const colectivo = parseFloat(document.getElementById("d-colectivo").value) || 0;
             const otros = parseFloat(document.getElementById("d-otros").value) || 0;
 
-            const totalHoy = comida + naftaMonto + colectivo + otros;
+            const totalHoyGasto = comida + naftaMonto + colectivo + otros;
+
+            const hoyStr = new Date().toDateString();
+            const fechaGuardada = localStorage.getItem("papeles360_puntos_hoy_fecha");
+            let puntosHoyTotal = parseInt(localStorage.getItem("papeles360_puntos_hoy_total") || "0");
+
+            if (fechaGuardada !== hoyStr) {
+                puntosHoyTotal = 0;
+                localStorage.setItem("papeles360_puntos_hoy_fecha", hoyStr);
+            }
+
+            if (puntosHoyTotal >= 20) {
+                alert("Ya conseguiste 20 pts hoy, volvé mañana para el sorteo de $100.000");
+                return;
+            }
 
             // PUNTOS Y RACHA
             let puntos = parseInt(localStorage.getItem("papeles360_puntos") || "0");
             let racha = parseInt(localStorage.getItem("papeles360_racha") || "0");
             const ultimaEntrada = localStorage.getItem("papeles360_ultima_entrada");
-
-            const hoyStr = new Date().toDateString();
             const ayerStr = new Date(Date.now() - 86400000).toDateString();
 
             if (ultimaEntrada === ayerStr) {
@@ -587,23 +628,29 @@
                 racha = 1;
             }
 
-            puntos += (racha * 10) + 10;
-            if (racha === 7) puntos += 100;
+            let puntosGanados = (racha * 10) + 10;
+            if (puntosHoyTotal + puntosGanados > 20) {
+                puntosGanados = 20 - puntosHoyTotal;
+            }
+
+            puntos += puntosGanados;
+            puntosHoyTotal += puntosGanados;
 
             localStorage.setItem("papeles360_puntos", puntos.toString());
             localStorage.setItem("papeles360_racha", racha.toString());
             localStorage.setItem("papeles360_ultima_entrada", hoyStr);
+            localStorage.setItem("papeles360_puntos_hoy_total", puntosHoyTotal.toString());
 
             // ENVÍO A GOOGLE SHEETS
             fetch(GOOGLE_SHEETS_URL, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ fecha: new Date().toISOString(), totalHoy, comida, naftaMonto, colectivo, otros })
+                body: JSON.stringify({ fecha: new Date().toISOString(), totalHoy: totalHoyGasto, comida, naftaMonto, colectivo, otros })
             }).catch(e => console.log(e));
 
             actualizarPuntosUI();
-            alert(`¡Gasto de $${totalHoy} guardado con éxito! +${(racha*10)+10} puntos ganados.`);
+            alert(`¡Gasto de $${totalHoyGasto} guardado con éxito! +${puntosGanados} puntos ganados.`);
             
             document.getElementById("d-comida").value = "";
             document.getElementById("d-nafta-monto").value = "";
@@ -614,14 +661,15 @@
         function actualizarPuntosUI() {
             const puntos = parseInt(localStorage.getItem("papeles360_puntos") || "0");
             const racha = parseInt(localStorage.getItem("papeles360_racha") || "0");
+            const puntosHoy = parseInt(localStorage.getItem("papeles360_puntos_hoy_total") || "0");
 
             document.getElementById("txt-racha").innerText = `Racha ${racha} días`;
-            document.getElementById("txt-puntos").innerText = `Puntos: ${puntos}`;
+            document.getElementById("txt-puntos").innerText = `Puntos: ${puntos} (Hoy: ${puntosHoy}/20)`;
 
             const lblSorteo = document.getElementById("txt-sorteo");
             if (puntos >= 200) {
                 lblSorteo.innerText = "🎉 ¡Ya estás en el sorteo de $100.000 de este mes!";
-                lblSorteo.className = "text-xs bg-yellow-400 text-gray-900 font-bold px-3 py-1.5 rounded-full shadow";
+                lblSorteo.className = "w-full text-center text-xs bg-yellow-400 text-gray-900 font-bold px-3 py-2 rounded-full shadow whitespace-normal break-words leading-tight";
             } else {
                 lblSorteo.innerText = `Faltan ${200 - puntos} pts para el sorteo de $100.000`;
             }
@@ -792,17 +840,14 @@
             const tipo = document.getElementById("sel-tipo-papel").value;
             const fechaLarga = new Date().toLocaleDateString("es-AR", { day: 'numeric', month: 'long', year: 'numeric' });
 
-            // Helper de valores con formato o línea punteada
             const f = (id) => document.getElementById(id)?.value || "..................................................";
 
-            // Configuración tipográfica obligatoria (Helvetica 9pt, interlineado 4.2)
             doc.setFont("Helvetica", "normal");
             doc.setFontSize(9);
             const lineHeight = 4.2;
 
             let y = 18;
 
-            // Función interna de escritura con salto de página automático y ancho 185
             const escribir = (texto, esNegrita = false, fontSize = 9) => {
                 doc.setFont("Helvetica", esNegrita ? "bold" : "normal");
                 doc.setFontSize(fontSize);
@@ -810,16 +855,14 @@
                 
                 lineas.forEach(linea => {
                     if (y > 272) {
-                        // Footer en página anterior
                         doc.setFont("Helvetica", "italic");
                         doc.setFontSize(7);
                         doc.setTextColor(100);
                         doc.text("PAPELESYA - Validez Legal - Art 287 CCCN / Ley 25.506", 105, 288, { align: "center" });
                         
                         doc.addPage();
-                        y = 18; // Margen superior nueva página
+                        y = 18;
                         
-                        // Encabezado de continuación
                         doc.setFont("Helvetica", "bold");
                         doc.setFontSize(9);
                         doc.setTextColor(0, 150, 60);
@@ -834,7 +877,6 @@
                 });
             };
 
-            // Encabezado inicial Página 1
             doc.setFont("Helvetica", "bold");
             doc.setFontSize(11);
             doc.setTextColor(0, 150, 60);
