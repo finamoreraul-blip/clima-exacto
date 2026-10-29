@@ -96,8 +96,8 @@
     <main class="max-w-md md:max-w-4xl mx-auto px-3 md:px-6 w-full p-4 flex-1 space-y-4">
 
         <!-- BANNER DE RACHA Y PUNTOS RESPONSIVE VERTICAL -->
-        <div class="w-full bg-gradient-to-r from-emerald-600 to-brand-500 rounded-2xl p-4 text-white shadow-lg">
-            <div class="flex justify-between items-center mb-2">
+        <div class="w-full bg-gradient-to-r from-emerald-600 to-brand-500 rounded-2xl p-4 text-white shadow-lg space-y-2">
+            <div class="flex justify-between items-center mb-1">
                 <div class="flex items-center gap-2">
                     <span class="text-yellow-300 text-lg">🔥</span>
                     <span id="txt-racha" class="font-bold text-sm md:text-base">Racha 0 días</span>
@@ -106,6 +106,10 @@
             </div>
             <div id="txt-sorteo" class="w-full text-center text-xs md:text-sm bg-white/20 px-3 py-2.5 rounded-full font-semibold border border-white/30 whitespace-normal break-words leading-snug">
                 Faltan 200 pts para el sorteo de $100.000
+            </div>
+            <!-- BANNER VIP ESTADO -->
+            <div id="banner-vip" class="bg-gray-800 text-white p-3 rounded-xl font-bold text-center text-sm">
+                🔒 Gratis: Te queda 1 papel con marca de agua
             </div>
         </div>
 
@@ -292,6 +296,12 @@
                     <!-- Se renderiza por JS -->
                 </div>
 
+                <!-- CAMPO EMAIL PARA NOTIFICAR PAGO -->
+                <div class="pt-2">
+                    <label class="text-xs font-bold text-gray-600">Email de Contacto (Para verificar pago)</label>
+                    <input type="email" id="f-email" placeholder="tucorreo@gmail.com" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl mt-1">
+                </div>
+
                 <!-- SECCIÓN DE FIRMAS DIGITALES DACTILARES -->
                 <div class="border-t pt-4 space-y-4">
                     <h3 class="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide">Firmas Digitales (Firma con el dedo)</h3>
@@ -366,7 +376,15 @@
                     <span class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold">PRIVADO</span>
                 </div>
 
-                <!-- SECCIÓN 1: HABILITAR VIP MANUAL -->
+                <!-- SECCIÓN 1: SOLICITUDES PENDIENTES -->
+                <div class="bg-gray-800 p-4 rounded-xl space-y-3 border border-gray-700">
+                    <h3 class="text-xs md:text-sm font-bold text-white">⏳ Solicitudes VIP Pendientes de Pago</h3>
+                    <div id="tabla-pendientes-admin" class="text-xs space-y-2 max-h-40 overflow-y-auto">
+                        <!-- JS Dynamic list -->
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 2: HABILITAR VIP MANUAL -->
                 <div class="bg-gray-800 p-4 rounded-xl space-y-3 border border-gray-700">
                     <h3 class="text-xs md:text-sm font-bold text-white">🔑 HABILITAR VIP MANUAL</h3>
                     <div class="space-y-3">
@@ -380,7 +398,7 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN 2: TABLA DE VIP MANUALES -->
+                <!-- SECCIÓN 3: TABLA DE VIP MANUALES -->
                 <div class="bg-gray-800 p-4 rounded-xl space-y-3 border border-gray-700">
                     <h3 class="text-xs md:text-sm font-bold text-white">📋 Usuarios VIP Activos</h3>
                     <div id="tabla-vips-activos" class="text-xs space-y-2 max-h-40 overflow-y-auto">
@@ -388,7 +406,7 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN 3: SORTEADOR DE PUNTOS -->
+                <!-- SECCIÓN 4: SORTEADOR DE PUNTOS -->
                 <div class="bg-gray-800 p-4 rounded-xl space-y-3 border border-gray-700">
                     <h3 class="text-xs md:text-sm font-bold text-white">🎰 Sorteo de Puntos (>200 pts)</h3>
                     <button onclick="realizarSorteo()" class="w-full h-12 bg-yellow-500 text-gray-900 font-black rounded-xl text-sm hover:bg-yellow-400">
@@ -416,7 +434,7 @@
             </div>
 
             <div class="space-y-1">
-                <h3 class="text-lg md:text-xl font-black text-gray-800">Límite Gratuito Alcanzado</h3>
+                <h3 id="txt-modal-estado" class="text-lg md:text-xl font-black text-gray-800">Límite Gratuito Alcanzado</h3>
                 <p class="text-xs md:text-sm text-gray-500 whitespace-normal break-words">Ya generaste tu primer documento gratuito. Para continuar descargando sin marca de agua, elegí una opción:</p>
             </div>
 
@@ -429,9 +447,9 @@
                         <span class="font-black text-brand-600 text-base">$9.900<span class="text-[10px] text-gray-500">/mes</span></span>
                     </div>
                     <p class="text-xs text-gray-600 mt-1 whitespace-normal break-words">Se cobra de forma automática cada mes. Podés cancelarlo cuando quieras desde tu cuenta de Mercado Pago.</p>
-                    <a href="https://mpago.la/14ksePv" target="_blank" onclick="simularPagoExitoso(30)" class="w-full h-12 mt-3 flex items-center justify-center text-center bg-brand-500 text-white font-bold text-sm rounded-xl hover:bg-brand-600 shadow">
+                    <button onclick="solicitarVIP('suscripcion')" class="w-full h-12 mt-3 flex items-center justify-center text-center bg-brand-500 text-white font-bold text-sm rounded-xl hover:bg-brand-600 shadow">
                         Suscribirme por $9.900/mes
-                    </a>
+                    </button>
                 </div>
 
                 <!-- CARD OPTION 2: 1 PAPEL -->
@@ -441,14 +459,14 @@
                         <span class="font-bold text-gray-700 text-sm">$4.900</span>
                     </div>
                     <p class="text-xs text-gray-500 mt-1 whitespace-normal break-words">Pago único. Genera este documento puntual sin marca de agua.</p>
-                    <a href="https://mpago.la/1NV4VPd" target="_blank" onclick="simularPagoExitoso(1)" class="w-full h-12 mt-3 flex items-center justify-center text-center bg-gray-800 text-white font-bold text-sm rounded-xl hover:bg-gray-900">
+                    <button onclick="solicitarVIP('unico')" class="w-full h-12 mt-3 flex items-center justify-center text-center bg-gray-800 text-white font-bold text-sm rounded-xl hover:bg-gray-900">
                         Pagar $4.900 único
-                    </a>
+                    </button>
                 </div>
             </div>
 
             <div class="text-[11px] text-gray-400 whitespace-normal break-words">
-                Al completar el pago en Mercado Pago, se acreditará automáticamente en tu dispositivo.
+                Al completar el pago en Mercado Pago, se acreditará automáticamente tras la verificación del admin.
             </div>
         </div>
     </div>
@@ -470,7 +488,7 @@
             renderAlquileres();
             cargarHistorialGrafico();
             checkAdminHash();
-            checkPremiumStatusUI();
+            actualizarUI_VIP();
             actualizarPuntosUI();
         });
 
@@ -482,6 +500,7 @@
             if (window.location.hash === "#admin-tresarroyos-2026") {
                 adminSec.classList.remove("hidden");
                 renderTablaVipsAdmin();
+                renderPendientesAdmin();
             } else {
                 adminSec.classList.add("hidden");
             }
@@ -796,298 +815,332 @@
             container.innerHTML = html;
         }
 
-        // LÓGICA DE CHECK PREMIUM
-        function isPremium() {
-            const hasta = localStorage.getItem("papeles360_premium_hasta");
-            if (hasta && parseInt(hasta) > Date.now()) return true;
-
-            const vips = JSON.parse(localStorage.getItem("papeles360_vip_manual") || "[]");
-            const userIdent = localStorage.getItem("papeles360_user_ident") || "";
-            if (userIdent) {
-                const match = vips.find(v => v.ident === userIdent && v.hasta > Date.now());
-                if (match) return true;
-            }
-            return false;
-        }
-
-        function checkPremiumStatusUI() {
-            const badge = document.getElementById("badge-status");
-            if (isPremium()) {
+        // LÓGICA DE UI VIP Y ESTADOS
+        function actualizarUI_VIP(){
+          const status = localStorage.getItem('papeles360_vip_status') || 'gratis';
+          const banner = document.getElementById('banner-vip');
+          const badge = document.getElementById('badge-status');
+          if(!banner) return;
+          
+          if(status === 'activo'){
+            banner.innerHTML = '✅ VIP ACTIVO - Papeles ilimitados sin marca';
+            banner.className = 'bg-emerald-600 text-white p-3 rounded-xl font-bold text-center text-sm';
+            if(badge) {
                 badge.innerText = "PREMIUM VIP";
                 badge.className = "text-xs md:text-sm bg-yellow-300 text-yellow-900 font-black px-3 py-1 rounded-full shadow-sm";
-            } else {
+            }
+          } else if(status === 'pendiente'){
+            banner.innerHTML = '⏳ VIP EN ESPERA - Estamos verificando tu pago de MP';
+            banner.className = 'bg-yellow-400 text-black p-3 rounded-xl font-bold text-center text-sm animate-pulse';
+            if(badge) {
+                badge.innerText = "EN ESPERA";
+                badge.className = "text-xs md:text-sm bg-yellow-400 text-gray-900 font-bold px-3 py-1 rounded-full shadow-sm";
+            }
+          } else {
+            const usos = localStorage.getItem('papeles360_usos') || 0;
+            banner.innerHTML = usos == 0 ? '🔒 Gratis: Te queda 1 papel con marca de agua' : '🔒 Gratis agotado - Pagá para seguir';
+            banner.className = 'bg-gray-800 text-white p-3 rounded-xl font-bold text-center text-sm';
+            if(badge) {
                 badge.innerText = "GRATIS";
                 badge.className = "text-xs md:text-sm bg-white text-brand-700 font-bold px-3 py-1 rounded-full shadow-sm";
             }
+          }
         }
 
-        // CONTROL DE GENERACIÓN CON DESCARGA DIRECTA (doc.save)
+        function solicitarVIP(tipo){
+          localStorage.setItem('papeles360_vip_status','pendiente');
+          localStorage.setItem('papeles360_vip_tipo',tipo);
+          localStorage.setItem('papeles360_vip_fecha_solicitud', new Date().toISOString());
+          localStorage.setItem('papeles360_vip_email', document.getElementById('f-email')?.value || prompt('Dejá tu email para avisarte') || 'sin email');
+          alert('Solicitud enviada. Quedás en ESPERA hasta que verifiquemos tu pago en Mercado Pago. Panel admin: #admin-tresarroyos-2026');
+          window.open(tipo==='unico' ? 'https://mpago.la/1NV4VPd' : 'https://mpago.la/14ksePv', '_blank');
+          actualizarUI_VIP();
+          document.getElementById('modal-pago')?.classList.add('hidden');
+        }
+
+        // CONTROL DE GENERACIÓN CON BLOQUEO DURO Y DESCARGA DIRECTA
         function ejecutarGeneracionPDF() {
-            const yaUsoGratis = localStorage.getItem("papeles360_usado_gratis") === "true";
-
-            if (!isPremium() && yaUsoGratis) {
-                document.getElementById("modal-pago").classList.remove("hidden");
-                return;
-            }
-
             generarPDFReal();
-
-            if (!isPremium()) {
-                localStorage.setItem("papeles360_usado_gratis", "true");
-            }
         }
 
         // ==========================================
         // FUNCIÓN GENERAR PDF REAL (LIBRERÍA JURÍDICA 2-3 PÁGS)
         // ==========================================
-        function generarPDFReal() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            const tipo = document.getElementById("sel-tipo-papel").value;
-            const fechaLarga = new Date().toLocaleDateString("es-AR", { day: 'numeric', month: 'long', year: 'numeric' });
-
-            const f = (id) => document.getElementById(id)?.value || "..................................................";
-
-            doc.setFont("Helvetica", "normal");
-            doc.setFontSize(9);
-            const lineHeight = 4.2;
-
-            let y = 18;
-
-            const escribir = (texto, esNegrita = false, fontSize = 9) => {
-                doc.setFont("Helvetica", esNegrita ? "bold" : "normal");
-                doc.setFontSize(fontSize);
-                const lineas = doc.splitTextToSize(texto, 185);
-                
-                lineas.forEach(linea => {
-                    if (y > 272) {
-                        doc.setFont("Helvetica", "italic");
-                        doc.setFontSize(7);
-                        doc.setTextColor(100);
-                        doc.text("PAPELESYA - Validez Legal - Art 287 CCCN / Ley 25.506", 105, 288, { align: "center" });
-                        
-                        doc.addPage();
-                        y = 18;
-                        
-                        doc.setFont("Helvetica", "bold");
-                        doc.setFontSize(9);
-                        doc.setTextColor(0, 150, 60);
-                        doc.text("PAPELESYA - INSTRUMENTO PRIVADO (Continuación)", 15, y);
-                        y += 8;
-                        doc.setFont("Helvetica", "normal");
-                        doc.setFontSize(9);
-                        doc.setTextColor(0);
-                    }
-                    doc.text(linea, 15, y);
-                    y += lineHeight;
-                });
-            };
-
-            doc.setFont("Helvetica", "bold");
-            doc.setFontSize(11);
-            doc.setTextColor(0, 150, 60);
-            doc.text("PAPELESYA - INSTRUMENTO PRIVADO", 15, y);
-            y += 5;
-            doc.setFont("Helvetica", "normal");
-            doc.setFontSize(8);
-            doc.setTextColor(100);
-            doc.text(`Fecha de emisión: ${fechaLarga} | Jurisdicción: Tres Arroyos, Bs. As.`, 15, y);
-            y += 8;
-            doc.setLineWidth(0.4);
-            doc.setDrawColor(0, 200, 81);
-            doc.line(15, y, 200, y);
-            y += 8;
-            doc.setTextColor(0);
-
-            // ==========================================
-            // MODELO A) CONTRATO ALQUILER (12 CLÁUSULAS LARGAS)
-            // ==========================================
-            if (tipo === "alquiler") {
-                const locador = f("f-locador");
-                const locadorDni = f("f-locador-dni");
-                const locatario = f("f-locatario");
-                const locatarioDni = f("f-locatario-dni");
-                const fiador = f("f-fiador");
-                const fiadorDni = f("f-fiador-dni");
-                const direccion = f("f-direccion");
-                const monto = f("f-monto");
-                const ajuste = f("f-ajuste");
-                const mesesAjuste = f("f-meses-ajuste");
-
-                escribir("CONTRATO DE LOCACIÓN DE VIVIENDA PERMANENTE", true, 11);
-                y += 2;
-                escribir(`Entre el/la señor/a ${locador}, DNI/CUIT N° ${locadorDni}, con domicilio en ${f("f-locador")}, en adelante denominado/a "EL LOCADOR", por una parte; y por la otra el/la señor/a ${locatario}, DNI N° ${locatarioDni}, en adelante denominado/a "EL LOCATARIO"; y el/la señor/a ${fiador}, DNI/CUIT N° ${fiadorDni}, en adelante denominado/a "EL FIADOR" o "CODEUDOR SOLIDARIO", convienen celebrar el presente Contrato de Locación sujeto a las siguientes cláusulas y condiciones legales vigentes:`);
-                y += 3;
-
-                escribir("PRIMERA (OBJETO): EL LOCADOR da en locación al LOCATARIO, que acepta para sí, el inmueble ubicado en calle " + direccion + ", de la ciudad de Tres Arroyos, Provincia de Buenos Aires. El inmueble se entrega desocupado y en perfecto estado de conservación, limpieza y funcionamiento de sus instalaciones, obligándose el LOCATARIO a restituirlo en las mismas condiciones al finalizar el vínculo locativo.", false);
-                escribir("SEGUNDA (PLAZO): El plazo de vigencia del presente contrato se estipula en veinticuatro (24) meses corridos, obligatorios para ambas partes, comenzando a regir a partir del día de la fecha, conforme lo normado por el Código Civil y Comercial de la Nación y la legislación complementaria aplicable.", false);
-                escribir("TERCERA (PRECIO Y FORMA DE PAGO): El precio mensual de la locación se pacta libremente en la suma inicial de PESOS ($" + monto + "), pagaderos por mes adelantado del 1 al 10 de cada mes calendario mediante transferencia bancaria. El valor de los alquileres se ajustará en forma cuatrimestral utilizando el índice oficial " + ajuste + " publicado por el BCRA/INDEC, aplicado cada " + mesesAjuste + " meses.", false);
-                escribir("CUARTA (DEPÓSITO DE GARANTÍA): En garantía del fiel cumplimiento de todas las obligaciones asumidas en este contrato, el LOCATARIO entrega en este acto la suma equivalente a un mes de alquiler en concepto de depósito de garantía, el cual será devuelto al finalizar la locación previa comprobación del estado del inmueble y libre deuda de servicios.", false);
-                escribir("QUINTA (DESTINO): El inmueble alquilado será destinado única y exclusivamente a vivienda familiar permanente del LOCATARIO y su grupo conviviente declarado, estando terminantemente prohibido cambiar su destino, subalquilar total o parcialmente, ni ceder los derechos de esta locación bajo ninguna forma jurídica, conforme el art. 1208 del CCCN.", false);
-                escribir("SEXTA (CONSERVACIÓN): El LOCATARIO recibe el inmueble con todos sus cristales, herrajes, llaves, sanitarios y cañerías en óptimo estado. Serán a su exclusivo cargo todas las reparaciones menores, roturas o desperfectos que se produzcan en el inmueble durante la vigencia de la locación, debiendo mantenerlo en idénticas condiciones.", false);
-                escribir("SEPTIMA (SERVICIOS Y EXPENSAS): Son a exclusivo cargo del LOCATARIO los pagos correspondientes a los servicios de energía eléctrica (Edesur/Cooperativa), gas natural (Camuzzi), impuesto inmobiliario (ARBA), tasa municipal (ABL / Servicios Urbanos Municipalidad de Tres Arroyos) y expensas comunes ordinarias. Las expensas extraordinarias serán íntegramente soportadas por el LOCADOR.", false);
-                escribir("OCTAVA (PROHIBICIONES): Queda prohibido al LOCATARIO realizar modificaciones estructurales, pintar paredes con colores oscuros sin previa autorización escrita del LOCADOR, tener animales peligrosos que afecten la convivencia o realizar actividades que perturben la tranquilidad de los vecinos.", false);
-                escribir("NOVENA (MORA E INTERESES): La falta de pago en término de los alquileres o servicios devengará un interés punitorio diario del 10% acumulativo mensual desde el día de su vencimiento, sin necesidad de interpelación previa. La mora se producirá de pleno derecho por el solo vencimiento de los plazos. Asimismo, faculta al LOCADOR a iniciar acción judicial de desalojo por falta de pago conforme art. 1223 del CCCN.", false);
-                escribir("DECIMA (RESCISIÓN ANTICIPADA): El LOCATARIO podrá rescindir el presente contrato en cualquier momento, debiendo notificar fehacientemente al LOCADOR. Si la rescisión se comunica transcurridos los primeros seis meses de contrato, deberá abonar en concepto de indemnización el equivalente a un mes y medio (1.5) de alquiler si la opción se ejercita dentro del primer año, o de un (1) mes si se efectúa transcurrido el primer año.", false);
-                escribir("UNDECIMA (FIADOR SOLIDARIO): El/la señor/a " + fiador + " se constituye en fiador liso, llano y principal pagador, codeudor solidario de todas y cada una de las obligaciones del LOCATARIO, renunciando expresamente a los beneficios de división y excusión, subsistiendo su fianza hasta la efectiva desocupación y entrega de llaves al LOCADOR.", false);
-                escribir("DUODECIMA (JURISDICCIÓN): Para todos los efectos legales derivados del presente contrato, las partes y el fiador se someten voluntariamente a la competencia y jurisdicción de los Tribunales Ordinarios del Departamento Judicial de Tres Arroyos, Provincia de Buenos Aires, renunciando a cualquier otro fuero o excepción.", false);
+        function generarPDFReal(){
+          const statusVIP = localStorage.getItem('papeles360_vip_status');
+          const usosGratis = parseInt(localStorage.getItem('papeles360_usos') || '0');
+          
+          // SI NO ES VIP ACTIVO Y YA USÓ 1 GRATIS, BLOQUEAR SIEMPRE
+          if(statusVIP !== 'activo' && usosGratis >= 1){
+            const modal = document.getElementById('modal-pago');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            const txtModal = document.getElementById('txt-modal-estado');
+            if(txtModal) {
+                txtModal.innerText = statusVIP === 'pendiente' ? '⏳ Pago en verificación - Esperá aprobación' : '🔒 Usaste tu papel gratis';
             }
-            // ==========================================
-            // MODELO B) BOLETO AUTOMOTOR (10 CLÁUSULAS LARGAS)
-            // ==========================================
-            else if (tipo === "automotor") {
-                const vendedor = f("f-vendedor");
-                const vendedorCuit = f("f-vendedor-cuit");
-                const comprador = f("f-comprador");
-                const compradorDom = f("f-comprador-domicilio");
-                const vehiculo = f("f-vehiculo");
-                const dominio = f("f-dominio");
-                const anio = f("f-anio");
-                const motor = f("f-motor");
-                const monto = f("f-monto");
+            return; // CORTA ACA, NO GENERA PDF
+          }
 
-                escribir("BOLETO DE COMPRAVENTA DE AUTOMOTOR / MOTO", true, 11);
-                y += 2;
-                escribir(`Conste por el presente instrumento que el/la señor/a ${vendedor}, CUIT/DNI ${vendedorCuit}, en adelante "EL VENDEDOR", vende al/la señor/a ${comprador}, DNI N° ${compradorDom}, en adelante "EL COMPRADOR", el vehículo usado cuyas especificaciones se detallan a continuación, sujeto a las cláusulas siguientes:`);
-                y += 3;
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          
+          const tipo = document.getElementById("sel-tipo-papel").value;
+          const fechaLarga = new Date().toLocaleDateString("es-AR", { day: 'numeric', month: 'long', year: 'numeric' });
 
-                escribir("ESPECIFICACIONES DEL RODADO: Vehículo marca y modelo " + vehiculo + ", Dominio / Patente N° " + dominio + ", Año " + anio + ", Motor y Chasis N° " + motor + ", en el estado en que se encuentra y que el COMPRADOR declara conocer y aceptar.", false);
-                escribir("PRIMERA (VENTA): EL VENDEDOR transfiere la propiedad del rodado mencionado libre de todo gravamen, prenda, inhibición o embargo judicial.", false);
-                escribir("SEGUNDA (PRECIO Y FORMA DE PAGO): El precio total y convenido de la compraventa se fija en la suma de PESOS ($" + monto + "), pagados en efectivo en este acto, sirviendo el presente de suficiente y eficaz recibo de pago total.", false);
-                escribir("TERCERA (DOCUMENTACIÓN OBLIGATORIA): EL VENDEDOR hace entrega en este acto del Título del Automotor, Cédula de Identificación (verde/azul), Formulario 08 certificado ante Escribano Público, Formulario 12 de Verificación Policial, grabado de autopartes, libre deuda de multas e informe de dominio histórico.", false);
-                escribir("CUARTA (DEUDAS ANTERIORES): Todas las deudas por patentes, infracciones de tránsito, multas o tasas municipales devengadas con anterioridad a la fecha de entrega real y efectiva del vehículo serán exclusiva y única responsabilidad del VENDEDOR.", false);
-                escribir("QUINTA (ENTREGA MATERIAL): La entrega material y posesoria del rodado se efectúa en el día de la fecha en la ciudad de Tres Arroyos, incluyendo herramientas reglamentarias, rueda de auxilio y llaves originales.", false);
-                escribir("SEXTA (RESPONSABILIDAD CIVIL): A partir de la hora cero del día siguiente a la firma del presente boleto y entrega de llaves, el COMPRADOR asume toda la responsabilidad civil, penal y administrativa por los daños o accidentes que el vehículo pueda ocasionar, art. 1740 del CCCN.", false);
-                escribir("SEPTIMA (ARREPENTIMIENTO): Las partes pactan el carácter de seña penitencial, rigiendo el art. 1059 del CCCN respecto a penalidades por desistimiento unilateral.", false);
-                escribir("OCTAVA (EVICCIÓN): El VENDEDOR responde por saneamiento, evicción y vicios redhibitorios conforme a derecho.", false);
-                escribir("NOVENA (TRANSFERENCIA OBLIGATORIA): El COMPRADOR se obliga formalmente a iniciar y concluir el trámite de transferencia de titularidad ante el Registro Seccional de la Propiedad Automotor correspondiente dentro del plazo improrrogable de diez (10) días hábiles.", false);
-                escribir("DECIMA (JURISDICCIÓN): Para cualquier litigio judicial, las partes se someten a los Tribunales Ordinarios de Tres Arroyos, Provincia de Buenos Aires.", false);
-            }
-            // ==========================================
-            // MODELO C) RECIBO DE ALQUILER LEGAL
-            // ==========================================
-            else if (tipo === "recibo") {
-                const recibiDe = f("f-recibi-de");
-                const dni = f("f-recibi-dni");
-                const monto = f("f-monto");
-                const concepto = f("f-concepto");
-                const direccion = f("f-direccion");
+          const f = (id) => document.getElementById(id)?.value || "..................................................";
 
-                escribir("RECIBO DE PAGO DE ALQUILER Y SERVICIOS", true, 11);
-                y += 2;
-                escribir("RECIBÍ de la/el señor/a " + recibiDe + ", DNI N° " + dni + ", la suma total de PESOS ($" + monto + "), en concepto de cancelación de alquiler y obligaciones conexas correspondientes al inmueble ubicado en calle " + direccion + ".");
-                y += 3;
-                escribir("DETALLE DEL COBRO: " + concepto + ".", false);
-                escribir("El presente recibo se extiende en los términos del Art. 880 del Código Civil y Comercial de la Nación, sirviendo de suficiente y eficaz comprobante cancelatorio por los conceptos indicados, no otorgándose validez a pagos parciales que no posean constancia escrita y firmada por el locador.", false);
-                escribir("En la ciudad de Tres Arroyos, a los " + new Date().getDate() + " días del mes en curso.", false);
-            }
-            // ==========================================
-            // MODELO D) CARTA DOCUMENTO (72HS)
-            // ==========================================
-            else if (tipo === "carta") {
-                const remitente = f("f-remitente");
-                const destinatario = f("f-destinatario");
-                const direccion = f("f-direccion");
-                const motivo = f("f-motivo");
+          doc.setFont("Helvetica", "normal");
+          doc.setFontSize(9);
+          const lineHeight = 4.2;
 
-                escribir("CARTA DOCUMENTO - INTIMACIÓN FORMAL FEHACIENTE", true, 11);
-                y += 2;
-                escribir("REMITENTE: " + remitente);
-                escribir("DESTINATARIO: " + destinatario);
-                escribir("DOMICILIO: " + direccion);
-                y += 2;
-                escribir("POR MEDIO DE LA PRESENTE, en mi carácter de locador/propietario, LE INTIMO formalmente a Ud. en el plazo perentorio e improrrogable de SETENTA Y DOS (72) HORAS corridas de recibida la presente, a regularizar la siguiente situación: " + motivo + ".");
-                y += 3;
-                escribir("El incumplimiento a lo aquí intimado dentro del plazo legal acordado configurará causal de mora automática, facultándome a iniciar de inmediato las acciones judiciales de desalojo, cobro ejecutivo de alquileres atrasados y daños y perjuicios, con expresa reserva de derechos en los términos del Art. 1223 del CCCN y normativa concordante. QUEDA UD. DEBIDAMENTE NOTIFICADO E APERCIBIDO.", false);
-            }
-            // ==========================================
-            // MODELO E) TELEGRAMA RENUNCIA LEY 20.744
-            // ==========================================
-            else if (tipo === "renuncia") {
-                const empleado = f("f-empleado");
-                const dni = f("f-empleado-dni");
-                const empleador = f("f-empleador");
-                const cuit = f("f-cuit-empresa");
-                const fechaBaja = f("f-fecha-baja");
+          let y = 18;
 
-                escribir("TELEGRAMA COLABORADOR - RENUNCIA LABORAL", true, 11);
-                y += 2;
-                escribir("DESTINATARIO: " + empleador + " (CUIT: " + cuit + ")");
-                y += 2;
-                escribir("Por medio de la presente, comunico formal y fehacientemente a Ud./s que renuncio de manera voluntaria e irrevocable al puesto de trabajo que venía desempeñando en su empresa, operando la efectiva extinción del vínculo laboral a partir del día " + fechaBaja + ", todo ello en los estrictos términos del Artículo 240 de la Ley de Contrato de Trabajo N° 20.744.");
-                y += 3;
-                escribir("Asimismo, intimo a la patronal a proceder a la inmediata confección y entrega de los certificados de trabajo y aportes de seguridad social previstos en el Artículo 80 de la LCT, así como a realizar la correspondiente liquidación final de haberes indemnizatorios proporcionales dentro de los plazos legales.", false);
-                escribir("Remitente: " + empleado + " - DNI N° " + dni, false);
-            }
-            // ==========================================
-            // MODELO F) RECIBO EMPLEADA CASAS PARTICULARES
-            // ==========================================
-            else if (tipo === "empleada") {
-                const empleador = f("f-empleador");
-                const empleada = f("f-empleada");
-                const cuil = f("f-cuil-empleada");
-                const monto = f("f-monto");
-                const categoria = f("f-categoria");
+          const escribir = (texto, esNegrita = false, fontSize = 9) => {
+              doc.setFont("Helvetica", esNegrita ? "bold" : "normal");
+              doc.setFontSize(fontSize);
+              const lineas = doc.splitTextToSize(texto, 185);
+              
+              lineas.forEach(linea => {
+                  if (y > 272) {
+                      doc.setFont("Helvetica", "italic");
+                      doc.setFontSize(7);
+                      doc.setTextColor(100);
+                      doc.text("PAPELESYA - Validez Legal - Art 287 CCCN / Ley 25.506", 105, 288, { align: "center" });
+                      
+                      doc.addPage();
+                      y = 18;
+                      
+                      doc.setFont("Helvetica", "bold");
+                      doc.setFontSize(9);
+                      doc.setTextColor(0, 150, 60);
+                      doc.text("PAPELESYA - INSTRUMENTO PRIVADO (Continuación)", 15, y);
+                      y += 8;
+                      doc.setFont("Helvetica", "normal");
+                      doc.setFontSize(9);
+                      doc.setTextColor(0);
+                  }
+                  doc.text(linea, 15, y);
+                  y += lineHeight;
+              });
+          };
 
-                escribir("RECIBO DE HABIERES - CASAS PARTICULARES (LEY 26.844)", true, 11);
-                y += 2;
-                escribir("EMPLEADOR/A: " + empleador);
-                escribir("TRABAJADOR/A: " + empleada + " - CUIL: " + cuil);
-                escribir("CATEGORÍA LABORAL: " + categoria);
-                y += 2;
-                escribir("Recibí de la parte empleadora la cantidad neta de PESOS ($" + monto + ") en concepto de pago integro de remuneraciones mensuales correspondientes al periodo devengado, con más los aportes y contribuciones de ley previstos por el régimen especial de casas particulares.");
-                y += 3;
-                escribir("Se extiende el presente duplicado de recibo oficial en los términos y con las formalidades legales exigidas por AFIP y el Ministerio de Trabajo.", false);
-            }
+          doc.setFont("Helvetica", "bold");
+          doc.setFontSize(11);
+          doc.setTextColor(0, 150, 60);
+          doc.text("PAPELESYA - INSTRUMENTO PRIVADO", 15, y);
+          y += 5;
+          doc.setFont("Helvetica", "normal");
+          doc.setFontSize(8);
+          doc.setTextColor(100);
+          doc.text(`Fecha de emisión: ${fechaLarga} | Jurisdicción: Tres Arroyos, Bs. As.`, 15, y);
+          y += 8;
+          doc.setLineWidth(0.4);
+          doc.setDrawColor(0, 200, 81);
+          doc.line(15, y, 200, y);
+          y += 8;
+          doc.setTextColor(0);
 
-            // MARCA DE AGUA SI NO ES PREMIUM
-            if (!isPremium()) {
-                doc.setFontSize(30);
-                doc.setTextColor(220, 38, 38);
-                doc.setGState(new doc.GState({ opacity: 0.15 }));
-                doc.text("BORRADOR - PAPELESYA", 105, 140, { align: "center", angle: 35 });
-                doc.setGState(new doc.GState({ opacity: 1.0 }));
-            }
+          // ==========================================
+          // MODELO A) CONTRATO ALQUILER (12 CLÁUSULAS LARGAS)
+          // ==========================================
+          if (tipo === "alquiler") {
+              const locador = f("f-locador");
+              const locadorDni = f("f-locador-dni");
+              const locatario = f("f-locatario");
+              const locatarioDni = f("f-locatario-dni");
+              const fiador = f("f-fiador");
+              const fiadorDni = f("f-fiador-dni");
+              const direccion = f("f-direccion");
+              const monto = f("f-monto");
+              const ajuste = f("f-ajuste");
+              const mesesAjuste = f("f-meses-ajuste");
 
-            // ==========================================
-            // BLOQUE DE FIRMAS DIGITALES DACTILARES
-            // ==========================================
-            y += 10;
-            if (y > 240) {
-                doc.addPage();
-                y = 30;
-            }
+              escribir("CONTRATO DE LOCACIÓN DE VIVIENDA PERMANENTE", true, 11);
+              y += 2;
+              escribir(`Entre el/la señor/a ${locador}, DNI/CUIT N° ${locadorDni}, con domicilio en ${f("f-locador")}, en adelante denominado/a "EL LOCADOR", por una parte; y por la otra el/la señor/a ${locatario}, DNI N° ${locatarioDni}, en adelante denominado/a "EL LOCATARIO"; y el/la señor/a ${fiador}, DNI/CUIT N° ${fiadorDni}, en adelante denominado/a "EL FIADOR" o "CODEUDOR SOLIDARIO", convienen celebrar el presente Contrato de Locación sujeto a las siguientes cláusulas y condiciones legales vigentes:`);
+              y += 3;
 
-            if (sigPad1 && !sigPad1.isEmpty()) {
-                const imgData1 = sigPad1.toDataURL();
-                doc.addImage(imgData1, 'PNG', 25, y, 65, 25);
-                doc.setFontSize(8);
-                doc.setTextColor(50);
-                doc.text("Firma Parte A / Locador / Vendedor", 25, y + 29);
-            }
+              escribir("PRIMERA (OBJETO): EL LOCADOR da en locación al LOCATARIO, que acepta para sí, el inmueble ubicado en calle " + direccion + ", de la ciudad de Tres Arroyos, Provincia de Buenos Aires. El inmueble se entrega desocupado y en perfecto estado de conservación, limpieza y funcionamiento de sus instalaciones, obligándose el LOCATARIO a restituirlo en las mismas condiciones al finalizar el vínculo locativo.", false);
+              escribir("SEGUNDA (PLAZO): El plazo de vigencia del presente contrato se estipula en veinticuatro (24) meses corridos, obligatorios para ambas partes, comenzando a regir a partir del día de la fecha, conforme lo normado por el Código Civil y Comercial de la Nación y la legislación complementaria aplicable.", false);
+              escribir("TERCERA (PRECIO Y FORMA DE PAGO): El precio mensual de la locación se pacta libremente en la suma inicial de PESOS ($" + monto + "), pagaderos por mes adelantado del 1 al 10 de cada mes calendario mediante transferencia bancaria. El valor de los alquileres se ajustará en forma cuatrimestral utilizando el índice oficial " + ajuste + " publicado por el BCRA/INDEC, aplicado cada " + mesesAjuste + " meses.", false);
+              escribir("CUARTA (DEPÓSITO DE GARANTÍA): En garantía del fiel cumplimiento de todas las obligaciones asumidas en este contrato, el LOCATARIO entrega en este acto la suma equivalente a un mes de alquiler en concepto de depósito de garantía, el cual será devuelto al finalizar la locación previa comprobación del estado del inmueble y libre deuda de servicios.", false);
+              escribir("QUINTA (DESTINO): El inmueble alquilado será destinado única y exclusivamente a vivienda familiar permanente del LOCATARIO y su grupo conviviente declarado, estando terminantemente prohibido cambiar su destino, subalquilar total o parcialmente, ni ceder los derechos de esta locación bajo ninguna forma jurídica, conforme el art. 1208 del CCCN.", false);
+              escribir("SEXTA (CONSERVACIÓN): El LOCATARIO recibe el inmueble con todos sus cristales, herrajes, llaves, sanitarios y cañerías en óptimo estado. Serán a su exclusivo cargo todas las reparaciones menores, roturas o desperfectos que se produzcan en el inmueble durante la vigencia de la locación, debiendo mantenerlo en idénticas condiciones.", false);
+              escribir("SEPTIMA (SERVICIOS Y EXPENSAS): Son a exclusivo cargo del LOCATARIO los pagos correspondientes a los servicios de energía eléctrica (Edesur/Cooperativa), gas natural (Camuzzi), impuesto inmobiliario (ARBA), tasa municipal (ABL / Servicios Urbanos Municipalidad de Tres Arroyos) y expensas comunes ordinarias. Las expensas extraordinarias serán íntegramente soportadas por el LOCADOR.", false);
+              escribir("OCTAVA (PROHIBICIONES): Queda prohibido al LOCATARIO realizar modificaciones estructurales, pintar paredes con colores oscuros sin previa autorización escrita del LOCADOR, tener animales peligrosos que afecten la convivencia o realizar actividades que perturben la tranquilidad de los vecinos.", false);
+              escribir("NOVENA (MORA E INTERESES): La falta de pago en término de los alquileres o servicios devengará un interés punitorio diario del 10% acumulativo mensual desde el día de su vencimiento, sin necesidad de interpelación previa. La mora se producirá de pleno derecho por el solo vencimiento de los plazos. Asimismo, faculta al LOCADOR a iniciar acción judicial de desalojo por falta de pago conforme art. 1223 del CCCN.", false);
+              escribir("DECIMA (RESCISIÓN ANTICIPADA): El LOCATARIO podrá rescindir el presente contrato en cualquier momento, debiendo notificar fehacientemente al LOCADOR. Si la rescisión se comunica transcurridos los primeros seis meses de contrato, deberá abonar en concepto de indemnización el equivalente a un mes y medio (1.5) de alquiler si la opción se ejercita dentro del primer año, o de un (1) mes si se efectúa transcurrido el primer año.", false);
+              escribir("UNDECIMA (FIADOR SOLIDARIO): El/la señor/a " + fiador + " se constituye en fiador liso, llano y principal pagador, codeudor solidario de todas y cada una de las obligaciones del LOCATARIO, renunciando expresamente a los beneficios de división y excusión, subsistiendo su fianza hasta la efectiva desocupación y entrega de llaves al LOCADOR.", false);
+              escribir("DUODECIMA (JURISDICCIÓN): Para todos los efectos legales derivados del presente contrato, las partes y el fiador se someten voluntariamente a la competencia y jurisdicción de los Tribunales Ordinarios del Departamento Judicial de Tres Arroyos, Provincia de Buenos Aires, renunciando a cualquier otro fuero o excepción.", false);
+          }
+          // ==========================================
+          // MODELO B) BOLETO AUTOMOTOR (10 CLÁUSULAS LARGAS)
+          // ==========================================
+          else if (tipo === "automotor") {
+              const vendedor = f("f-vendedor");
+              const vendedorCuit = f("f-vendedor-cuit");
+              const comprador = f("f-comprador");
+              const compradorDom = f("f-comprador-domicilio");
+              const vehiculo = f("f-vehiculo");
+              const dominio = f("f-dominio");
+              const anio = f("f-anio");
+              const motor = f("f-motor");
+              const monto = f("f-monto");
 
-            if (sigPad2 && !sigPad2.isEmpty() && document.getElementById("box-firma-2").style.display !== "none") {
-                const imgData2 = sigPad2.toDataURL();
-                doc.addImage(imgData2, 'PNG', 120, y, 65, 25);
-                doc.setFontSize(8);
-                doc.setTextColor(50);
-                doc.text("Firma Parte B / Locatario / Comprador", 120, y + 29);
-            }
+              escribir("BOLETO DE COMPRAVENTA DE AUTOMOTOR / MOTO", true, 11);
+              y += 2;
+              escribir(`Conste por el presente instrumento que el/la señor/a ${vendedor}, CUIT/DNI ${vendedorCuit}, en adelante "EL VENDEDOR", vende al/la señor/a ${comprador}, DNI N° ${compradorDom}, en adelante "EL COMPRADOR", el vehículo usado cuyas especificaciones se detallan a continuación, sujeto a las cláusulas siguientes:`);
+              y += 3;
 
-            // FOOTER LEGAL FINAL EN ÚLTIMA PÁGINA
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFont("Helvetica", "italic");
-                doc.setFontSize(7);
-                doc.setTextColor(120);
-                doc.text(`Página ${i} de ${pageCount} | Documento generado por PapelesYA Tres Arroyos - Validez legal Art 287 CCCN / Ley 25.506`, 105, 288, { align: "center" });
-            }
+              escribir("ESPECIFICACIONES DEL RODADO: Vehículo marca y modelo " + vehiculo + ", Dominio / Patente N° " + dominio + ", Año " + anio + ", Motor y Chasis N° " + motor + ", en el estado en que se encuentra y que el COMPRADOR declara conocer y aceptar.", false);
+              escribir("PRIMERA (VENTA): EL VENDEDOR transfiere la propiedad del rodado mencionado libre de todo gravamen, prenda, inhibición o embargo judicial.", false);
+              escribir("SEGUNDA (PRECIO Y FORMA DE PAGO): El precio total y convenido de la compraventa se fija en la suma de PESOS ($" + monto + "), pagados en efectivo en este acto, sirviendo el presente de suficiente y eficaz recibo de pago total.", false);
+              escribir("TERCERA (DOCUMENTACIÓN OBLIGATORIA): EL VENDEDOR hace entrega en este acto del Título del Automotor, Cédula de Identificación (verde/azul), Formulario 08 certificado ante Escribano Público, Formulario 12 de Verificación Policial, grabado de autopartes, libre deuda de multas e informe de dominio histórico.", false);
+              escribir("CUARTA (DEUDAS ANTERIORES): Todas las deudas por patentes, infracciones de tránsito, multas o tasas municipales devengadas con anterioridad a la fecha de entrega real y efectiva del vehículo serán exclusiva y única responsabilidad del VENDEDOR.", false);
+              escribir("QUINTA (ENTREGA MATERIAL): La entrega material y posesoria del rodado se efectúa en el día de la fecha en la ciudad de Tres Arroyos, incluyendo herramientas reglamentarias, rueda de auxilio y llaves originales.", false);
+              escribir("SEXTA (RESPONSABILIDAD CIVIL): A partir de la hora cero del día siguiente a la firma del presente boleto y entrega de llaves, el COMPRADOR asume toda la responsabilidad civil, penal y administrativa por los daños o accidentes que el vehículo pueda ocasionar, art. 1740 del CCCN.", false);
+              escribir("SEPTIMA (ARREPENTIMIENTO): Las partes pactan el carácter de seña penitencial, rigiendo el art. 1059 del CCCN respecto a penalidades por desistimiento unilateral.", false);
+              escribir("OCTAVA (EVICCIÓN): El VENDEDOR responde por saneamiento, evicción y vicios redhibitorios conforme a derecho.", false);
+              escribir("NOVENA (TRANSFERENCIA OBLIGATORIA): El COMPRADOR se obliga formalmente a iniciar y concluir el trámite de transferencia de titularidad ante el Registro Seccional de la Propiedad Automotor correspondiente dentro del plazo improrrogable de diez (10) días hábiles.", false);
+              escribir("DECIMA (JURISDICCIÓN): Para cualquier litigio judicial, las partes se someten a los Tribunales Ordinarios de Tres Arroyos, Provincia de Buenos Aires.", false);
+          }
+          // ==========================================
+          // MODELO C) RECIBO DE ALQUILER LEGAL
+          // ==========================================
+          else if (tipo === "recibo") {
+              const recibiDe = f("f-recibi-de");
+              const dni = f("f-recibi-dni");
+              const monto = f("f-monto");
+              const concepto = f("f-concepto");
+              const direccion = f("f-direccion");
 
-            // DESCARGA DIRECTA REAL EN CLIENTE
-            const nombreArchivo = `PapelesYA-${tipo}-LIBRERIA-${Date.now()}.pdf`;
-            doc.save(nombreArchivo);
+              escribir("RECIBO DE PAGO DE ALQUILER Y SERVICIOS", true, 11);
+              y += 2;
+              escribir("RECIBÍ de la/el señor/a " + recibiDe + ", DNI N° " + dni + ", la suma total de PESOS ($" + monto + "), en concepto de cancelación de alquiler y obligaciones conexas correspondientes al inmueble ubicado en calle " + direccion + ".");
+              y += 3;
+              escribir("DETALLE DEL COBRO: " + concepto + ".", false);
+              escribir("El presente recibo se extiende en los términos del Art. 880 del Código Civil y Comercial de la Nación, sirviendo de suficiente y eficaz comprobante cancelatorio por los conceptos indicados, no otorgándose validez a pagos parciales que no posean constancia escrita y firmada por el locador.", false);
+              escribir("En la ciudad de Tres Arroyos, a los " + new Date().getDate() + " días del mes en curso.", false);
+          }
+          // ==========================================
+          // MODELO D) CARTA DOCUMENTO (72HS)
+          // ==========================================
+          else if (tipo === "carta") {
+              const remitente = f("f-remitente");
+              const destinatario = f("f-destinatario");
+              const direccion = f("f-direccion");
+              const motivo = f("f-motivo");
+
+              escribir("CARTA DOCUMENTO - INTIMACIÓN FORMAL FEHACIENTE", true, 11);
+              y += 2;
+              escribir("REMITENTE: " + remitente);
+              escribir("DESTINATARIO: " + destinatario);
+              escribir("DOMICILIO: " + direccion);
+              y += 2;
+              escribir("POR MEDIO DE LA PRESENTE, en mi carácter de locador/propietario, LE INTIMO formalmente a Ud. en el plazo perentorio e improrrogable de SETENTA Y DOS (72) HORAS corridas de recibida la presente, a regularizar la siguiente situación: " + motivo + ".");
+              y += 3;
+              escribir("El incumplimiento a lo aquí intimado dentro del plazo legal acordado configurará causal de mora automática, facultándome a iniciar de inmediato las acciones judiciales de desalojo, cobro ejecutivo de alquileres atrasados y daños y perjuicios, con expresa reserva de derechos en los términos del Art. 1223 del CCCN y normativa concordante. QUEDA UD. DEBIDAMENTE NOTIFICADO E APERCIBIDO.", false);
+          }
+          // ==========================================
+          // MODELO E) TELEGRAMA RENUNCIA LEY 20.744
+          // ==========================================
+          else if (tipo === "renuncia") {
+              const empleado = f("f-empleado");
+              const dni = f("f-empleado-dni");
+              const empleador = f("f-empleador");
+              const cuit = f("f-cuit-empresa");
+              const fechaBaja = f("f-fecha-baja");
+
+              escribir("TELEGRAMA COLABORADOR - RENUNCIA LABORAL", true, 11);
+              y += 2;
+              escribir("DESTINATARIO: " + empleador + " (CUIT: " + cuit + ")");
+              y += 2;
+              escribir("Por medio de la presente, comunico formal y fehacientemente a Ud./s que renuncio de manera voluntaria e irrevocable al puesto de trabajo que venía desempeñando en su empresa, operando la efectiva extinción del vínculo laboral a partir del día " + fechaBaja + ", todo ello en los estrictos términos del Artículo 240 de la Ley de Contrato de Trabajo N° 20.744.");
+              y += 3;
+              escribir("Asimismo, intimo a la patronal a proceder a la inmediata confección y entrega de los certificados de trabajo y aportes de seguridad social previstos en el Artículo 80 de la LCT, así como a realizar la correspondiente liquidación final de haberes indemnizatorios proporcionales dentro de los plazos legales.", false);
+              escribir("Remitente: " + empleado + " - DNI N° " + dni, false);
+          }
+          // ==========================================
+          // MODELO F) RECIBO EMPLEADA CASAS PARTICULARES
+          // ==========================================
+          else if (tipo === "empleada") {
+              const empleador = f("f-empleador");
+              const empleada = f("f-empleada");
+              const cuil = f("f-cuil-empleada");
+              const monto = f("f-monto");
+              const categoria = f("f-categoria");
+
+              escribir("RECIBO DE HABIERES - CASAS PARTICULARES (LEY 26.844)", true, 11);
+              y += 2;
+              escribir("EMPLEADOR/A: " + empleador);
+              escribir("TRABAJADOR/A: " + empleada + " - CUIL: " + cuil);
+              escribir("CATEGORÍA LABORAL: " + categoria);
+              y += 2;
+              escribir("Recibí de la parte empleadora la cantidad neta de PESOS ($" + monto + ") en concepto de pago integro de remuneraciones mensuales correspondientes al periodo devengado, con más los aportes y contribuciones de ley previstos por el régimen especial de casas particulares.");
+              y += 3;
+              escribir("Se extiende el presente duplicado de recibo oficial en los términos y con las formalidades legales exigidas por AFIP y el Ministerio de Trabajo.", false);
+          }
+
+          // MARCA DE AGUA SI NO ES PREMIUM
+          if (!isPremium()) {
+              doc.setFontSize(30);
+              doc.setTextColor(220, 38, 38);
+              doc.setGState(new doc.GState({ opacity: 0.15 }));
+              doc.text("BORRADOR - PAPELESYA", 105, 140, { align: "center", angle: 35 });
+              doc.setGState(new doc.GState({ opacity: 1.0 }));
+          }
+
+          // ==========================================
+          // BLOQUE DE FIRMAS DIGITALES DACTILARES
+          // ==========================================
+          y += 10;
+          if (y > 240) {
+              doc.addPage();
+              y = 30;
+          }
+
+          if (sigPad1 && !sigPad1.isEmpty()) {
+              const imgData1 = sigPad1.toDataURL();
+              doc.addImage(imgData1, 'PNG', 25, y, 65, 25);
+              doc.setFontSize(8);
+              doc.setTextColor(50);
+              doc.text("Firma Parte A / Locador / Vendedor", 25, y + 29);
+          }
+
+          if (sigPad2 && !sigPad2.isEmpty() && document.getElementById("box-firma-2").style.display !== "none") {
+              const imgData2 = sigPad2.toDataURL();
+              doc.addImage(imgData2, 'PNG', 120, y, 65, 25);
+              doc.setFontSize(8);
+              doc.setTextColor(50);
+              doc.text("Firma Parte B / Locatario / Comprador", 120, y + 29);
+          }
+
+          // FOOTER LEGAL FINAL EN ÚLTIMA PÁGINA
+          const pageCount = doc.internal.getNumberOfPages();
+          for (let i = 1; i <= pageCount; i++) {
+              doc.setPage(i);
+              doc.setFont("Helvetica", "italic");
+              doc.setFontSize(7);
+              doc.setTextColor(120);
+              doc.text(`Página ${i} de ${pageCount} | Documento generado por PapelesYA Tres Arroyos - Validez legal Art 287 CCCN / Ley 25.506`, 105, 288, { align: "center" });
+          }
+
+          // DESCARGA DIRECTA REAL EN CLIENTE
+          const nombreArchivo = `PapelesYA-${tipo}-LIBRERIA-${Date.now()}.pdf`;
+          doc.save(nombreArchivo);
+
+          if(statusVIP !== 'activo'){
+            const nuevosUsos = (parseInt(localStorage.getItem('papeles360_usos')||'0')+1);
+            localStorage.setItem('papeles360_usos', nuevosUsos);
+          }
+          actualizarUI_VIP();
+        }
+
+        // LÓGICA DE CHECK PREMIUM
+        function isPremium() {
+            const status = localStorage.getItem("papeles360_vip_status");
+            return status === 'activo';
         }
 
         // 4. ALQUILERES Y WHATSAPP REMINDERS
@@ -1169,24 +1222,61 @@
 
             vips.push({ ident: user, hasta });
             localStorage.setItem("papeles360_vip_manual", JSON.stringify(vips));
-            localStorage.setItem("papeles360_user_ident", user);
+            localStorage.setItem("papeles360_vip_status", 'activo');
 
             alert(`Cuenta ${user} activada como VIP por ${dias} días (hasta ${new Date(hasta).toLocaleDateString()}).`);
             document.getElementById("admin-vip-usuario").value = "";
             renderTablaVipsAdmin();
-            checkPremiumStatusUI();
+            actualizarUI_VIP();
+        }
+
+        function renderPendientesAdmin() {
+            const container = document.getElementById("tabla-pendientes-admin");
+            const status = localStorage.getItem('papeles360_vip_status');
+            const email = localStorage.getItem('papeles360_vip_email') || 'No especificado';
+            const tipo = localStorage.getItem('papeles360_vip_tipo') || '---';
+
+            if (status !== 'pendiente') {
+                container.innerHTML = `<div class="text-gray-400">No hay solicitudes pendientes.</div>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-900 p-2.5 rounded-xl border border-gray-700 gap-2">
+                    <span class="whitespace-normal break-words text-yellow-300"><b>${email}</b> (${tipo})</span>
+                    <button onclick="aprobarVIP()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg text-xs shrink-0">APROBAR PAGO</button>
+                </div>
+            `;
+        }
+
+        function aprobarVIP() {
+            localStorage.setItem('papeles360_vip_status', 'activo');
+            alert('¡Pago aprobado! Usuario ahora es VIP Activo.');
+            renderPendientesAdmin();
+            renderTablaVipsAdmin();
+            actualizarUI_VIP();
         }
 
         function renderTablaVipsAdmin() {
             const vips = JSON.parse(localStorage.getItem("papeles360_vip_manual") || "[]");
             const container = document.getElementById("tabla-vips-activos");
 
-            if (vips.length === 0) {
+            if (vips.length === 0 && localStorage.getItem("papeles360_vip_status") !== 'activo') {
                 container.innerHTML = `<div class="text-gray-400">No hay usuarios VIP activos.</div>`;
                 return;
             }
 
-            container.innerHTML = vips.map((v, i) => `
+            let html = "";
+            if (localStorage.getItem("papeles360_vip_status") === 'activo') {
+                html += `
+                    <div class="flex justify-between items-center bg-gray-900 p-2 rounded-xl border border-gray-700 gap-2">
+                        <span class="whitespace-normal break-words text-emerald-400"><b>Actual (Este dispositivo)</b> - ACTIVO</span>
+                        <button onclick="quitarVipActual()" class="text-red-400 font-bold hover:underline shrink-0 px-2 py-1">Quitar</button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html + vips.map((v, i) => `
                 <div class="flex justify-between items-center bg-gray-900 p-2 rounded-xl border border-gray-700 gap-2">
                     <span class="whitespace-normal break-words">${v.ident} (Hasta: ${new Date(v.hasta).toLocaleDateString()})</span>
                     <button onclick="quitarVipManual(${i})" class="text-red-400 font-bold hover:underline shrink-0 px-2 py-1">Quitar</button>
@@ -1194,12 +1284,19 @@
             `).join("");
         }
 
+        function quitarVipActual() {
+            localStorage.setItem('papeles360_vip_status', 'gratis');
+            renderTablaVipsAdmin();
+            renderPendientesAdmin();
+            actualizarUI_VIP();
+        }
+
         function quitarVipManual(index) {
             const vips = JSON.parse(localStorage.getItem("papeles360_vip_manual") || "[]");
             vips.splice(index, 1);
             localStorage.setItem("papeles360_vip_manual", JSON.stringify(vips));
             renderTablaVipsAdmin();
-            checkPremiumStatusUI();
+            actualizarUI_VIP();
         }
 
         function realizarSorteo() {
@@ -1336,13 +1433,6 @@
                 ctx.textAlign = "center";
                 ctx.fillText(h.mes, centerX, canvas.height - 4);
             });
-        }
-
-        function simularPagoExitoso(dias) {
-            localStorage.setItem("papeles360_premium_hasta", (Date.now() + dias * 24 * 60 * 60 * 1000).toString());
-            cerrarModalPago();
-            checkPremiumStatusUI();
-            alert("¡Pago registrado! Ya tenés acceso completo.");
         }
 
         function cerrarModalPago() {
