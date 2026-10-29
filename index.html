@@ -36,10 +36,16 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 
     <style>
+        * { max-width: 100%; box-sizing: border-box; }
+        html, body { overflow-x: hidden; }
+        canvas { touch-action: none; }
+        
         .signature-canvas {
             border: 2px dashed #CBD5E1;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             background-color: #F8FAFC;
+            width: 100%;
+            height: 140px;
             touch-action: none;
         }
         .active-tab {
@@ -49,209 +55,210 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+<body class="bg-gray-50 overflow-x-hidden text-gray-800 font-sans min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
     <!-- HEADER DE LA APLICACIÓN -->
-    <header class="bg-brand-500 text-white shadow-md sticky top-0 z-40">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+    <header class="bg-brand-500 text-white shadow-md sticky top-0 z-40 w-full">
+        <div class="max-w-md md:max-w-4xl mx-auto px-3 md:px-6 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2">
                 <span class="text-2xl">📄</span>
                 <div>
-                    <h1 class="text-lg font-black tracking-tight leading-none">PapelesYA</h1>
-                    <p class="text-xs text-brand-100 font-medium">¿Cuánto te sale por día vivir?</p>
+                    <h1 class="text-lg md:text-xl font-black tracking-tight leading-none">PapelesYA</h1>
+                    <p class="text-xs md:text-sm text-brand-100 font-medium">¿Cuánto te sale por día vivir?</p>
                 </div>
             </div>
-            <div id="badge-status" class="text-xs bg-white text-brand-700 font-bold px-2.5 py-1 rounded-full shadow-sm">
+            <div id="badge-status" class="text-xs md:text-sm bg-white text-brand-700 font-bold px-3 py-1 rounded-full shadow-sm">
                 GRATIS
             </div>
         </div>
         
         <!-- NAVEGACIÓN MOBILE-FIRST -->
-        <nav class="flex justify-around bg-brand-600 text-xs font-semibold text-white border-t border-brand-500">
-            <button onclick="switchTab('tab-eco')" id="btn-tab-eco" class="py-2.5 px-1 flex-1 text-center active-tab bg-white/10">
-                <i class="fa-solid fa-calculator block text-base mb-0.5"></i> Economía
+        <nav class="flex justify-around bg-brand-600 text-xs md:text-sm font-semibold text-white border-t border-brand-500 w-full">
+            <button onclick="switchTab('tab-eco')" id="btn-tab-eco" class="py-3 px-1 flex-1 text-center active-tab bg-white/10 min-h-[48px] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-calculator text-base mb-0.5"></i> Economía
             </button>
-            <button onclick="switchTab('tab-diario')" id="btn-tab-diario" class="py-2.5 px-1 flex-1 text-center">
-                <i class="fa-solid fa-gas-pump block text-base mb-0.5"></i> Hoy + Nafta
+            <button onclick="switchTab('tab-diario')" id="btn-tab-diario" class="py-3 px-1 flex-1 text-center min-h-[48px] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-gas-pump text-base mb-0.5"></i> Hoy + Nafta
             </button>
-            <button onclick="switchTab('tab-papeles')" id="btn-tab-papeles" class="py-2.5 px-1 flex-1 text-center">
-                <i class="fa-solid fa-file-contract block text-base mb-0.5"></i> Generar Papel
+            <button onclick="switchTab('tab-papeles')" id="btn-tab-papeles" class="py-3 px-1 flex-1 text-center min-h-[48px] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-file-contract text-base mb-0.5"></i> Papeles
             </button>
-            <button onclick="switchTab('tab-alquileres')" id="btn-tab-alquileres" class="py-2.5 px-1 flex-1 text-center">
-                <i class="fa-solid fa-key block text-base mb-0.5"></i> Alquileres
+            <button onclick="switchTab('tab-alquileres')" id="btn-tab-alquileres" class="py-3 px-1 flex-1 text-center min-h-[48px] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-key text-base mb-0.5"></i> Alquileres
             </button>
-            <button onclick="switchTab('tab-chat')" id="btn-tab-chat" class="py-2.5 px-1 flex-1 text-center">
-                <i class="fa-solid fa-robot block text-base mb-0.5"></i> IA Legal
+            <button onclick="switchTab('tab-chat')" id="btn-tab-chat" class="py-3 px-1 flex-1 text-center min-h-[48px] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-robot text-base mb-0.5"></i> IA Legal
             </button>
         </nav>
     </header>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <main class="max-w-md mx-auto w-full p-4 flex-1 space-y-4">
+    <!-- CONTENEDOR GENERAL RESPONSIVE -->
+    <main class="max-w-md md:max-w-4xl mx-auto px-3 md:px-6 w-full p-4 flex-1 space-y-4">
 
-        <!-- BANNER DE RACHA Y PUNTOS (VERTICAL NO CORTADO) -->
-        <div class="bg-gradient-to-r from-emerald-600 to-brand-500 rounded-2xl p-4 text-white shadow-lg flex flex-col space-y-2">
-            <div class="flex justify-between items-center">
-                <div>
-                    <div class="flex items-center space-x-2 text-yellow-300 font-bold">
-                        <i class="fa-solid fa-fire"></i>
-                        <span id="txt-racha">Racha 0 días</span>
-                    </div>
-                    <div id="txt-puntos" class="text-xs">Puntos: 0</div>
+        <!-- BANNER DE RACHA Y PUNTOS RESPONSIVE VERTICAL -->
+        <div class="w-full bg-gradient-to-r from-emerald-600 to-brand-500 rounded-2xl p-4 text-white shadow-lg">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-yellow-300 text-lg">🔥</span>
+                    <span id="txt-racha" class="font-bold text-sm md:text-base">Racha 0 días</span>
+                    <span id="txt-puntos" class="text-xs md:text-sm bg-white/20 px-2.5 py-1 rounded-full font-semibold">0 pts (Hoy: 0/20)</span>
                 </div>
             </div>
-            <div id="txt-sorteo" class="w-full text-center text-xs bg-white/20 px-3 py-2 rounded-full font-semibold border border-white/30 whitespace-normal break-words leading-tight">
+            <div id="txt-sorteo" class="w-full text-center text-xs md:text-sm bg-white/20 px-3 py-2.5 rounded-full font-semibold border border-white/30 whitespace-normal break-words leading-snug">
                 Faltan 200 pts para el sorteo de $100.000
             </div>
         </div>
 
         <!-- SECCIÓN 1: MI ECONOMÍA DIARIA -->
         <section id="tab-eco" class="space-y-4">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
-                <h2 class="text-base font-bold text-gray-800 flex items-center">
-                    <span class="text-xl mr-2">💰</span> Mis Ingresos Mensuales
-                </h2>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-500">Sueldo / Principal</label>
-                        <input type="number" id="inp-sueldo" value="650000" oninput="calcularEconomia()" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm font-semibold focus:outline-none focus:border-brand-500">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="w-full bg-white rounded-2xl shadow-sm p-4 md:p-6 border border-gray-100 space-y-3">
+                    <h2 class="text-base md:text-lg font-bold text-gray-800 flex items-center">
+                        <span class="text-xl mr-2">💰</span> Mis Ingresos Mensuales
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs md:text-sm font-semibold text-gray-500">Sueldo / Principal</label>
+                            <input type="number" id="inp-sueldo" value="650000" oninput="calcularEconomia()" class="w-full h-12 text-base px-4 rounded-xl border border-gray-200 bg-gray-50 font-semibold focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="text-xs md:text-sm font-semibold text-gray-500">Extras / Changas</label>
+                            <input type="number" id="inp-extras" value="80000" oninput="calcularEconomia()" class="w-full h-12 text-base px-4 rounded-xl border border-gray-200 bg-gray-50 font-semibold focus:outline-none focus:border-brand-500">
+                        </div>
                     </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-500">Extras / Changas</label>
-                        <input type="number" id="inp-extras" value="80000" oninput="calcularEconomia()" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-sm font-semibold focus:outline-none focus:border-brand-500">
-                    </div>
-                </div>
-                <div class="text-right text-xs font-bold text-brand-700">
-                    Total Ingresos: $<span id="lbl-total-ingresos">730.000</span>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
-                <h2 class="text-base font-bold text-gray-800 flex items-center">
-                    <span class="text-xl mr-2">📊</span> Gastos Fijos y Mensuales
-                </h2>
-                <div class="space-y-2 text-xs font-medium">
-                    <div class="flex items-center justify-between">
-                        <span>Alquiler / Hipoteca</span>
-                        <input type="number" id="g-alquiler" value="250000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Expensas</span>
-                        <input type="number" id="g-expensas" value="35000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Comida Estimada</span>
-                        <input type="number" id="g-comida" value="180000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Luz / Gas / Agua / Wifi</span>
-                        <input type="number" id="g-servicios" value="45000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Colectivo / Nafta</span>
-                        <input type="number" id="g-transporte" value="50000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Otros Gastos</span>
-                        <input type="number" id="g-otros" value="30000" oninput="calcularEconomia()" class="w-28 text-right bg-gray-50 border rounded-lg p-1.5 font-bold">
+                    <div class="text-right text-xs md:text-sm font-bold text-brand-700 pt-1">
+                        Total Ingresos: $<span id="lbl-total-ingresos">730.000</span>
                     </div>
                 </div>
 
-                <div class="border-t pt-2 mt-2 space-y-1">
-                    <div class="flex justify-between text-sm font-bold">
-                        <span>Total Gastos Mensuales:</span>
-                        <span id="lbl-total-gastos">$590.000</span>
+                <div class="w-full bg-white rounded-2xl shadow-sm p-4 md:p-6 border border-gray-100 space-y-3">
+                    <h2 class="text-base md:text-lg font-bold text-gray-800 flex items-center">
+                        <span class="text-xl mr-2">📊</span> Gastos Fijos y Mensuales
+                    </h2>
+                    <div class="space-y-2.5 text-xs md:text-sm font-medium">
+                        <div class="flex items-center justify-between">
+                            <span>Alquiler / Hipoteca</span>
+                            <input type="number" id="g-alquiler" value="250000" oninput="calcularEconomia()" class="w-32 h-10 text-right bg-gray-50 border border-gray-200 rounded-lg px-2 font-bold text-sm">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Expensas</span>
+                            <input type="number" id="g-expensas" value="35000" oninput="calcularEconomia()" class="w-32 h-10 text-right bg-gray-50 border border-gray-200 rounded-lg px-2 font-bold text-sm">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Comida Estimada</span>
+                            <input type="number" id="g-comida" value="180000" oninput="calcularEconomia()" class="w-32 h-10 text-right bg-gray-50 border border-gray-200 rounded-lg px-2 font-bold text-sm">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Luz / Gas / Agua / Wifi</span>
+                            <input type="number" id="g-servicios" value="45000" oninput="calcularEconomia()" class="w-32 h-10 text-right bg-gray-50 border border-gray-200 rounded-lg px-2 font-bold text-sm">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Colectivo / Nafta</span>
+                            <input type="number" id="g-transporte" value="50000" oninput="calcularEconomia()" class="w-32 h-10 text-right bg-gray-50 border border-gray-200 rounded-lg px-2 font-bold text-sm">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span>Otros Gastos</span>
+                            <input type="number" id="g-otros" value="30000" oninput="calcularEconomia()" class="w-32 h-10 text-right bg-gray-50 border border-gray-200 rounded-lg px-2 font-bold text-sm">
+                        </div>
                     </div>
-                    <div class="flex justify-between text-xs text-gray-500 font-semibold">
-                        <span>Costo Real Diario (Gastos/30):</span>
-                        <span id="lbl-costo-diario-total" class="text-brand-600 font-bold">$19.666 / día</span>
-                    </div>
-                    <!-- NUEVAS LÍNEAS DE CÁLCULO POR DÍA -->
-                    <div class="flex justify-between text-xs font-bold mt-1">
-                      <span>💸 Gastás por día:</span>
-                      <span id="lbl-gasto-dia" class="text-red-600">$0 / día</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-bold">
-                      <span>💰 Ganás por día:</span>
-                      <span id="lbl-ganancia-dia" class="text-emerald-600">$0 / día</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-black mt-1 pt-1 border-t border-gray-200">
-                      <span>✅ Te queda por día:</span>
-                      <span id="lbl-neto-dia" class="text-brand-600">$0 / día</span>
+
+                    <div class="border-t pt-3 mt-2 space-y-1.5 text-xs md:text-sm">
+                        <div class="flex justify-between font-bold">
+                            <span>Total Gastos Mensuales:</span>
+                            <span id="lbl-total-gastos">$590.000</span>
+                        </div>
+                        <div class="flex justify-between text-gray-500 font-semibold">
+                            <span>Costo Real Diario (Gastos/30):</span>
+                            <span id="lbl-costo-diario-total" class="text-brand-600 font-bold">$19.666 / día</span>
+                        </div>
+
+                        <!-- CÁLCULO DIARIO COLUMNA MOBILE / ROW DESKTOP -->
+                        <div class="flex flex-col md:flex-row md:justify-between font-bold mt-1 gap-1">
+                          <span>💸 Gastás por día:</span>
+                          <span id="lbl-gasto-dia" class="text-red-600 text-right md:text-left">$0 / día</span>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:justify-between font-bold gap-1">
+                          <span>💰 Ganás por día:</span>
+                          <span id="lbl-ganancia-dia" class="text-emerald-600 text-right md:text-left">$0 / día</span>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:justify-between font-black mt-1 pt-1 border-t border-gray-200 gap-1">
+                          <span>✅ Te queda por día:</span>
+                          <span id="lbl-neto-dia" class="text-brand-600 text-right md:text-left">$0 / día</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- SEMÁFORO FINANCIERO -->
-            <div id="card-semaforo" class="rounded-2xl p-4 text-white shadow-md transition-all duration-300">
-                <div class="text-xs font-semibold opacity-90">Diagnóstico del Mes</div>
-                <div id="txt-semaforo-estado" class="text-lg font-black mt-0.5">Calculando...</div>
-                <div id="txt-semaforo-detalle" class="text-xs mt-1 opacity-95">---</div>
+            <div id="card-semaforo" class="w-full rounded-2xl p-4 md:p-6 text-white shadow-md transition-all duration-300">
+                <div class="text-xs md:text-sm font-semibold opacity-90">Diagnóstico del Mes</div>
+                <div id="txt-semaforo-estado" class="text-lg md:text-xl font-black mt-0.5 whitespace-normal break-words">Calculando...</div>
+                <div id="txt-semaforo-detalle" class="text-xs md:text-sm mt-1 opacity-95 whitespace-normal break-words">---</div>
             </div>
 
             <!-- HISTORIAL / CANVAS GRAPHIC -->
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-gray-800">Historial 6 Meses (Ingresos vs Gastos)</h3>
-                    <button onclick="cerrarMes()" class="bg-brand-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl hover:bg-brand-600 shadow">
+            <div class="w-full bg-white rounded-2xl shadow-sm p-4 md:p-6 border border-gray-100 space-y-3">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <h3 class="text-sm md:text-base font-bold text-gray-800">Historial 6 Meses (Ingresos vs Gastos)</h3>
+                    <button onclick="cerrarMes()" class="w-full sm:w-auto h-12 px-5 bg-brand-500 text-white text-xs md:text-sm font-bold rounded-xl hover:bg-brand-600 shadow">
                         🔒 CERRAR MES
                     </button>
                 </div>
                 <div class="relative w-full overflow-x-auto">
-                    <canvas id="chart-historial" class="w-full h-44 rounded-xl bg-gray-50 border"></canvas>
+                    <canvas id="chart-historial" class="w-full h-48 rounded-xl bg-gray-50 border"></canvas>
                 </div>
             </div>
         </section>
 
         <!-- SECCIÓN 2: GASTO DÍA A DÍA + NAFTA -->
         <section id="tab-diario" class="space-y-4 hidden">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
-                <h2 class="text-base font-bold text-gray-800 flex items-center">
+            <div class="w-full bg-white rounded-2xl shadow-sm p-4 md:p-6 border border-gray-100 space-y-4">
+                <h2 class="text-base md:text-lg font-bold text-gray-800 flex items-center">
                     <span class="text-xl mr-2">🛒</span> Registro Diario de Gastos
                 </h2>
                 
-                <div class="space-y-2">
+                <div class="space-y-3">
                     <div>
-                        <label class="text-xs font-semibold text-gray-600">Comida / Mercado Hoy ($)</label>
-                        <input type="number" id="d-comida" placeholder="0" class="w-full bg-gray-50 border rounded-xl p-2 text-sm font-semibold">
+                        <label class="text-xs md:text-sm font-semibold text-gray-600">Comida / Mercado Hoy ($)</label>
+                        <input type="number" id="d-comida" placeholder="0" class="w-full h-12 text-base px-4 bg-gray-50 border border-gray-200 rounded-xl font-semibold">
                     </div>
 
                     <!-- CALCULADORA DE NAFTA -->
-                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-2">
-                        <span class="text-xs font-bold text-emerald-800 block">⛽ Calculadora de Nafta / Combustible</span>
-                        <div class="grid grid-cols-3 gap-2">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-3">
+                        <span class="text-xs md:text-sm font-bold text-emerald-800 block">⛽ Calculadora de Nafta / Combustible</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                             <div>
-                                <label class="text-[10px] font-bold text-emerald-700">Monto ($)</label>
-                                <input type="number" id="d-nafta-monto" oninput="calcNafta()" placeholder="15000" class="w-full bg-white border rounded-lg p-1.5 text-xs font-bold">
+                                <label class="text-xs font-bold text-emerald-700">Monto ($)</label>
+                                <input type="number" id="d-nafta-monto" oninput="calcNafta()" placeholder="15000" class="w-full h-12 text-base px-3 bg-white border border-emerald-200 rounded-xl font-bold">
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold text-emerald-700">Litros (L)</label>
-                                <input type="number" id="d-nafta-litros" oninput="calcNafta()" placeholder="14" class="w-full bg-white border rounded-lg p-1.5 text-xs font-bold">
+                                <label class="text-xs font-bold text-emerald-700">Litros (L)</label>
+                                <input type="number" id="d-nafta-litros" oninput="calcNafta()" placeholder="14" class="w-full h-12 text-base px-3 bg-white border border-emerald-200 rounded-xl font-bold">
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold text-emerald-700">Dura (Días)</label>
-                                <input type="number" id="d-nafta-dias" oninput="calcNafta()" placeholder="7" class="w-full bg-white border rounded-lg p-1.5 text-xs font-bold">
+                                <label class="text-xs font-bold text-emerald-700">Dura (Días)</label>
+                                <input type="number" id="d-nafta-dias" oninput="calcNafta()" placeholder="7" class="w-full h-12 text-base px-3 bg-white border border-emerald-200 rounded-xl font-bold">
                             </div>
                         </div>
-                        <div class="text-[11px] font-bold text-emerald-900 flex justify-between pt-1 border-t border-emerald-200">
+                        <div class="text-xs md:text-sm font-bold text-emerald-900 flex justify-between pt-2 border-t border-emerald-200 flex-wrap gap-1">
                             <span>Gasto diario nafta: <strong id="res-nafta-dia">$0</strong>/día</span>
                             <span>Consumo: <strong id="res-nafta-ldia">0</strong> L/día</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-semibold text-gray-600">Colectivo / Pasajes ($)</label>
-                            <input type="number" id="d-colectivo" placeholder="0" class="w-full bg-gray-50 border rounded-xl p-2 text-sm font-semibold">
+                            <label class="text-xs md:text-sm font-semibold text-gray-600">Colectivo / Pasajes ($)</label>
+                            <input type="number" id="d-colectivo" placeholder="0" class="w-full h-12 text-base px-4 bg-gray-50 border border-gray-200 rounded-xl font-semibold">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600">Otros Varios ($)</label>
-                            <input type="number" id="d-otros" placeholder="0" class="w-full bg-gray-50 border rounded-xl p-2 text-sm font-semibold">
+                            <label class="text-xs md:text-sm font-semibold text-gray-600">Otros Varios ($)</label>
+                            <input type="number" id="d-otros" placeholder="0" class="w-full h-12 text-base px-4 bg-gray-50 border border-gray-200 rounded-xl font-semibold">
                         </div>
                     </div>
                 </div>
 
-                <button onclick="guardarGastoDia()" class="w-full bg-brand-500 text-white font-black py-3 rounded-xl shadow-md hover:bg-brand-600 transition flex items-center justify-center space-x-2 text-sm">
+                <button onclick="guardarGastoDia()" class="w-full h-14 text-base font-bold bg-brand-500 text-white rounded-xl shadow-md hover:bg-brand-600 transition flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-floppy-disk"></i>
                     <span>GUARDAR DÍA (+PUNTOS)</span>
                 </button>
@@ -260,17 +267,17 @@
 
         <!-- SECCIÓN 3: GENERADOR DE PAPELES CON FIRMA DIGITAL (LIBRERÍA JURÍDICA) -->
         <section id="tab-papeles" class="space-y-4 hidden">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+            <div class="w-full bg-white rounded-2xl shadow-sm p-4 md:p-6 border border-gray-100 space-y-4">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-base font-bold text-gray-800 flex items-center">
+                    <h2 class="text-base md:text-lg font-bold text-gray-800 flex items-center">
                         <span class="text-xl mr-2">📑</span> Modelos Librería Jurídica
                     </h2>
-                    <span class="text-[10px] bg-brand-100 text-brand-800 font-bold px-2 py-0.5 rounded">Arg 2024-2025</span>
+                    <span class="text-xs bg-brand-100 text-brand-800 font-bold px-2.5 py-1 rounded">Arg 2024-2025</span>
                 </div>
 
                 <div>
-                    <label class="text-xs font-bold text-gray-600">Seleccionar Tipo de Documento</label>
-                    <select id="sel-tipo-papel" onchange="renderCamposPapel()" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-sm font-bold focus:border-brand-500 focus:outline-none mt-1">
+                    <label class="text-xs md:text-sm font-bold text-gray-600">Seleccionar Tipo de Documento</label>
+                    <select id="sel-tipo-papel" onchange="renderCamposPapel()" class="w-full h-12 text-base px-4 bg-gray-50 border border-gray-300 rounded-xl font-bold focus:border-brand-500 focus:outline-none mt-1">
                         <option value="alquiler">1. Contrato Alquiler Vivienda (12 Cláusulas)</option>
                         <option value="automotor">2. Boleto Compra-Venta Automotor / Moto (10 Cláusulas)</option>
                         <option value="recibo">3. Recibo de Alquiler Legal Detallado</option>
@@ -281,33 +288,33 @@
                 </div>
 
                 <!-- CONTENEDOR DINÁMICO DE CAMPOS SEGÚN MODELO -->
-                <div id="container-campos-dinamicos" class="space-y-2.5 pt-2 border-t border-gray-100">
+                <div id="container-campos-dinamicos" class="space-y-3 pt-2 border-t border-gray-100">
                     <!-- Se renderiza por JS -->
                 </div>
 
                 <!-- SECCIÓN DE FIRMAS DIGITALES DACTILARES -->
-                <div class="border-t pt-3 space-y-3">
-                    <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide">Firmas Digitales (Firma con el dedo)</h3>
+                <div class="border-t pt-4 space-y-4">
+                    <h3 class="text-xs md:text-sm font-bold text-gray-700 uppercase tracking-wide">Firmas Digitales (Firma con el dedo)</h3>
                     
                     <div>
                         <div class="flex justify-between items-center mb-1">
-                            <span class="text-xs font-semibold text-gray-600" id="lbl-firma-1">Firma Parte A / Locador / Vendedor</span>
-                            <button type="button" onclick="limpiarFirma(1)" class="text-[10px] text-red-500 font-bold hover:underline">Limpiar</button>
+                            <span class="text-xs md:text-sm font-semibold text-gray-600" id="lbl-firma-1">Firma Parte A / Locador / Vendedor</span>
+                            <button type="button" onclick="limpiarFirma(1)" class="text-xs text-red-500 font-bold hover:underline px-2 py-1">Limpiar</button>
                         </div>
-                        <canvas id="canvas-firma-1" class="signature-canvas w-full h-28"></canvas>
+                        <canvas id="canvas-firma-1" class="signature-canvas"></canvas>
                     </div>
 
                     <div id="box-firma-2">
                         <div class="flex justify-between items-center mb-1">
-                            <span class="text-xs font-semibold text-gray-600" id="lbl-firma-2">Firma Parte B / Locatario / Comprador</span>
-                            <button type="button" onclick="limpiarFirma(2)" class="text-[10px] text-red-500 font-bold hover:underline">Limpiar</button>
+                            <span class="text-xs md:text-sm font-semibold text-gray-600" id="lbl-firma-2">Firma Parte B / Locatario / Comprador</span>
+                            <button type="button" onclick="limpiarFirma(2)" class="text-xs text-red-500 font-bold hover:underline px-2 py-1">Limpiar</button>
                         </div>
-                        <canvas id="canvas-firma-2" class="signature-canvas w-full h-28"></canvas>
+                        <canvas id="canvas-firma-2" class="signature-canvas"></canvas>
                     </div>
                 </div>
 
                 <!-- BOTÓN PRINCIPAL DE GENERACIÓN -->
-                <button onclick="ejecutarGeneracionPDF()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center space-x-2 text-sm">
+                <button onclick="ejecutarGeneracionPDF()" class="w-full h-14 text-base font-bold bg-brand-500 hover:bg-brand-600 text-white rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-file-pdf text-lg"></i>
                     <span>DESCARGAR PDF LIBRERÍA (2-3 PÁGS)</span>
                 </button>
@@ -316,12 +323,12 @@
 
         <!-- SECCIÓN 4: MIS ALQUILERES & RECORDATORIOS -->
         <section id="tab-alquileres" class="space-y-4 hidden">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
-                <h2 class="text-base font-bold text-gray-800 flex items-center justify-between">
+            <div class="w-full bg-white rounded-2xl shadow-sm p-4 md:p-6 border border-gray-100 space-y-4">
+                <h2 class="text-base md:text-lg font-bold text-gray-800 flex items-center justify-between">
                     <span>🔑 Mis Alquileres</span>
-                    <button onclick="nuevoAlquilerModal()" class="text-xs bg-brand-500 text-white px-2.5 py-1 rounded-lg font-bold">+ Agregar</button>
+                    <button onclick="nuevoAlquilerModal()" class="h-10 px-4 text-xs md:text-sm bg-brand-500 text-white rounded-xl font-bold hover:bg-brand-600">+ Agregar</button>
                 </h2>
-                <div id="lista-alquileres" class="space-y-2">
+                <div id="lista-alquileres" class="space-y-3">
                     <!-- Dynamic rendering -->
                 </div>
             </div>
@@ -329,20 +336,20 @@
 
         <!-- SECCIÓN 5: CHAT IA MINI -->
         <section id="tab-chat" class="space-y-4 hidden">
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col h-[420px]">
-                <h2 class="text-base font-bold text-gray-800 pb-2 border-b flex items-center">
+            <div class="w-full bg-white rounded-2xl shadow-sm p-4 md:p-6 border border-gray-100 flex flex-col h-[480px]">
+                <h2 class="text-base md:text-lg font-bold text-gray-800 pb-3 border-b flex items-center">
                     <span class="text-xl mr-2">🤖</span> Asistente Legal Alquileres
                 </h2>
                 
-                <div id="chat-messages" class="flex-1 overflow-y-auto py-3 space-y-3 text-xs">
-                    <div class="bg-gray-100 p-2.5 rounded-xl max-w-[85%] text-gray-700">
+                <div id="chat-messages" class="flex-1 overflow-y-auto py-3 space-y-3 text-xs md:text-sm">
+                    <div class="bg-gray-100 p-3 rounded-2xl max-w-[85%] text-gray-700 whitespace-normal break-words">
                         👋 ¡Hola! Soy tu asistente de contratos. Preguntame sobre la Ley de Alquileres, aumentos (ICL/IPC), expensas o rescisiones.
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-2 pt-2 border-t">
-                    <input type="text" id="chat-input" placeholder="Escribí tu duda (ej: ¿Quién paga expensas?)..." onkeypress="if(event.key==='Enter') enviarChat()" class="flex-1 bg-gray-50 border rounded-xl p-2.5 text-xs focus:outline-none focus:border-brand-500">
-                    <button onclick="enviarChat()" class="bg-brand-500 text-white p-2.5 rounded-xl hover:bg-brand-600">
+                <div class="flex items-center space-x-2 pt-3 border-t">
+                    <input type="text" id="chat-input" placeholder="Escribí tu duda..." onkeypress="if(event.key==='Enter') enviarChat()" class="flex-1 h-12 text-sm md:text-base px-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-500">
+                    <button onclick="enviarChat()" class="w-12 h-12 bg-brand-500 text-white rounded-xl hover:bg-brand-600 flex items-center justify-center shrink-0">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
@@ -351,22 +358,22 @@
 
         <!-- PANEL DE ADMINISTRACIÓN PRIVADO (#admin-tresarroyos-2026) -->
         <section id="panel-admin-privado" class="space-y-4 hidden">
-            <div class="bg-gray-900 text-white rounded-2xl p-4 shadow-xl space-y-4 border-2 border-brand-500">
-                <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-                    <h2 class="text-sm font-black text-brand-500 flex items-center">
+            <div class="w-full bg-gray-900 text-white rounded-2xl p-4 md:p-6 shadow-xl space-y-4 border-2 border-brand-500">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                    <h2 class="text-sm md:text-base font-black text-brand-500 flex items-center">
                         <i class="fa-solid fa-user-shield mr-2"></i> PANEL DE CONTROL ADMIN (Tres Arroyos)
                     </h2>
-                    <span class="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold">PRIVADO</span>
+                    <span class="text-xs bg-red-600 text-white px-2.5 py-1 rounded font-bold">PRIVADO</span>
                 </div>
 
                 <!-- SECCIÓN 1: HABILITAR VIP MANUAL -->
-                <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
-                    <h3 class="text-xs font-bold text-white">🔑 HABILITAR VIP MANUAL</h3>
-                    <div class="space-y-2">
-                        <input type="text" id="admin-vip-usuario" placeholder="Email o Teléfono del usuario" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-xs text-white">
-                        <div class="flex space-x-2">
-                            <input type="number" id="admin-vip-dias" value="30" placeholder="Días VIP" class="w-1/2 bg-gray-900 border border-gray-600 rounded-lg p-2 text-xs text-white">
-                            <button onclick="activarVipManual()" class="w-1/2 bg-brand-500 font-bold text-xs rounded-lg py-2 text-white hover:bg-brand-600">
+                <div class="bg-gray-800 p-4 rounded-xl space-y-3 border border-gray-700">
+                    <h3 class="text-xs md:text-sm font-bold text-white">🔑 HABILITAR VIP MANUAL</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="admin-vip-usuario" placeholder="Email o Teléfono del usuario" class="w-full h-12 text-sm px-4 bg-gray-900 border border-gray-600 rounded-xl text-white">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="number" id="admin-vip-dias" value="30" placeholder="Días VIP" class="w-full sm:w-1/2 h-12 text-sm px-4 bg-gray-900 border border-gray-600 rounded-xl text-white">
+                            <button onclick="activarVipManual()" class="w-full sm:w-1/2 h-12 bg-brand-500 font-bold text-sm rounded-xl text-white hover:bg-brand-600">
                                 Activar VIP
                             </button>
                         </div>
@@ -374,20 +381,20 @@
                 </div>
 
                 <!-- SECCIÓN 2: TABLA DE VIP MANUALES -->
-                <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
-                    <h3 class="text-xs font-bold text-white">📋 Usuarios VIP Activos</h3>
-                    <div id="tabla-vips-activos" class="text-[11px] space-y-1 max-h-36 overflow-y-auto">
+                <div class="bg-gray-800 p-4 rounded-xl space-y-3 border border-gray-700">
+                    <h3 class="text-xs md:text-sm font-bold text-white">📋 Usuarios VIP Activos</h3>
+                    <div id="tabla-vips-activos" class="text-xs space-y-2 max-h-40 overflow-y-auto">
                         <!-- JS Dynamic list -->
                     </div>
                 </div>
 
                 <!-- SECCIÓN 3: SORTEADOR DE PUNTOS -->
-                <div class="bg-gray-800 p-3 rounded-xl space-y-2 border border-gray-700">
-                    <h3 class="text-xs font-bold text-white">🎰 Sorteo de Puntos (>200 pts)</h3>
-                    <button onclick="realizarSorteo()" class="w-full bg-yellow-500 text-gray-900 font-black py-2 rounded-lg text-xs hover:bg-yellow-400">
+                <div class="bg-gray-800 p-4 rounded-xl space-y-3 border border-gray-700">
+                    <h3 class="text-xs md:text-sm font-bold text-white">🎰 Sorteo de Puntos (>200 pts)</h3>
+                    <button onclick="realizarSorteo()" class="w-full h-12 bg-yellow-500 text-gray-900 font-black rounded-xl text-sm hover:bg-yellow-400">
                         SORTEAR $100.000 AHORA
                     </button>
-                    <div id="res-sorteo" class="text-xs font-bold text-yellow-300 text-center"></div>
+                    <div id="res-sorteo" class="text-xs md:text-sm font-bold text-yellow-300 text-center whitespace-normal break-words"></div>
                 </div>
             </div>
         </section>
@@ -395,52 +402,52 @@
     </main>
 
     <!-- FOOTER LEGAL -->
-    <footer class="bg-white border-t py-4 text-center text-xs text-gray-500 px-4 mt-auto">
+    <footer class="bg-white border-t py-4 text-center text-xs md:text-sm text-gray-500 px-4 mt-auto w-full">
         <p class="font-semibold text-gray-600">PapelesYA - Modelos informativos. Tres Arroyos.</p>
     </footer>
 
     <!-- MODAL DE PAGO CON LINKS REALES DE MERCADO PAGO -->
     <div id="modal-pago" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 text-center relative shadow-2xl animate-bounce-in">
-            <button onclick="cerrarModalPago()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+        <div class="bg-white rounded-3xl max-w-sm w-full max-h-[90vh] overflow-y-auto p-5 md:p-6 space-y-4 text-center relative shadow-2xl">
+            <button onclick="cerrarModalPago()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 font-bold text-lg w-8 h-8 flex items-center justify-center">✕</button>
             
             <div class="w-12 h-12 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
                 💳
             </div>
 
             <div class="space-y-1">
-                <h3 class="text-lg font-black text-gray-800">Límite Gratuito Alcanzado</h3>
-                <p class="text-xs text-gray-500">Ya generaste tu primer documento gratuito. Para continuar descargando sin marca de agua, elegí una opción:</p>
+                <h3 class="text-lg md:text-xl font-black text-gray-800">Límite Gratuito Alcanzado</h3>
+                <p class="text-xs md:text-sm text-gray-500 whitespace-normal break-words">Ya generaste tu primer documento gratuito. Para continuar descargando sin marca de agua, elegí una opción:</p>
             </div>
 
             <div class="space-y-3 pt-2">
                 <!-- CARD OPTION 1: SUSCRIPCIÓN MES ILIMITADO (DESTACADO) -->
-                <div class="border-2 border-brand-500 bg-brand-50/50 rounded-2xl p-3.5 text-left relative">
+                <div class="border-2 border-brand-500 bg-brand-50/50 rounded-2xl p-4 text-left relative">
                     <span class="absolute -top-2.5 right-3 bg-brand-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase">Suscripción</span>
                     <div class="flex justify-between items-baseline">
                         <span class="font-black text-sm text-gray-800">MES ILIMITADO</span>
                         <span class="font-black text-brand-600 text-base">$9.900<span class="text-[10px] text-gray-500">/mes</span></span>
                     </div>
-                    <p class="text-[11px] text-gray-600 mt-0.5">Se cobra de forma automática cada mes. Podés cancelarlo cuando quieras desde tu cuenta de Mercado Pago.</p>
-                    <a href="https://mpago.la/14ksePv" target="_blank" onclick="simularPagoExitoso(30)" class="mt-2.5 block text-center bg-brand-500 text-white font-bold text-xs py-2 rounded-xl hover:bg-brand-600 shadow">
+                    <p class="text-xs text-gray-600 mt-1 whitespace-normal break-words">Se cobra de forma automática cada mes. Podés cancelarlo cuando quieras desde tu cuenta de Mercado Pago.</p>
+                    <a href="https://mpago.la/14ksePv" target="_blank" onclick="simularPagoExitoso(30)" class="w-full h-12 mt-3 flex items-center justify-center text-center bg-brand-500 text-white font-bold text-sm rounded-xl hover:bg-brand-600 shadow">
                         Suscribirme por $9.900/mes
                     </a>
                 </div>
 
                 <!-- CARD OPTION 2: 1 PAPEL -->
-                <div class="border border-gray-200 rounded-2xl p-3.5 text-left">
+                <div class="border border-gray-200 rounded-2xl p-4 text-left">
                     <div class="flex justify-between items-baseline">
                         <span class="font-bold text-sm text-gray-800">1 Solo Papel</span>
                         <span class="font-bold text-gray-700 text-sm">$4.900</span>
                     </div>
-                    <p class="text-[11px] text-gray-500 mt-0.5">Pago único. Genera este documento puntual sin marca de agua.</p>
-                    <a href="https://mpago.la/1NV4VPd" target="_blank" onclick="simularPagoExitoso(1)" class="mt-2.5 block text-center bg-gray-800 text-white font-bold text-xs py-2 rounded-xl hover:bg-gray-900">
+                    <p class="text-xs text-gray-500 mt-1 whitespace-normal break-words">Pago único. Genera este documento puntual sin marca de agua.</p>
+                    <a href="https://mpago.la/1NV4VPd" target="_blank" onclick="simularPagoExitoso(1)" class="w-full h-12 mt-3 flex items-center justify-center text-center bg-gray-800 text-white font-bold text-sm rounded-xl hover:bg-gray-900">
                         Pagar $4.900 único
                     </a>
                 </div>
             </div>
 
-            <div class="text-[10px] text-gray-400">
+            <div class="text-[11px] text-gray-400 whitespace-normal break-words">
                 Al completar el pago en Mercado Pago, se acreditará automáticamente en tu dispositivo.
             </div>
         </div>
@@ -556,9 +563,9 @@
             const elNeto = document.getElementById("lbl-neto-dia");
             elNeto.innerText = "$" + Math.round(netoDiario).toLocaleString("es-AR") + " / día";
             if (netoDiario < 0) {
-                elNeto.className = "text-red-600";
+                elNeto.className = "text-red-600 text-right md:text-left";
             } else {
-                elNeto.className = "text-brand-600";
+                elNeto.className = "text-brand-600 text-right md:text-left";
             }
 
             const semaforo = document.getElementById("card-semaforo");
@@ -566,15 +573,15 @@
             const detalle = document.getElementById("txt-semaforo-detalle");
 
             if (saldo > 50000) {
-                semaforo.className = "rounded-2xl p-4 text-white shadow-md bg-emerald-600 transition-all";
+                semaforo.className = "w-full rounded-2xl p-4 md:p-6 text-white shadow-md bg-emerald-600 transition-all";
                 estado.innerText = "🟢 ¡Te sobra $" + Math.round(saldo).toLocaleString("es-AR") + "!";
                 detalle.innerText = "Tu economía está estable este mes. Podés ahorrar o invertir.";
             } else if (saldo >= 0) {
-                semaforo.className = "rounded-2xl p-4 text-white shadow-md bg-yellow-500 transition-all";
+                semaforo.className = "w-full rounded-2xl p-4 md:p-6 text-white shadow-md bg-yellow-500 transition-all";
                 estado.innerText = "🟡 Llegás justo (Saldo: $" + Math.round(saldo).toLocaleString("es-AR") + ")";
                 detalle.innerText = "Cuidado con los gastos imprevistos de fin de mes.";
             } else {
-                semaforo.className = "rounded-2xl p-4 text-white shadow-md bg-red-600 transition-all";
+                semaforo.className = "w-full rounded-2xl p-4 md:p-6 text-white shadow-md bg-red-600 transition-all";
                 estado.innerText = "🔴 Estás en ROJO te faltan $" + Math.abs(Math.round(saldo)).toLocaleString("es-AR");
                 detalle.innerText = "Tus gastos superan tus ingresos. Revisá tus costos fijos.";
             }
@@ -664,12 +671,12 @@
             const puntosHoy = parseInt(localStorage.getItem("papeles360_puntos_hoy_total") || "0");
 
             document.getElementById("txt-racha").innerText = `Racha ${racha} días`;
-            document.getElementById("txt-puntos").innerText = `Puntos: ${puntos} (Hoy: ${puntosHoy}/20)`;
+            document.getElementById("txt-puntos").innerText = `${puntos} pts (Hoy: ${puntosHoy}/20)`;
 
             const lblSorteo = document.getElementById("txt-sorteo");
             if (puntos >= 200) {
                 lblSorteo.innerText = "🎉 ¡Ya estás en el sorteo de $100.000 de este mes!";
-                lblSorteo.className = "w-full text-center text-xs bg-yellow-400 text-gray-900 font-bold px-3 py-2 rounded-full shadow whitespace-normal break-words leading-tight";
+                lblSorteo.className = "w-full text-center text-xs md:text-sm bg-yellow-400 text-gray-900 font-bold px-3 py-2.5 rounded-full shadow whitespace-normal break-words leading-snug";
             } else {
                 lblSorteo.innerText = `Faltan ${200 - puntos} pts para el sorteo de $100.000`;
             }
@@ -688,69 +695,69 @@
                 document.getElementById("lbl-firma-1").innerText = "Firma Locador (Propietario)";
                 document.getElementById("lbl-firma-2").innerText = "Firma Locatario (Inquilino)";
                 html = `
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-locador" placeholder="Locador (Nombre y Apellido)" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-locador-dni" placeholder="DNI / CUIT Locador" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-locador" placeholder="Locador (Nombre y Apellido)" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-locador-dni" placeholder="DNI / CUIT Locador" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-locatario" placeholder="Locatario (Nombre y Apellido)" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-locatario-dni" placeholder="DNI Locatario" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-locatario" placeholder="Locatario (Nombre y Apellido)" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-locatario-dni" placeholder="DNI Locatario" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-fiador" placeholder="Fiador / Garante Solidario" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-fiador-dni" placeholder="DNI / CUIT Fiador" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-fiador" placeholder="Fiador / Garante Solidario" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-fiador-dni" placeholder="DNI / CUIT Fiador" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <input type="text" id="f-direccion" placeholder="Dirección del Inmueble (Ej: Mitre 450, Tres Arroyos)" class="w-full border rounded-xl p-2 text-xs">
-                    <div class="grid grid-cols-3 gap-2">
-                        <input type="number" id="f-monto" placeholder="Alquiler Inicial $" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-ajuste" placeholder="Índice (IPC/ICL/Casa Propia)" class="border rounded-xl p-2 text-xs" value="IPC">
-                        <input type="number" id="f-meses-ajuste" placeholder="Meses Ajuste" class="border rounded-xl p-2 text-xs" value="4">
+                    <input type="text" id="f-direccion" placeholder="Dirección del Inmueble (Ej: Mitre 450, Tres Arroyos)" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="number" id="f-monto" placeholder="Alquiler Inicial $" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-ajuste" placeholder="Índice (IPC/ICL/Casa Propia)" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl" value="IPC">
+                        <input type="number" id="f-meses-ajuste" placeholder="Meses Ajuste" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl" value="4">
                     </div>
                 `;
             } else if (tipo === "automotor") {
                 document.getElementById("lbl-firma-1").innerText = "Firma Vendedor";
                 document.getElementById("lbl-firma-2").innerText = "Firma Comprador";
                 html = `
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-vendedor" placeholder="Vendedor Nombre y DNI" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-vendedor-cuit" placeholder="CUIT / Estado Civil Vendedor" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-vendedor" placeholder="Vendedor Nombre y DNI" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-vendedor-cuit" placeholder="CUIT / Estado Civil Vendedor" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-comprador" placeholder="Comprador Nombre y DNI" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-comprador-domicilio" placeholder="Domicilio Comprador" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-comprador" placeholder="Comprador Nombre y DNI" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-comprador-domicilio" placeholder="Domicilio Comprador" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <input type="text" id="f-vehiculo" placeholder="Marca y Modelo" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-dominio" placeholder="Patente / Dominio" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-anio" placeholder="Año / Color" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="text" id="f-vehiculo" placeholder="Marca y Modelo" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-dominio" placeholder="Patente / Dominio" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-anio" placeholder="Año / Color" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-motor" placeholder="N° Motor y Chasis" class="border rounded-xl p-2 text-xs">
-                        <input type="number" id="f-monto" placeholder="Precio Total Compraventa $" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-motor" placeholder="N° Motor y Chasis" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="number" id="f-monto" placeholder="Precio Total Compraventa $" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
                 `;
             } else if (tipo === "recibo") {
                 document.getElementById("lbl-firma-1").innerText = "Firma Quien Recibe (Propietario/Cobrador)";
                 boxFirma2.style.display = "none";
                 html = `
-                    <input type="text" id="f-recibi-de" placeholder="Recibí de (Nombre Inquilino)" class="w-full border rounded-xl p-2 text-xs">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-recibi-dni" placeholder="DNI Inquilino" class="border rounded-xl p-2 text-xs">
-                        <input type="number" id="f-monto" placeholder="Monto Total $" class="border rounded-xl p-2 text-xs">
+                    <input type="text" id="f-recibi-de" placeholder="Recibí de (Nombre Inquilino)" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-recibi-dni" placeholder="DNI Inquilino" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="number" id="f-monto" placeholder="Monto Total $" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <input type="text" id="f-concepto" placeholder="Concepto Detallado (Ej: Alquiler mes Octubre + Expensas + Edesur)" class="w-full border rounded-xl p-2 text-xs">
-                    <input type="text" id="f-direccion" placeholder="Dirección del Inmueble" class="w-full border rounded-xl p-2 text-xs">
+                    <input type="text" id="f-concepto" placeholder="Concepto Detallado (Ej: Alquiler mes Octubre + Expensas)" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                    <input type="text" id="f-direccion" placeholder="Dirección del Inmueble" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                 `;
             } else if (tipo === "carta") {
                 document.getElementById("lbl-firma-1").innerText = "Firma Remitente";
                 boxFirma2.style.display = "none";
                 html = `
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-remitente" placeholder="Remitente (Tu Nombre y Apellido)" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-destinatario" placeholder="Destinatario" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-remitente" placeholder="Remitente (Tu Nombre y Apellido)" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-destinatario" placeholder="Destinatario" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <input type="text" id="f-direccion" placeholder="Domicilio del Destinatario" class="w-full border rounded-xl p-2 text-xs">
-                    <select id="f-motivo" class="w-full border rounded-xl p-2 text-xs font-bold">
+                    <input type="text" id="f-direccion" placeholder="Domicilio del Destinatario" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                    <select id="f-motivo" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl font-bold">
                         <option value="Intimación de Pago de Alquileres atrasados en 72hs (Art. 1223 CCCN)">Intimación Pago Alquiler 72hs</option>
                         <option value="Intimación Devolución Inmediata Depósito de Garantía">Intimación Devolución Depósito</option>
                         <option value="Notificación Formal de Rescisión Anticipada de Contrato">Rescisión Anticipada Contrato</option>
@@ -760,29 +767,29 @@
                 document.getElementById("lbl-firma-1").innerText = "Firma Empleado Renunciante";
                 boxFirma2.style.display = "none";
                 html = `
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-empleado" placeholder="Empleado (Nombre Completo)" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-empleado-dni" placeholder="DNI Empleado" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-empleado" placeholder="Empleado (Nombre Completo)" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-empleado-dni" placeholder="DNI Empleado" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-empleador" placeholder="Empresa / Razón Social" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-cuit-empresa" placeholder="CUIT Empleador" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-empleador" placeholder="Empresa / Razón Social" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-cuit-empresa" placeholder="CUIT Empleador" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <input type="date" id="f-fecha-baja" class="w-full border rounded-xl p-2 text-xs">
+                    <input type="date" id="f-fecha-baja" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                 `;
             } else if (tipo === "empleada") {
                 document.getElementById("lbl-firma-1").innerText = "Firma Empleador/a";
                 document.getElementById("lbl-firma-2").innerText = "Firma Empleada";
                 html = `
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-empleador" placeholder="Empleador/a Nombre y DNI" class="border rounded-xl p-2 text-xs">
-                        <input type="text" id="f-empleada" placeholder="Empleado/a Nombre y DNI" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-empleador" placeholder="Empleador/a Nombre y DNI" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="text" id="f-empleada" placeholder="Empleado/a Nombre y DNI" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="f-cuil-empleada" placeholder="CUIL Empleada" class="border rounded-xl p-2 text-xs">
-                        <input type="number" id="f-monto" placeholder="Sueldo Neto $" class="border rounded-xl p-2 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="f-cuil-empleada" placeholder="CUIL Empleada" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
+                        <input type="number" id="f-monto" placeholder="Sueldo Neto $" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                     </div>
-                    <input type="text" id="f-categoria" value="5ta Categoría - Personal para Tareas Generales" class="w-full border rounded-xl p-2 text-xs">
+                    <input type="text" id="f-categoria" value="5ta Categoría - Personal para Tareas Generales" class="w-full h-12 text-sm px-4 border border-gray-200 rounded-xl">
                 `;
             }
 
@@ -807,10 +814,10 @@
             const badge = document.getElementById("badge-status");
             if (isPremium()) {
                 badge.innerText = "PREMIUM VIP";
-                badge.className = "text-xs bg-yellow-300 text-yellow-900 font-black px-2.5 py-1 rounded-full shadow-sm";
+                badge.className = "text-xs md:text-sm bg-yellow-300 text-yellow-900 font-black px-3 py-1 rounded-full shadow-sm";
             } else {
                 badge.innerText = "GRATIS";
-                badge.className = "text-xs bg-white text-brand-700 font-bold px-2.5 py-1 rounded-full shadow-sm";
+                badge.className = "text-xs md:text-sm bg-white text-brand-700 font-bold px-3 py-1 rounded-full shadow-sm";
             }
         }
 
@@ -1089,18 +1096,18 @@
             const container = document.getElementById("lista-alquileres");
 
             if (list.length === 0) {
-                container.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">No tenés alquileres guardados.</div>`;
+                container.innerHTML = `<div class="text-xs md:text-sm text-gray-400 text-center py-4">No tenés alquileres guardados.</div>`;
                 return;
             }
 
             container.innerHTML = list.map((a, index) => `
-                <div class="bg-gray-50 border rounded-xl p-3 flex justify-between items-center text-xs">
-                    <div>
+                <div class="bg-gray-50 border rounded-xl p-3 flex justify-between items-center text-xs md:text-sm gap-2">
+                    <div class="whitespace-normal break-words">
                         <div class="font-bold text-gray-800">${a.inquilino} (${a.propiedad})</div>
                         <div class="text-gray-500">Vence: ${a.vencimiento} - Monto: $${a.monto}</div>
                     </div>
-                    <a href="https://wa.me/${a.telefono}?text=Hola%20${encodeURIComponent(a.inquilino)},%20te%20contacto%20de%20PapelesYA%20para%20recordarte%20el%20pago%20del%20alquiler." target="_blank" class="bg-green-500 text-white p-2 rounded-lg font-bold">
-                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <a href="https://wa.me/${a.telefono}?text=Hola%20${encodeURIComponent(a.inquilino)},%20te%20contacto%20de%20PapelesYA%20para%20recordarte%20el%20pago%20del%20alquiler." target="_blank" class="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center font-bold shrink-0">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
                     </a>
                 </div>
             `).join("");
@@ -1128,7 +1135,7 @@
             if (!text) return;
 
             const chat = document.getElementById("chat-messages");
-            chat.innerHTML += `<div class="bg-brand-500 text-white p-2.5 rounded-xl max-w-[85%] ml-auto font-medium">${inp.value}</div>`;
+            chat.innerHTML += `<div class="bg-brand-500 text-white p-3 rounded-2xl max-w-[85%] ml-auto font-medium whitespace-normal break-words">${inp.value}</div>`;
             inp.value = "";
 
             let resp = "Para esos temas te recomendamos revisar la Ley de Alquileres vigente o consultar con un profesional.";
@@ -1142,7 +1149,7 @@
             }
 
             setTimeout(() => {
-                chat.innerHTML += `<div class="bg-gray-100 p-2.5 rounded-xl max-w-[85%] text-gray-700">${resp}</div>`;
+                chat.innerHTML += `<div class="bg-gray-100 p-3 rounded-2xl max-w-[85%] text-gray-700 whitespace-normal break-words">${resp}</div>`;
                 chat.scrollTop = chat.scrollHeight;
             }, 300);
         }
@@ -1175,14 +1182,14 @@
             const container = document.getElementById("tabla-vips-activos");
 
             if (vips.length === 0) {
-                container.innerHTML = `<div class="text-gray-500">No hay usuarios VIP activos.</div>`;
+                container.innerHTML = `<div class="text-gray-400">No hay usuarios VIP activos.</div>`;
                 return;
             }
 
             container.innerHTML = vips.map((v, i) => `
-                <div class="flex justify-between items-center bg-gray-900 p-1.5 rounded border border-gray-700">
-                    <span>${v.ident} (Hasta: ${new Date(v.hasta).toLocaleDateString()})</span>
-                    <button onclick="quitarVipManual(${i})" class="text-red-400 font-bold hover:underline">Quitar</button>
+                <div class="flex justify-between items-center bg-gray-900 p-2 rounded-xl border border-gray-700 gap-2">
+                    <span class="whitespace-normal break-words">${v.ident} (Hasta: ${new Date(v.hasta).toLocaleDateString()})</span>
+                    <button onclick="quitarVipManual(${i})" class="text-red-400 font-bold hover:underline shrink-0 px-2 py-1">Quitar</button>
                 </div>
             `).join("");
         }
@@ -1246,7 +1253,7 @@
             const ctx = canvas.getContext("2d");
 
             canvas.width = canvas.parentElement.offsetWidth || 350;
-            canvas.height = 170;
+            canvas.height = 180;
 
             let historial = JSON.parse(localStorage.getItem("papeles360_historial") || "[]");
             
